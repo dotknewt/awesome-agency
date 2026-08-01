@@ -184,6 +184,21 @@
 				"name": "dotKnewt",
 				"email": "dotknewt@keemail.me"
 			}
+		},
+		{
+			"name": "work-objects-toolkit",
+			"source": {
+				"source": "git-subdir",
+				"url": "git@github.com:dotknewt/toolkits.git",
+				"path": "work-objects-toolkit",
+				"ref": "main"
+			},
+			"description": "Evidence-linked work objects — one work/<id>-<slug>/ dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.",
+			"version": "0.1.0",
+			"author": {
+				"name": "dotKnewt",
+				"email": "dotknewt@keemail.me"
+			}
 		}
 	]
 }
