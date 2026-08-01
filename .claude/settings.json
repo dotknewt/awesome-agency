@@ -14,7 +14,9 @@
   },
   "model": "sonnet",
   "enabledPlugins": {
-    "instruction-management@dotknewt-toolkits": true
+    "instruction-management@dotknewt-toolkits": true,
+    "superpowers@dotknewt-toolkits": true,
+    "engineering-toolkit@dotknewt-toolkits": true
   },
   "effortLevel": "high",
   "advisorModel": "claude-opus-4-7"
