@@ -17,8 +17,8 @@ Single-question `AskUserQuestion` with one option per catalogue row plus Cancel:
 
 ## Step 2: Dispatch
 
-- **Create issue template** → follow the workflow in `plugins/github-toolkit/commands/create-issue-template.md`.
-- **Scaffold CI workflow** → follow the workflow in `plugins/github-toolkit/commands/scaffold-ci-workflow.md`.
+- **Create issue template** → follow the workflow in `${CLAUDE_PLUGIN_ROOT}/commands/create-issue-template.md`.
+- **Scaffold CI workflow** → follow the workflow in `${CLAUDE_PLUGIN_ROOT}/commands/scaffold-ci-workflow.md`.
 - **Cancel** → acknowledge and stop.
 
 _(Add a row to the table and a dispatch line here each time a new scaffolding command is added to this plugin.)_
