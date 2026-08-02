@@ -299,6 +299,14 @@ Full DO/DON'T lists live in `references/triggering-examples.md` and `references/
 - **`evals/evals.json`** — test cases for this skill's own output quality
 - **`evals/eval_queries.json`** — labeled queries for testing whether this skill's `description` triggers correctly
 
+### External Resources
+
+- **Creating custom subagents**: https://code.claude.com/docs/en/sub-agents
+- **Running agents in parallel**: https://code.claude.com/docs/en/agents
+- **Agent teams**: https://code.claude.com/docs/en/agent-teams
+- **Orchestration with dynamic workflows**: https://code.claude.com/docs/en/workflows
+- **Isolating sessions with worktrees**: https://code.claude.com/docs/en/worktrees
+
 ## Implementation Workflow
 
 To create an agent for a plugin:

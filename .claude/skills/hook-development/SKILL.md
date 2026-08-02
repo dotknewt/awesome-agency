@@ -331,7 +331,11 @@ See `scripts/README.md` for full usage and a typical workflow.
 
 ### External Resources
 
-- **Official Docs**: https://docs.claude.com/en/docs/claude-code/hooks
+- **Official Docs**: https://code.claude.com/docs/en/hooks
+- **Automate actions with hooks (guide)**: https://code.claude.com/docs/en/hooks-guide
+- **Routines**: https://code.claude.com/docs/en/routines
+- **Scheduled tasks (`/loop`)**: https://code.claude.com/docs/en/scheduled-tasks
+- **Desktop scheduled tasks**: https://code.claude.com/docs/en/desktop-scheduled-tasks
 - **Testing**: Use `claude --debug` for detailed logs
 - **Validation**: Use `jq` to validate hook JSON output
 

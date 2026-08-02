@@ -497,3 +497,12 @@ For detailed examples and advanced patterns, see:
 - [examples/minimal-plugin.md](examples/minimal-plugin.md) — simplest possible plugin (single command)
 - [examples/standard-plugin.md](examples/standard-plugin.md) — well-structured plugin with commands, agents, skills, and hooks
 - [examples/advanced-plugin.md](examples/advanced-plugin.md) — enterprise-grade plugin with MCP integration and multi-level organization
+
+## Additional Resources
+
+### External Resources
+
+- **Create plugins**: https://code.claude.com/docs/en/plugins
+- **Plugins reference**: https://code.claude.com/docs/en/plugins-reference
+- **Discover and install plugins**: https://code.claude.com/docs/en/discover-plugins
+- **Create a plugin marketplace**: https://code.claude.com/docs/en/plugin-marketplaces

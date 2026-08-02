@@ -225,3 +225,8 @@ For the complete generic skill-creator methodology:
 ### Validation Script
 
 - **`scripts/validate_skill.py`** - Automated SKILL.md structural checks (see Step 5)
+
+### External Resources
+
+- **Extend Claude with skills**: https://code.claude.com/docs/en/skills
+- **Agent Skills in the SDK**: https://code.claude.com/docs/en/agent-sdk/skills

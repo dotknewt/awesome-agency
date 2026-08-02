@@ -426,7 +426,9 @@ Working examples in `examples/`:
 ### External Resources
 
 - **Official MCP Docs**: https://modelcontextprotocol.io/
-- **Claude Code MCP Docs**: https://docs.claude.com/en/docs/claude-code/mcp
+- **Claude Code MCP Docs**: https://code.claude.com/docs/en/mcp
+- **MCP Quickstart**: https://code.claude.com/docs/en/mcp-quickstart
+- **Managed MCP (org-level control)**: https://code.claude.com/docs/en/managed-mcp
 - **MCP SDK**: @modelcontextprotocol/sdk
 - **Testing**: Use `claude --debug` and `/mcp` command
 
