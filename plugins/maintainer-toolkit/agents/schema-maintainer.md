@@ -1,0 +1,1 @@
+../../../agents/schema-maintainer/schema-maintainer.md
