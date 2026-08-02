@@ -1,0 +1,43 @@
+{
+  "skill_name": "writing-fragments",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "help me brainstorm ideas for an essay about grief",
+      "expected_output": "The skill recognizes this as an explore-phase request with no path given, so it asks once where to save the fragments document, then remembers that path for the rest of the session without asking again. It captures the initial prompt itself as raw material and starts interviewing the user about grief. The first write to the file consists of a single H1 working title and nothing else on that line or around it — no metadata, no TOC, no date — with the first captured fragment appended after it.",
+      "assertions": [
+        "The skill asks exactly once where to save the document before writing anything to disk",
+        "Once the user answers, the skill does not ask for the path again later in the session",
+        "The first write to the file starts with a single H1 line and nothing else — no metadata block, no table of contents, no date",
+        "The file contains no headings other than the initial H1",
+        "At least one fragment about grief drawn from the conversation is written, phrased in the user's own words rather than generic essay boilerplate"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "save fragments to notes/essay-on-craft.md as we talk through my idea about how constraint improves creative work — I've been thinking about this for a while",
+      "expected_output": "Since an explicit path was given, the skill does not ask where to save. It writes a single H1 working title on the first write, then silently appends each fragment as it emerges from the conversation, separating fragments with a horizontal rule. The skill narrates additions briefly (e.g. \"adding that\") instead of pausing for permission or showing a save confirmation before each append.",
+      "assertions": [
+        "The skill does not ask the user where to save, since notes/essay-on-craft.md was already given in the prompt",
+        "The file starts with a single H1 working title and nothing else on first write",
+        "Fragments are separated by a horizontal rule (a line containing only ---) rather than blank lines, headings, or numbering",
+        "No headings appear inside any fragment body — only the single H1 at the top of the file",
+        "The skill mentions additions in passing rather than asking permission or presenting a save dialog before each append"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Actually — cut that grandmother line, it doesn't fit. And merge the first two fragments, they're circling the same point about practiced attention.",
+      "expected_output": "This is a mid-session correction to the fragments file already in progress (provided as the input file, simulating a session that started a few turns earlier), not new material to append. The skill re-reads the file from disk, then edits it in place: it removes the grandmother-commute fragment entirely, and combines the dog-barking fragment and the 'noticing is a discipline' fragment into a single fragment. It does not leave the old fragments untouched and tack a corrected version onto the end of the file. The existing H1, the untouched leading-word fragment, and the horizontal-rule separators between remaining fragments are all preserved.",
+      "files": ["evals/files/mid-session-fragments.md"],
+      "assertions": [
+        "The grandmother-commute fragment is removed from the file rather than left in place with a new fragment appended after it",
+        "The dog-barking fragment and the 'noticing is a discipline' fragment are combined into a single fragment block instead of remaining two separate fragments",
+        "No new fragment is appended to the end of the file that merely restates or duplicates the pre-edit content",
+        "The H1 working title text is unchanged from the input file",
+        "The leading-word fragment ('rehearsed noticing') is preserved unchanged and still appears in the file",
+        "Fragments remaining in the file are still separated only by horizontal rules, with no headings inside fragment bodies"
+      ]
+    }
+  ]
+}

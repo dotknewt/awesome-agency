@@ -46,30 +46,9 @@ Scaffold a new standalone skill under `skills/` in the current repository.
 
 6. **Write `skills/<name>/references/.gitkeep`** and **`skills/<name>/scripts/.gitkeep`** (empty files).
 
-7. **Register in `marketplace.json`** if it exists at `.claude-plugin/marketplace.json`:
-   - Append a new entry to `plugins` array:
-     ```json
-     {
-       "name": "<name>",
-       "source": "./skills/<name>",
-       "description": "<first sentence of description>",
-       "version": "1.0.0",
-       "author": { "name": "<git user.name>" }
-     }
-     ```
+7. **Register in the marketplace** — run `.github/scripts/generate-marketplace.py`. It creates the skill's micro-entry automatically (`marketplace.json` is generated; never hand-edit it). If the skill must NOT ship standalone (it depends on a bundle's scripts/hooks), add it to `BUNDLE_BOUND_SKILLS` in that script instead.
 
-8. **Update `skills/AGENTS.md`** — this repo's catalog of standalone, root-level skills (parallel to `plugins/AGENTS.md` for plugins and the top-level `agents/AGENTS.md` for standalone agent plugins). This only applies to skills scaffolded directly under this repo's `skills/`, not skills created inside a plugin's own `skills/` subdirectory.
-   - If `skills/AGENTS.md` doesn't exist yet, create it:
-     ```markdown
-     # skills/
-
-     Standalone skills available at repo root (not bundled inside a plugin).
-
-     | Skill | Purpose | Primary triggers |
-     |---|---|---|
-     | `<name>` | <one-line purpose> | <2-3 short trigger phrases> |
-     ```
-   - If it exists, add one row for the new skill (or update the existing row if regenerating one).
+8. **Bundle membership (optional):** if the skill should also ship inside a bundle, symlink `plugins/<bundle>/skills/<name> → ../../../skills/<name>` and bump that bundle's `plugin.json` version.
 
 9. **Confirm** to the user:
    ```
@@ -77,8 +56,7 @@ Scaffold a new standalone skill under `skills/` in the current repository.
    ├── SKILL.md
    ├── references/
    └── scripts/
-   Registered in marketplace.json.
-   Updated skills/AGENTS.md.
+   Regenerated .claude-plugin/marketplace.json (micro-entry added).
    Next: fill in the SKILL.md body, then run the plugin-validator agent to check the structure.
    ```
 

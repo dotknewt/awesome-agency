@@ -1,0 +1,42 @@
+{
+  "skill_name": "wizard",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up Stripe test-mode API keys for local dev and CI.",
+      "expected_output": "A wizard script (copied from template.sh) with one or more stages that open the Stripe test API keys dashboard, capture the publishable key with ask and the secret key with ask_secret, write both to .env via write_env, and call set_secret only for the key(s) actually referenced by secrets.* in .github/workflows/*. TOTAL_STAGES and TOTAL_MINUTES are set to honest values before the stages run.",
+      "assertions": [
+        "The generated script's TOTAL_STAGES value matches the number of stage() calls it contains",
+        "Every set_secret name in the script matches a secrets.* reference found in .github/workflows/*",
+        "The script opens the Stripe dashboard API keys URL (open_url) before asking for the corresponding value",
+        "The secret key is captured with ask_secret (hidden input), not ask",
+        "write_env is called for every value that needs to persist locally, and set_secret is called only for values CI actually needs",
+        "bash -n reports no syntax errors on the generated script"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "walk me through migrating our config from schema v1 to v2",
+      "expected_output": "Before authoring any stage(), the wizard scopes the migration by identifying the current (v1) state and the target (v2) state, per SKILL.md's guidance for migrations/transitions. The generated script's stages each move one concrete field or value from its v1 location to its v2 location, confirm() gates any irreversible action, and the closing summary reflects what changed.",
+      "assertions": [
+        "The wizard explicitly captures the current (v1) state and the target (v2) state before writing stages, rather than jumping straight to stage authoring",
+        "Every irreversible action between the v1 and v2 states is gated with confirm before it runs",
+        "Each generated stage traces to one concrete field/value moving from a named v1 location to a named v2 location",
+        "The wizard does not invent config keys, file paths, or migration steps it hasn't verified — it asks the user or flags a gap instead of guessing",
+        "TOTAL_STAGES and TOTAL_MINUTES are set to reflect the actual number and estimated duration of migration stages"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We already have STRIPE_PUBLISHABLE_KEY set in .env from a previous run — set up the rest of the Stripe wizard without clobbering it.",
+      "expected_output": "The generated wizard uses the template's ask/ask_secret helpers (backed by the _existing() helper in template.sh) so that any KEY already present in .env is offered back to the human as the default value, and pressing Enter keeps it rather than blanking it out.",
+      "assertions": [
+        "For a KEY already present in .env, the generated wizard's ask or ask_secret call surfaces the existing value as the default (via _existing()) instead of prompting blind",
+        "The prompt text signals a default is available (e.g. '[Enter keeps current]'), matching template.sh's existing ask()/ask_secret() behavior",
+        "Re-running the wizard and pressing Enter on a prompt with an existing value does not overwrite that .env value with an empty string",
+        "write_env remains idempotent — the existing key is upserted in place in .env, not duplicated as a second line",
+        "Values not already present in .env still prompt normally with no false default offered"
+      ]
+    }
+  ]
+}

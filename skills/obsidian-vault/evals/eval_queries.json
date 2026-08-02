@@ -1,0 +1,22 @@
+[
+  { "query": "find my notes about RAG in Obsidian", "should_trigger": true },
+  { "query": "can you search my Obsidian vault for anything on transformers?", "should_trigger": true },
+  { "query": "add a new Obsidian note about the meeting notes format", "should_trigger": true },
+  { "query": "I need to create an index note in Obsidian linking all my ML papers", "should_trigger": true },
+  { "query": "open my Obsidian vault and find the note on prompt engineering", "should_trigger": true },
+  { "query": "add a note to my knowledge base about attention mechanisms and link it to related topics", "should_trigger": true },
+  { "query": "can you find where I wrote about chunking strategies in my notes?", "should_trigger": true },
+  { "query": "create a new note summarizing this paper and connect it with wikilinks to what I already have", "should_trigger": true },
+  { "query": "I want to organize my personal wiki - can you check if I already have a note on fine-tuning before I write a new one?", "should_trigger": true },
+  { "query": "search my second brain for anything related to vector databases", "should_trigger": true },
+  { "query": "write a README for my project", "should_trigger": false },
+  { "query": "search this folder of markdown files in VS Code", "should_trigger": false },
+  { "query": "can you clean up the formatting in this markdown file?", "should_trigger": false },
+  { "query": "create a new Notion page about our roadmap", "should_trigger": false },
+  { "query": "help me write a blog post about RAG", "should_trigger": false },
+  { "query": "grep through my project's docs folder for TODOs", "should_trigger": false },
+  { "query": "convert this markdown note to a PDF", "should_trigger": false },
+  { "query": "set up a wiki for my team using Confluence", "should_trigger": false },
+  { "query": "find all the .md files in this git repo that mention 'deprecated'", "should_trigger": false },
+  { "query": "write documentation for this API in markdown format", "should_trigger": false }
+]

@@ -1,15 +1,79 @@
 # agency
 
-The Claude Code plugin marketplace for dotKnewt's personal extensions. Add it with:
+dotKnewt's Claude Code plugin marketplace — one repo holding every skill, agent,
+command, and hook, organized awesome-copilot-style: shared component pools at the
+top level, with plugins as thin bundles that reference them.
 
 ```
 /plugin marketplace add dotknewt/agency
 ```
 
-This repo is just the manifest (`.claude-plugin/marketplace.json`) — it aggregates plugins that live in sibling repos, each independently addable if you only want that slice:
+## Install
 
-- [`dotknewt/skills`](https://github.com/dotknewt/skills) — standalone skills
-- [`dotknewt/agents`](https://github.com/dotknewt/agents) — agent-persona plugins
-- [`dotknewt/toolkits`](https://github.com/dotknewt/toolkits) — composite skills+agents+commands+hooks bundles, including the Ludus cyber-range toolkit + MCP server (`ludus-toolkit`)
+**A bundle** (curated set of skills/agents/commands/hooks):
 
-See `AGENTS.md` for manifest conventions.
+```
+claude plugin install engineering-toolkit@agency
+```
+
+**A single skill** (every skill is individually installable):
+
+```
+claude plugin install tdd@agency
+```
+
+**A single agent** (suffix `-agent`):
+
+```
+claude plugin install ember-agent@agency
+```
+
+Installing a bundle plus one of its skills standalone loads that skill twice
+(once per plugin namespace) — harmless, but avoid it.
+
+## Layout
+
+| Directory | Contents |
+|---|---|
+| `skills/` | All skills, one directory each (`<name>/SKILL.md`). `skills/in-progress/` holds unshipped drafts. |
+| `agents/` | All agents, one directory each (`<name>/<name>.md`, plus symlinked dependencies so single-agent installs are self-contained). |
+| `commands/` | Slash-command definitions, one subdirectory per owning bundle. |
+| `hooks/` | Hook sets — `<set>/hooks.json` + `<set>/scripts/`. |
+| `instructions/` | Reference instruction docs used by agents/commands. |
+| `mcp/` | Bundled MCP servers (`mcp/ludus/`). |
+| `plugins/` | Bundle definitions: `.claude-plugin/plugin.json`, README, and symlinks into the pools above. Claude Code dereferences the symlinks at install time. |
+| `docs/specs/` | Agent/skill/work-object specifications used by the dev tooling. |
+| `.claude/` | Repo-local development tooling (not distributed). |
+
+## Bundles
+
+| Plugin | What it does |
+|---|---|
+| `engineering-toolkit` | Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD, code review. |
+| `instruction-management` | Maintain and improve AGENTS.md / CLAUDE.md project instructions. |
+| `github-toolkit` | Issue templates, CI scaffolding, branch-warden + issue-filer agents. |
+| `hooks-toolkit` | Safety/hygiene hooks — force-push guard, secret scanner, manifest validators. |
+| `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
+| `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
+| `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
+| `agent-doublecheck` | Three-layer verification pipeline for AI output. |
+| `agent-ember` | Ember, an AI-partnership persona agent. |
+
+`work-object-guard` is the one skill without a standalone entry — it depends on
+its bundle's scripts and hook, so install `work-objects-toolkit` instead.
+
+## Contributing / maintaining
+
+- Add a skill: create `skills/<name>/SKILL.md`, then run
+  `.github/scripts/generate-marketplace.py` to regenerate the manifest
+  (every pool item gets a micro-entry automatically).
+- Add an agent: create `agents/<name>/<name>.md`, regenerate.
+- Change bundle membership: add/remove symlinks under `plugins/<name>/`,
+  bump the version in its `plugin.json`, regenerate.
+- CI (`.github/workflows/validate.yml`) fails on stale manifests, broken
+  symlinks, invalid `plugin.json`, and malformed skill frontmatter.
+
+Formerly this marketplace aggregated three sibling repos
+(`dotknewt/skills`, `dotknewt/agents`, `dotknewt/toolkits`); their content now
+lives here and the old repos are archived. If you still have the old
+`dotknewt-*` marketplaces added, remove them and reinstall from `agency`.

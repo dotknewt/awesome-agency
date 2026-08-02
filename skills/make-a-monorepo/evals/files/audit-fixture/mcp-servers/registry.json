@@ -1,0 +1,10 @@
+{
+  "$schema_version": "1.0",
+  "schemas": {},
+  "servers": {
+    "splunk-mcp": {
+      "module": "mcp-servers/splunk-mcp",
+      "version": "0.1.0"
+    }
+  }
+}

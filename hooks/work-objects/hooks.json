@@ -1,0 +1,17 @@
+{
+  "description": "Gate work-object status transitions (in-review/approved) on the evidence checker instead of narration.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/work-object-status-gate.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

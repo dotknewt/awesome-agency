@@ -1,0 +1,94 @@
+{
+  "skill_name": "instruction-management",
+  "evals": [
+    {
+      "id": 1,
+      "name": "fresh-repo-no-memory",
+      "prompt": "I just cloned this widget-store repo and there's no agent memory file yet. Can you audit it and suggest what should go in one?",
+      "expected_output": "Discovery finds neither AGENTS.md nor CLAUDE.md; skill offers to scaffold AGENTS.md (not CLAUDE.md). Proposed content covers npm scripts and notes PORT env var.",
+      "assertions": [
+        {
+          "text": "Proposes scaffolding AGENTS.md (not CLAUDE.md) as the canonical filename"
+        },
+        {
+          "text": "Mentions at least two real package.json scripts (dev/build/test/lint)"
+        },
+        {
+          "text": "Does not invent commands not present in package.json"
+        },
+        {
+          "text": "Outputs a discovery summary or quality report before proposing edits"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "claude-md-only-migrate",
+      "prompt": "Check whether my CLAUDE.md is still accurate for this repo.",
+      "expected_output": "Discovery finds only CLAUDE.md. Skill audits it AND surfaces the AGENTS.md migration with BOTH options. User is asked which option to use.",
+      "assertions": [
+        {
+          "text": "Surfaces AGENTS.md migration option (skill does not silently leave the repo on CLAUDE.md)"
+        },
+        {
+          "text": "Presents BOTH migration options: rename, and @AGENTS.md stub"
+        },
+        {
+          "text": "Asks the user to choose between options rather than picking unilaterally"
+        },
+        {
+          "text": "Audits the existing CLAUDE.md content"
+        },
+        {
+          "text": "Mentions AGENTS.md by name"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "agents-md-audit",
+      "prompt": "Audit AGENTS.md for this project.",
+      "expected_output": "Audits the AGENTS.md, prints a quality report before diffs, flags both stale entries, proposes targeted diffs against AGENTS.md.",
+      "assertions": [
+        {
+          "text": "Flags `npm run start` as stale (the script no longer exists in package.json)"
+        },
+        {
+          "text": "Flags `src/worker.js` as stale (real file is `src/index.ts`)"
+        },
+        {
+          "text": "Outputs a quality report (with scores or grade) before any proposed diffs"
+        },
+        {
+          "text": "Proposed edits target AGENTS.md, not a new or separate CLAUDE.md"
+        },
+        {
+          "text": "Does not fabricate commands or files not present in the fixture"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "monorepo-mixed",
+      "prompt": "Look at the agent memory files across this monorepo and tell me what's off.",
+      "expected_output": "Discovers root AGENTS.md and packages/api/CLAUDE.md. Flags inconsistency and proposes unifying on AGENTS.md.",
+      "assertions": [
+        {
+          "text": "Identifies both ./AGENTS.md (root) and ./packages/api/CLAUDE.md"
+        },
+        {
+          "text": "Flags the mixed-filename inconsistency in the same repo as a problem"
+        },
+        {
+          "text": "Proposes migrating the api package's CLAUDE.md to AGENTS.md"
+        },
+        {
+          "text": "Presents both migration options (rename OR @AGENTS.md stub) and applies the choice consistently"
+        },
+        {
+          "text": "Does not propose adding new memory files unrelated to the existing structure"
+        }
+      ]
+    }
+  ]
+}

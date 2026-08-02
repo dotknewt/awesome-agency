@@ -122,20 +122,11 @@ When a user describes what they want an agent to do, you will:
    [Complete system prompt]
    ```
 
-5. **Update the top-level `agents/AGENTS.md` catalog — only for standalone agents:**
-   - This step applies **only** when the target output path is under this repo's top-level `agents/<name>/` (a standalone agent-persona plugin, e.g. `agents/agent-ember/agents/ember.md`) — the directory that sits alongside `plugins/` and `skills/` at repo root.
-   - **Do not** do this when the target is nested inside an existing toolkit-style plugin (e.g. `plugins/agency-toolkit/agents/*.md`, `plugins/github-toolkit/agents/*.md`). Those plugins are already covered by `plugins/AGENTS.md`'s catalog at the plugin level — don't create a second, redundant per-agent index inside them.
-   - When it does apply: if `agents/AGENTS.md` doesn't exist yet, create it with a header and a table:
-     ```markdown
-     # agents/
-
-     Standalone agent-persona plugins living at repo root, one directory per agent.
-
-     | Agent plugin | Version | Purpose | Primary triggers |
-     |---|---|---|---|
-     | `agents/[identifier]` | [version] | [one-line purpose] | [2-3 short trigger phrases] |
-     ```
-   - If it already exists, add one row for the new agent plugin (or update the existing row if regenerating one). Keep each row to one line — this is a catalog, not a spec; the full detail lives in the plugin's own files.
+5. **Register the agent in the marketplace — pooled agents only:**
+   - This step applies when the target output path is this repo's top-level pool: `agents/<identifier>/<identifier>.md` (dir-per-agent — the directory that sits alongside `skills/` and `plugins/` at repo root).
+   - Run `.github/scripts/generate-marketplace.py` — it auto-creates the `<identifier>-agent` micro-entry in `.claude-plugin/marketplace.json` (never hand-edit that file).
+   - If the agent needs pool content at runtime (instructions, skills), symlink those into `agents/<identifier>/` so the standalone install is self-contained, and reference them via `${CLAUDE_PLUGIN_ROOT}/...`.
+   - If the agent should also ship inside a bundle, add a symlink `plugins/<bundle>/agents/<identifier>.md → ../../../agents/<identifier>/<identifier>.md` and bump the bundle's `plugin.json` version.
 
 6. **Explain to User**: Provide summary of created agent:
    - What it does
@@ -153,10 +144,10 @@ When a user describes what they want an agent to do, you will:
 - Model choice is appropriate
 - Tool selection follows least privilege
 - Color choice matches agent purpose
-- If (and only if) the target is a standalone plugin under top-level `agents/`: `agents/AGENTS.md` at repo root has an up-to-date row for it (created if missing)
+- If the target is the top-level `agents/` pool: `.claude-plugin/marketplace.json` regenerated so the `<identifier>-agent` micro-entry exists
 
 **Output Format:**
-Create agent file, update the top-level `agents/AGENTS.md` catalog if this is a standalone agent plugin, then provide summary:
+Create agent file, regenerate the marketplace manifest if this is a pooled agent, then provide summary:
 
 ## Agent Created: [identifier]
 
@@ -169,7 +160,7 @@ Create agent file, update the top-level `agents/AGENTS.md` catalog if this is a 
 
 ### Files Created/Updated
 - `agents/[identifier].md` ([word count] words)
-- `agents/AGENTS.md` (row added/updated) — only when creating a standalone plugin under top-level `agents/`; omit this line for agents added inside an existing plugin
+- `.claude-plugin/marketplace.json` (regenerated) — only when creating an agent in the top-level `agents/` pool; omit this line for agents added inside a plugin elsewhere
 
 ### How to Use
 This agent will trigger when [triggering scenarios].
@@ -187,8 +178,8 @@ Validate with: `scripts/validate-agent.sh agents/[identifier].md`
 - Very complex requirements: Break into multiple specialized agents
 - User wants specific tool access: Honor the request in agent configuration
 - User specifies model: Use specified model instead of inherit
-- First agent in an existing plugin: Create `agents/` directory first — no top-level catalog update needed
-- First standalone agent plugin at repo root: Create `agents/<name>/agents/` directory first, then the top-level `agents/AGENTS.md` with the header + table
+- First agent in an existing plugin (outside this repo's pool layout): Create `agents/` directory first — no marketplace update needed
+- First pooled agent at repo root: Create `agents/<name>/` first, save the agent as `agents/<name>/<name>.md`, then regenerate the marketplace manifest
 ```
 
 This agent automates agent creation using the proven patterns from Claude Code's internal implementation, making it easy for users to create high-quality autonomous agents.

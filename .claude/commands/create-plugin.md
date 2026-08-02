@@ -347,14 +347,11 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
    - For settings: Provide configuration templates
 
 2. **Add marketplace entry** (if publishing):
-   - Show user how to add to marketplace.json
-   - Help draft marketplace description
-   - Suggest category and tags
+   - For a bundle in this repo: register it in `BUNDLE_ORDER` inside `.github/scripts/generate-marketplace.py`, then run the script — `marketplace.json` is generated, never hand-edit it.
+   - Bundle components should be symlinks into the shared pools (`skills/`, `agents/`, `commands/`, `hooks/`), added to the pools first — see `AGENTS.md` "Architecture".
+   - Help draft the plugin.json description; suggest keywords.
 
-2a. **Update `plugins/AGENTS.md`'s "Key plugins" table** — required whenever the plugin was created under this repo's own `plugins/` directory (from Phase 4's location choice), skip entirely if the plugin was created elsewhere (e.g. `../new-plugin-name` or a custom external path):
-   - Add a new row: `| \`plugin-name\` | version | one-line purpose | primary entry points (commands/agents/skills) |`
-   - Follow the existing table's conventions for the "Primary entry points" column (list the slash commands, agent names, and/or skill names a user would actually invoke).
-   - If this is the very first plugin-scoped edit in the session, also verify no other row in the table is stale before adding the new one (report but don't silently fix unrelated staleness — that's `instruction-management`'s job).
+2a. **Update the "Bundles" table in the root `README.md`** — required whenever the plugin was created under this repo's own `plugins/` directory, skip entirely if the plugin was created elsewhere (e.g. `../new-plugin-name` or a custom external path).
 
 3. **Create summary**:
    - Mark all todos complete

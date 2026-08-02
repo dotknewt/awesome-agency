@@ -277,7 +277,7 @@ Full DO/DON'T lists live in `references/triggering-examples.md` and `references/
 
 ### Canonical Spec
 
-- **`specs/agents/Agent-Specification.md`** — the source of truth for agent conventions in this repo. Where this skill and the spec disagree, the spec wins; this skill exists to teach it, not to redefine it.
+- **`docs/specs/agents/Agent-Specification.md`** — the source of truth for agent conventions in this repo. Where this skill and the spec disagree, the spec wins; this skill exists to teach it, not to redefine it.
 
 ### Reference Files
 

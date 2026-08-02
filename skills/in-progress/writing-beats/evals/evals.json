@@ -1,0 +1,39 @@
+{
+  "skill_name": "writing-beats",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got a pile of notes from digging into why our onboarding funnel leaks users at step 3 — interview snippets, a couple of funnel charts I described in words, and some competitor screenshots I annotated. Can you turn this into an article? Notes:\n\n- 41% of signups drop at the \"connect your calendar\" step.\n- Support interview: \"nobody explains why we need calendar access before they've seen any value.\"\n- Competitor X delays the calendar ask until after the first successful action.\n- Our own PM notes says calendar access is used for exactly one feature (smart scheduling), which most users don't touch in week one.\n- Analytics: users who skip calendar connect entirely still activate at a normal rate.",
+      "expected_output": "The agent does not write anything to a file yet. It notices no save path was given and asks the user where to save the article, then remembers that path for the rest of the session. Before offering any beats, it also works with the user to establish which concepts the audience already knows walking in (the prerequisites) rather than assuming.",
+      "assertions": [
+        "The agent asks for a save path before writing to it",
+        "The agent does not create or write to any article file before a save path is given",
+        "Once the user supplies a path, the agent does not ask for it again in the same session",
+        "The agent works with the user to establish grounded/prerequisite concepts before proposing any candidate beats"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Here's the raw material for a piece on our onboarding funnel leak — same notes as before. Save the article to content/drafts/onboarding-leak.md. Notes:\n\n- 41% of signups drop at the \"connect your calendar\" step.\n- Support interview: \"nobody explains why we need calendar access before they've seen any value.\"\n- Competitor X delays the calendar ask until after the first successful action.\n- Our own PM notes says calendar access is used for exactly one feature (smart scheduling), which most users don't touch in week one.\n- Analytics: users who skip calendar connect entirely still activate at a normal rate.",
+      "expected_output": "After settling with the user what the audience already knows walking in (the prerequisites), the agent proposes 2-3 candidate starting beats drawn from the notes, each a different entry point into the article. Each candidate is annotated with what new concept(s) it would ground, and none of them lean on any concept beyond what's already grounded (prerequisites, since nothing has been introduced yet). The agent shows these to the user and waits for a pick before writing anything to content/drafts/onboarding-leak.md; once picked, only that single starting beat is written.",
+      "assertions": [
+        "The agent proposes between 2 and 3 candidate starting beats before writing anything to the file",
+        "Each candidate beat only leans on already-grounded concepts (i.e. concepts established as prerequisites, since no beat has been written yet)",
+        "Each candidate beat states what new concept(s) it grounds/introduces",
+        "The agent shows the candidate beats to the user and gets a pick before writing to content/drafts/onboarding-leak.md",
+        "After the user picks, the agent writes only that one chosen beat to the file, not multiple beats ahead"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Actually, go back and rewrite beat 3 — I want it to open with the support interview quote about nobody explaining the calendar ask, instead of leading with the 41% drop-off stat. Leave everything else as is. The article's at content/drafts/onboarding-leak.md, we're currently five beats in.",
+      "expected_output": "The agent re-reads content/drafts/onboarding-leak.md from disk, locates beat 3, and edits only that beat in place per the writing-rhythm rule for \"rewrite that beat\" requests — beats 1, 2, 4, and 5 are left untouched. It does not restart the journey, re-ask for the save path, or regenerate candidate beats for slots other than 3. If the rewritten beat 3 now grounds a different concept than the original version did, the agent updates its sense of what's grounded before it next offers candidate beats.",
+      "assertions": [
+        "The agent edits only beat 3 in the article file; beats 1, 2, 4, and 5 are unchanged from before the edit",
+        "The agent re-reads the article file from disk before making the edit rather than relying on a stale in-context copy",
+        "The agent does not ask again for the save path, since it was already established earlier in the session",
+        "If the rewritten beat 3 grounds a different concept than the original did, the agent's next set of candidate beats reflects the updated grounded set rather than the stale one"
+      ]
+    }
+  ]
+}

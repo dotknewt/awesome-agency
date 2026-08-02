@@ -1,0 +1,1 @@
+../../../agents/dockerize-mcp-server/dockerize-mcp-server.md

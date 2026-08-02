@@ -1,0 +1,51 @@
+# Canonical label set ensured by /create-issue-template's label-reconciliation step.
+# Create-if-missing only — never edit or delete a label that already exists under
+# one of these names, even if its color/description differs from what's listed here.
+
+# Template-default labels assigned by create-issue-template.md Step 5a (one per
+# catalogue template type).
+category:
+  - name: "bug"
+    color: "d73a4a"
+    description: "Something isn't working"
+  - name: "feat"
+    color: "a2eeef"
+    description: "New feature or request"
+  - name: "docs"
+    color: "0075ca"
+    description: "Improvements or additions to documentation"
+  - name: "support"
+    color: "d876e3"
+    description: "Usage question or request for help"
+
+# Fixed 5-label triage taxonomy — lifecycle labels a maintainer applies after
+# an issue is filed. Not auto-applied by any scaffolded template.
+triage:
+  - name: "needs-triage"
+    color: "fbca04"
+    description: "Maintainer needs to evaluate this issue"
+  - name: "needs-info"
+    color: "c5def5"
+    description: "Waiting on reporter for more information"
+  - name: "ready-for-agent"
+    color: "0e8a16"
+    description: "Fully specified, ready for an AFK agent"
+  - name: "ready-for-human"
+    color: "5319e7"
+    description: "Requires human implementation"
+  - name: "wontfix"
+    color: "ffffff"
+    description: "Will not be actioned"
+
+# GitHub stock default labels that are NOT part of the set above. Delete only
+# these exact names when present (Branch B of the reconciliation step) — never
+# delete a label outside this fixed list, e.g. never touch type:*, action:*,
+# or any other custom label.
+remove_if_present:
+  - "documentation"
+  - "duplicate"
+  - "enhancement"
+  - "good first issue"
+  - "help wanted"
+  - "invalid"
+  - "question"

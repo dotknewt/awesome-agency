@@ -1,0 +1,19 @@
+{
+  "name": "hooks-toolkit",
+  "version": "1.0.1",
+  "description": "Composable safety and hygiene hooks for Claude Code \u2014 force-push guard, secret scanner, plugin/skill manifest validators, branch nudges, and dirty-tree stop check.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/agency",
+  "license": "MIT",
+  "keywords": [
+    "hooks",
+    "safety",
+    "secrets",
+    "git",
+    "validation",
+    "hygiene"
+  ]
+}

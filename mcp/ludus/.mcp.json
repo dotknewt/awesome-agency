@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ludus": {
+      "command": "docker",
+      "args": [
+        "mcp", "gateway", "run",
+        "--catalog", "${CLAUDE_PLUGIN_ROOT}/mcp/ludus/ludus-catalog.yaml"
+      ]
+    }
+  }
+}

@@ -405,7 +405,7 @@ Restrict or expand based on agent needs:
 
 ### Customize Colors
 
-Choose colors that match agent purpose, from the canonical palette (`specs/agents/Agent-Specification.md`): `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, `cyan`.
+Choose colors that match agent purpose, from the canonical palette (`docs/specs/agents/Agent-Specification.md`): `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, `cyan`.
 
 - **Blue/Cyan**: Analysis, review, investigation, documentation
 - **Green**: Generation, creation, success-oriented

@@ -1,0 +1,22 @@
+[
+  { "query": "I need to set up Stripe API keys for this repo", "should_trigger": true },
+  { "query": "Can you walk me through connecting our repo to Auth0?", "should_trigger": true },
+  { "query": "help me migrate our database config from the old format to the new one, step by step", "should_trigger": true },
+  { "query": "walk me through setting up SendGrid so I can send emails from staging and prod", "should_trigger": true },
+  { "query": "I need to configure our GitHub Actions to deploy to AWS — walk me through getting the credentials", "should_trigger": true },
+  { "query": "guide me through moving our app from Heroku to Render", "should_trigger": true },
+  { "query": "my manager wants Twilio set up for SMS notifications, can you take me through it step by step, opening the dashboard and telling me what to click?", "should_trigger": true },
+  { "query": "we need to rotate our Stripe keys and update both .env and the CI secret — walk me through it", "should_trigger": true },
+  { "query": "help me set up a new Firebase project for this repo, I don't know where anything is in the console", "should_trigger": true },
+  { "query": "can you make me a script that steps me through migrating our feature flags from LaunchDarkly to our own config format", "should_trigger": true },
+  { "query": "write a bash deploy script", "should_trigger": false },
+  { "query": "add a new env var to .env", "should_trigger": false },
+  { "query": "can you write a script that reads .env and validates all required keys are present", "should_trigger": false },
+  { "query": "set STRIPE_SECRET_KEY directly in .env for me, I already have the key value right here", "should_trigger": false },
+  { "query": "explain how Stripe webhooks work", "should_trigger": false },
+  { "query": "write a python script that migrates rows from the old users table to the new one", "should_trigger": false },
+  { "query": "what's the difference between test mode and live mode in Stripe", "should_trigger": false },
+  { "query": "add a GitHub Actions workflow that runs our test suite on push", "should_trigger": false },
+  { "query": "review this bash script for bugs", "should_trigger": false },
+  { "query": "our CI is failing because a secret is missing, can you check the workflow file", "should_trigger": false }
+]

@@ -1,0 +1,21 @@
+{
+  "name": "agent-doublecheck",
+  "version": "1.0.1",
+  "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/dotknewt/agency",
+  "license": "MIT",
+  "keywords": [
+    "verification",
+    "hallucination",
+    "fact-check",
+    "source-citation",
+    "trust",
+    "safety"
+  ],
+  "agents": [
+    "./agents/doublecheck.md"
+  ]
+}

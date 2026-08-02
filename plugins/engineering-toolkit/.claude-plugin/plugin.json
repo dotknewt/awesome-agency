@@ -1,0 +1,11 @@
+{
+  "name": "engineering-toolkit",
+  "version": "0.1.0",
+  "description": "Idea-to-ship engineering flow \u2014 grilling, PRD/issue breakdown, TDD implementation, and code review, routed by ask-matt.",
+  "repository": "https://github.com/dotknewt/agency",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "license": "MIT"
+}

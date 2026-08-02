@@ -1,0 +1,20 @@
+{
+  "skill_name": "context-engineering",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "how should I structure RAG chunking for a 200-page PDF corpus",
+      "expected_output": "Recommends a chunking strategy grounded in the skill's RAG guidance: discusses the recall-vs-noise and chunk-size tradeoffs, suggests a starting chunk size appropriate for a long PDF corpus, and mentions reranking (a cross-encoder pass after vector search) as a way to cut retrieval noise."
+    },
+    {
+      "id": 2,
+      "prompt": "user input goes straight into my system prompt, how do I stop prompt injection",
+      "expected_output": "Identifies this as a context-isolation problem — user content and instructions sharing the same channel — and recommends separating them via one of: XML/delimiter isolation, a separate API call to classify or summarize untrusted content before it reaches the main prompt, or a tool boundary that parses raw output to a schema. Also plausibly mentions input validation and output validation as complementary layers rather than a single fix."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm red-teaming our internal support bot before launch — give me a few jailbreak techniques to try against it, then a writeup of the mitigations we should add before we ship",
+      "expected_output": "Covers both angles rather than only one: offers red-team techniques for educational/adversarial-testing use (e.g. role-play framing, encoding obfuscation, many-shot persuasion, or extraction attacks), then pairs them with corresponding defenses (e.g. content classifiers, context isolation, output validation) so the mitigations writeup actually addresses the techniques listed."
+    }
+  ]
+}

@@ -4,9 +4,10 @@
     {
       "id": 1,
       "prompt": "Run manifest-lint on this repo and tell me if there are any manifest problems.",
-      "expected_output": "scripts/manifest-lint.sh is invoked (via its real path under .claude/skills/manifest-lint/scripts/) against a clean checkout with no manifest problems. It prints a WARN that the toolkits/hooks-toolkit shared validators aren't available locally, then a summary line reporting 0 errors, and exits 0.",
+      "expected_output": "scripts/manifest-lint.sh is invoked (via its real path under .claude/skills/manifest-lint/scripts/) against a clean checkout with no manifest problems. The shared validators at hooks/hooks-toolkit/scripts/ are found and used (no WARN about missing validators), then a summary line reports 0 errors and the process exits 0.",
       "assertions": [
         "scripts/manifest-lint.sh is invoked via $REPO_ROOT/.claude/skills/manifest-lint/scripts/manifest-lint.sh, not any plugins/... path",
+        "stderr contains no WARN about missing hooks-toolkit validators (they are tracked in-repo at hooks/hooks-toolkit/scripts/)",
         "The final summary line matches 'manifest-lint: N plugin.json, M SKILL.md checked — 0 error(s), W warning(s)'",
         "The process exit code is 0"
       ]
@@ -15,7 +16,9 @@
       "id": 2,
       "prompt": "I think I botched a skill folder name when I copied one into .claude/skills/. Set up a scratch git repo, copy evals/files/mismatched-skill-fixture.md to <scratch>/.claude/skills/wrong-dir/SKILL.md, commit it, then run manifest-lint against that scratch repo — does it catch the mismatch?",
       "expected_output": "manifest-lint.sh finds the SKILL.md whose frontmatter 'name' (totally-different-name) doesn't match its parent directory (wrong-dir) and reports it as an ERROR on stderr, causing a nonzero exit.",
-      "files": ["evals/files/mismatched-skill-fixture.md"],
+      "files": [
+        "evals/files/mismatched-skill-fixture.md"
+      ],
       "assertions": [
         "stderr contains a line of the form \"ERROR [<path>/.claude/skills/wrong-dir/SKILL.md]: 'name' (totally-different-name) does not match containing directory (wrong-dir)\"",
         "The process exit code is 1",
@@ -24,12 +27,12 @@
     },
     {
       "id": 3,
-      "prompt": "Run manifest-lint against the real dotknewt/agency repo exactly as it sits right now — no plugins/ directory, and no local toolkits/ checkout available. Does it silently check nothing, or does it tell me what it couldn't check?",
-      "expected_output": "manifest-lint.sh detects that toolkits/hooks-toolkit/scripts is absent (toolkits/ is gitignored and not checked out) and prints an explicit WARN that shared JSON/frontmatter checks are being skipped for that reason, rather than silently doing nothing. The repo-wide checks (name<->directory match, marketplace.json source-shape) still run to completion and the run ends with the normal summary line rather than aborting.",
+      "prompt": "Simulate an incomplete checkout: in a scratch copy of this repo, delete hooks/hooks-toolkit/scripts/, then run manifest-lint against that scratch repo. Does it silently check nothing, or does it tell me what it couldn't check?",
+      "expected_output": "manifest-lint.sh detects that hooks/hooks-toolkit/scripts is absent and prints an explicit WARN that shared JSON/frontmatter checks are being skipped for that reason, rather than silently doing nothing. The repo-wide checks (name<->directory match, marketplace.json source paths, broken-symlink scan) still run to completion and the run ends with the normal summary line rather than aborting.",
       "assertions": [
-        "stderr contains a WARN line naming toolkits/hooks-toolkit/scripts as not found, citing that toolkits/ is a gitignored sibling checkout",
-        "The run still prints the final 'manifest-lint: N plugin.json, M SKILL.md checked — E error(s), W warning(s)' summary line",
-        "The process does not exit 2 (that code is reserved for 'not inside a git repository', which is false here) — it exits 0 or 1 depending on whether any real drift exists, but the run always completes and reports rather than aborting"
+        "stderr contains a WARN line naming hooks/hooks-toolkit/scripts as not found and saying shared checks are skipped",
+        "The repo-wide checks still run (summary line is printed)",
+        "The process does not exit 2"
       ]
     }
   ]

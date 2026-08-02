@@ -1,0 +1,22 @@
+[
+  { "query": "Before you send that reply, can you double-check it for mistakes?", "should_trigger": true },
+  { "query": "critique your own answer before finishing — I don't want to catch errors after the fact", "should_trigger": true },
+  { "query": "review this before you're done, I don't fully trust the first pass", "should_trigger": true },
+  { "query": "hey can u sanity check what you just wrote and fix anything sketchy before we move on", "should_trigger": true },
+  { "query": "Don't just hand me the answer — grade it yourself against the requirements and polish it if it falls short.", "should_trigger": true },
+  { "query": "Build me a self-critique loop that iterates on the output of generate_report() in report_builder.py until it passes quality checks, max 3 iterations.", "should_trigger": true },
+  { "query": "Design a rubric-based grader for scoring our support-ticket summaries on accuracy, tone, and completeness with weighted dimensions.", "should_trigger": true },
+  { "query": "Set up an LLM-as-judge system that compares two versions of the same onboarding doc and explains which is better.", "should_trigger": true },
+  { "query": "We need an evaluator-optimizer pipeline that keeps refining the generated SQL until the test suite in tests/sql/ passes, capped at 5 rounds.", "should_trigger": true },
+  { "query": "my manager wants the agent to check its own draft for quality and iterate on it automatically instead of me proofreading every time", "should_trigger": true },
+  { "query": "Can you review this pull request in ~/repos/api-gateway for security issues before I request reviewers?", "should_trigger": false },
+  { "query": "Write unit tests for the calculate_discount function in pricing.py.", "should_trigger": false },
+  { "query": "What's your opinion on which cloud provider is better for a small SaaS, AWS or GCP?", "should_trigger": false },
+  { "query": "Can you proofread this email for typos before I send it to the client?", "should_trigger": false },
+  { "query": "Can you grade these five student essays against my attached rubric and give each one a score out of 100?", "should_trigger": false },
+  { "query": "Compare these two marketing taglines and tell me which one is catchier.", "should_trigger": false },
+  { "query": "Debug why my pytest suite in tests/ keeps failing on the checkout flow.", "should_trigger": false },
+  { "query": "Summarize the key differences between these two API design proposals for the team wiki.", "should_trigger": false },
+  { "query": "can u check this code actually compiles, keep getting red squigglies", "should_trigger": false },
+  { "query": "Improve the readability of this paragraph — it's too dense for a general audience.", "should_trigger": false }
+]

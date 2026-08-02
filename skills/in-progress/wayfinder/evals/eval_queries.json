@@ -1,0 +1,22 @@
+[
+  { "query": "we need to redo our onboarding but I honestly don't know where to start — can you help me get a handle on it?", "should_trigger": true },
+  { "query": "This migration off the legacy billing system is way bigger than one session. Can we get it tracked as issues we chip away at?", "should_trigger": true },
+  { "query": "can you keep working the redesign map, issue #482, whatever's next", "should_trigger": true },
+  { "query": "continue https://github.com/acme/webapp/issues/210 — that's the map for the search revamp", "should_trigger": true },
+  { "query": "resume ticket 88 on the data-platform map please", "should_trigger": true },
+  { "query": "we've got this huge overhaul ahead of us (rewriting the whole notifications system end to end) and I want it tracked as issues we pick off one at a time", "should_trigger": true },
+  { "query": "there's no clear plan yet for the API v2 migration, it's too much to hold in my head at once — can we structure it as tickets on the tracker?", "should_trigger": true },
+  { "query": "whats next on the wayfinder map for checkout redesign", "should_trigger": true },
+  { "query": "my manager wants a plan for consolidating our three internal admin tools into one, but nobody's scoped it yet and it's clearly multi-week — where do we even begin", "should_trigger": true },
+  { "query": "hey so we kind of need to replan the whole data warehouse thing, it's a mess, too big to just wing it in one sitting, can you set up something we track over time", "should_trigger": true },
+  { "query": "Create a GitHub issue for the login bug I just found — title 'Login fails on Safari 17'", "should_trigger": false },
+  { "query": "can you open an issue titled 'Fix flaky CI test in auth_spec.rb'?", "should_trigger": false },
+  { "query": "close issue #47, it's resolved, the fix shipped last week", "should_trigger": false },
+  { "query": "can you triage our open bug backlog and label everything by severity?", "should_trigger": false },
+  { "query": "add the 'needs-design' label to issue 512", "should_trigger": false },
+  { "query": "write unit tests for the new auth module", "should_trigger": false },
+  { "query": "can you review this PR and leave comments on the diff?", "should_trigger": false },
+  { "query": "summarize the last 5 commits on main for me", "should_trigger": false },
+  { "query": "I need to update the formulas in my project timeline spreadsheet, can you help", "should_trigger": false },
+  { "query": "file a single bug report: the export button is disabled when the cart is empty, should show a tooltip instead", "should_trigger": false }
+]

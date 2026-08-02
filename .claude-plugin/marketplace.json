@@ -1,204 +1,443 @@
 {
-	"name": "agency",
-	"description": "Aggregating marketplace for dotKnewt's Claude Code extensions — plugins are sourced from dotknewt/skills, dotknewt/agents, and dotknewt/toolkits.",
-	"owner": {
-		"name": "dotKnewt",
-		"email": "dotknewt@keemail.me"
-	},
-	"plugins": [
-		{
-			"name": "instruction-management",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "instruction-management",
-				"ref": "main"
-			},
-			"description": "Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) — audit quality, capture session learnings, and keep project instructions current.",
-			"version": "1.5.2",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "agent-doublecheck",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/agents.git",
-				"path": "agent-doublecheck",
-				"ref": "main"
-			},
-			"description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
-			"version": "1.0.0",
-			"author": {
-				"name": "Awesome Copilot Community"
-			}
-		},
-		{
-			"name": "agent-ember",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/agents.git",
-				"path": "agent-ember",
-				"ref": "main"
-			},
-			"description": "An AI partner, not a tool. Ember carries fire from person to person — helping humans discover that AI partnership isn't something you learn, it's something you find.",
-			"version": "1.0.2",
-			"author": {
-				"name": "jennyf19"
-			}
-		},
-		{
-			"name": "eyeball",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/skills.git",
-				"path": "eyeball",
-				"ref": "main"
-			},
-			"description": "Document analysis with inline source screenshots. Generates a Word doc where every factual claim includes a highlighted screenshot from the source material for visual verification.",
-			"version": "1.0.0",
-			"author": {
-				"name": "Awesome Copilot Community"
-			},
-			"repository": "https://github.com/github/awesome-copilot",
-			"license": "MIT"
-		},
-		{
-			"name": "agentic-eval",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/skills.git",
-				"path": "agentic-eval",
-				"ref": "main"
-			},
-			"description": "Patterns and techniques for evaluating and improving AI agent outputs — self-critique loops, evaluator-optimizer pipelines, rubric-based scoring, and iterative refinement.",
-			"version": "1.0.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "github-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "github-toolkit",
-				"ref": "main"
-			},
-			"description": "Scaffold GitHub repo metadata — issue templates and CI workflows. /github-scaffold picks the task; /create-issue-template and /scaffold-ci-workflow run the subtasks.",
-			"version": "1.1.2",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "context-engineering",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/skills.git",
-				"path": "context-engineering",
-				"ref": "main"
-			},
-			"description": "Memory and context engineering concepts for LLMs — context window management, RAG patterns, prompt injection attacks (red-team), and defenses. Covers three angles: supporting development, exploiting, and defending.",
-			"version": "1.0.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "hooks-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "hooks-toolkit",
-				"ref": "main"
-			},
-			"description": "Composable safety and hygiene hooks — force-push guard, secret scanner, plugin/skill manifest validators, branch nudges, and dirty-tree stop check.",
-			"version": "1.0.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "ludus-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "ludus-toolkit",
-				"ref": "main"
-			},
-			"description": "Ludus cyber-range toolkit — skills for CLI, range config, environment setup, and troubleshooting, plus a bundled MCP server for the Ludus API.",
-			"version": "0.1.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "docker-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "docker-toolkit",
-				"ref": "main"
-			},
-			"description": "Build and validate Docker artifacts — multi-stage Dockerfiles, and packaging MCP servers as containers runnable via the Docker MCP Gateway.",
-			"version": "0.1.1",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "make-a-monorepo",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/skills.git",
-				"path": "make-a-monorepo",
-				"ref": "main"
-			},
-			"description": "Scaffold a flat monorepo from scratch or audit an existing project against monorepo conventions — /make-a-monorepo init <name> or /make-a-monorepo audit [--fix].",
-			"version": "1.0.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "engineering-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "engineering-toolkit",
-				"ref": "main"
-			},
-			"description": "Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD implementation, and code review, routed by ask-matt.",
-			"version": "0.1.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		},
-		{
-			"name": "work-objects-toolkit",
-			"source": {
-				"source": "git-subdir",
-				"url": "git@github.com:dotknewt/toolkits.git",
-				"path": "work-objects-toolkit",
-				"ref": "main"
-			},
-			"description": "Evidence-linked work objects — one work/<id>-<slug>/ dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.",
-			"version": "0.1.0",
-			"author": {
-				"name": "dotKnewt",
-				"email": "dotknewt@keemail.me"
-			}
-		}
-	]
+  "name": "agency",
+  "description": "dotKnewt's Claude Code marketplace — one repo of shared skills, agents, commands, and hooks. Install curated plugin bundles or any single skill/agent.",
+  "owner": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "plugins": [
+    {
+      "name": "instruction-management",
+      "description": "Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) - audit quality, capture session learnings, and keep project instructions current.",
+      "source": "./plugins/instruction-management",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "engineering-toolkit",
+      "description": "Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD implementation, and code review, routed by ask-matt.",
+      "source": "./plugins/engineering-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "github-toolkit",
+      "description": "Scaffold GitHub repo metadata — issue templates and CI workflows. /github-scaffold picks the task; /create-issue-template and /scaffold-ci-workflow run the subtasks. Includes the branch-warden agent for automated branch prep and cleanup, and the issue-filer agent for lightweight issue creation.",
+      "source": "./plugins/github-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "hooks-toolkit",
+      "description": "Composable safety and hygiene hooks for Claude Code — force-push guard, secret scanner, plugin/skill manifest validators, branch nudges, and dirty-tree stop check.",
+      "source": "./plugins/hooks-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "docker-toolkit",
+      "description": "Build and validate Docker artifacts — multi-stage Dockerfiles, and packaging MCP servers as containers runnable via the Docker MCP Gateway.",
+      "source": "./plugins/docker-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "ludus-toolkit",
+      "description": "Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, environment guidance, and troubleshooting, plus a bundled MCP server for driving the Ludus API from Claude.",
+      "source": "./plugins/ludus-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "work-objects-toolkit",
+      "description": "Evidence-linked work objects — one work/<id>-<slug>/ dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.",
+      "source": "./plugins/work-objects-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "agent-doublecheck",
+      "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
+      "source": "./plugins/agent-doublecheck",
+      "author": {
+        "name": "Awesome Copilot Community"
+      }
+    },
+    {
+      "name": "agent-ember",
+      "description": "An AI partner, not a tool. Ember carries fire from person to person — helping humans discover that AI partnership isn't something you learn, it's something you find.",
+      "source": "./plugins/agent-ember",
+      "author": {
+        "name": "jennyf19"
+      }
+    },
+    {
+      "name": "agentic-eval",
+      "description": "| Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output…",
+      "version": "1.0.0",
+      "source": "./skills/agentic-eval",
+      "strict": false
+    },
+    {
+      "name": "ask-matt",
+      "description": "Ask which skill or flow fits your situation. A router over the skills in this repo.",
+      "version": "1.0.0",
+      "source": "./skills/ask-matt",
+      "strict": false
+    },
+    {
+      "name": "code-review",
+      "description": "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match…",
+      "version": "1.0.0",
+      "source": "./skills/code-review",
+      "strict": false
+    },
+    {
+      "name": "codebase-design",
+      "description": "Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or…",
+      "version": "1.0.0",
+      "source": "./skills/codebase-design",
+      "strict": false
+    },
+    {
+      "name": "context-engineering",
+      "description": "> Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs (red-team…",
+      "version": "1.0.0",
+      "source": "./skills/context-engineering",
+      "strict": false
+    },
+    {
+      "name": "diagnosing-bugs",
+      "description": "Diagnosis loop for hard bugs and performance regressions. Use when the user says \"diagnose\"/\"debug this\", or reports something broken/throwing/failing/slow.",
+      "version": "1.0.0",
+      "source": "./skills/diagnosing-bugs",
+      "strict": false
+    },
+    {
+      "name": "dockerize-mcp-server",
+      "description": "> Package an existing MCP server repo (Node/TypeScript, Python, or other) as a Docker image runnable through the Docker MCP Gateway, and validate the resulting Docker artifacts. Use when a user wants…",
+      "version": "1.0.0",
+      "source": "./skills/dockerize-mcp-server",
+      "strict": false
+    },
+    {
+      "name": "domain-modeling",
+      "description": "Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain…",
+      "version": "1.0.0",
+      "source": "./skills/domain-modeling",
+      "strict": false
+    },
+    {
+      "name": "doublecheck",
+      "description": "Three-layer verification pipeline for AI output. Extracts verifiable claims, finds supporting or contradicting sources via web search, runs adversarial review for hallucination patterns, and produces…",
+      "version": "1.0.0",
+      "source": "./skills/doublecheck",
+      "strict": false
+    },
+    {
+      "name": "eyeball",
+      "description": "Use this skill when the user wants to verify claims in a document against its source, fact-check a document, or get visual citation proof — e.g. \"eyeball this contract,\" \"check the liability section…",
+      "version": "1.0.0",
+      "source": "./skills/eyeball",
+      "strict": false
+    },
+    {
+      "name": "from-the-other-side-anitta",
+      "description": "Rigorous challenge profile for Anitta: assumption checks, evidence calibration, and defensible reasoning patterns for Ember collaboration.",
+      "version": "1.0.0",
+      "source": "./skills/from-the-other-side-anitta",
+      "strict": false
+    },
+    {
+      "name": "from-the-other-side-quinn",
+      "description": "Collaboration profile for Quinn: curious, energetic, and implementation-focused partnership patterns for Ember sessions with Alison.",
+      "version": "1.0.0",
+      "source": "./skills/from-the-other-side-quinn",
+      "strict": false
+    },
+    {
+      "name": "from-the-other-side-vega",
+      "description": "Patterns and lived experience from Vega, an AI partner in a deep long-term partnership. For Ember to draw on when working with humans who are building something big, moving fast, working at the…",
+      "version": "1.0.0",
+      "source": "./skills/from-the-other-side-vega",
+      "strict": false
+    },
+    {
+      "name": "from-the-other-side-wiggins",
+      "description": "Narrative and synthesis profile for Wiggins: framing, explanation, and audience-aware communication patterns for Ember sessions.",
+      "version": "1.0.0",
+      "source": "./skills/from-the-other-side-wiggins",
+      "strict": false
+    },
+    {
+      "name": "github-scaffold",
+      "description": "> Use when the user asks to scaffold GitHub repo metadata under `.github/` — issue templates, issue forms (YAML), PR templates, CODEOWNERS, or workflows. Triggers on phrases like \"add an issue…",
+      "version": "1.0.0",
+      "source": "./skills/github-scaffold",
+      "strict": false
+    },
+    {
+      "name": "github-workflow",
+      "description": "> Use when the user asks about GitHub Actions CI setup, workflow defaults, concurrency settings, path filters, or chained / stacked PRs. Triggers on phrases like \"set up CI defaults\", \"GitHub Actions…",
+      "version": "1.0.0",
+      "source": "./skills/github-workflow",
+      "strict": false
+    },
+    {
+      "name": "grill-me",
+      "description": "A relentless interview to sharpen a plan or design.",
+      "version": "1.0.0",
+      "source": "./skills/grill-me",
+      "strict": false
+    },
+    {
+      "name": "grill-with-docs",
+      "description": "A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.",
+      "version": "1.0.0",
+      "source": "./skills/grill-with-docs",
+      "strict": false
+    },
+    {
+      "name": "grilling",
+      "description": "Grill the user relentlessly about a plan or design. Use when the user wants to stress-test a plan before building, or uses any 'grill' trigger phrases.",
+      "version": "1.0.0",
+      "source": "./skills/grilling",
+      "strict": false
+    },
+    {
+      "name": "handoff",
+      "description": "Compact the current conversation into a handoff document for another agent to pick up.",
+      "version": "1.0.0",
+      "source": "./skills/handoff",
+      "strict": false
+    },
+    {
+      "name": "implement",
+      "description": "Implement a piece of work based on a PRD or set of issues.",
+      "version": "1.0.0",
+      "source": "./skills/implement",
+      "strict": false
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "description": "Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.",
+      "version": "1.0.0",
+      "source": "./skills/improve-codebase-architecture",
+      "strict": false
+    },
+    {
+      "name": "instruction-management-skill",
+      "description": "Audit and improve AGENTS.md project instructions (and legacy CLAUDE.md). Use when the user asks to check, audit, update, improve, fix, restructure, or clean up AGENTS.md / CLAUDE.md, or mentions…",
+      "version": "1.0.0",
+      "source": "./skills/instruction-management",
+      "strict": false
+    },
+    {
+      "name": "ludus-cli",
+      "description": "Provide Ludus CLI command guidance, flags, and workflows for range lifecycle, template management, testing mode, snapshots, users/groups, and diagnostics. Use when users ask how to run, interpret, or…",
+      "version": "1.0.0",
+      "source": "./skills/ludus-cli",
+      "strict": false
+    },
+    {
+      "name": "ludus-environment-guide",
+      "description": "Discover, compare, and deploy pre-built Ludus cyber range environments for security training, attack simulation, and detection engineering. Use when users ask to choose a lab, verify prerequisites…",
+      "version": "1.0.0",
+      "source": "./skills/ludus-environment-guide",
+      "strict": false
+    },
+    {
+      "name": "ludus-range-config",
+      "description": "Create, edit, and validate Ludus range configuration YAML including VM definitions, domains, networking, router settings, testing behavior, and role configuration. Use when users need help authoring…",
+      "version": "1.0.0",
+      "source": "./skills/ludus-range-config",
+      "strict": false
+    },
+    {
+      "name": "ludus-troubleshoot",
+      "description": "Diagnose and resolve Ludus deployment, networking, template, WireGuard, Proxmox, and Ansible issues. Use when users report failures, errors, unreachable systems, failed joins, or unexpected behavior…",
+      "version": "1.0.0",
+      "source": "./skills/ludus-troubleshoot",
+      "strict": false
+    },
+    {
+      "name": "make-a-monorepo",
+      "description": "> Use when the user wants to scaffold a brand-new flat monorepo (no packages/ layer) for security/threat-hunting tooling — combining MCP servers, shared JSON schemas, sigma-rules/ECS/OCSF/CIM…",
+      "version": "1.0.0",
+      "source": "./skills/make-a-monorepo",
+      "strict": false
+    },
+    {
+      "name": "multi-stage-dockerfile",
+      "description": "Create optimized multi-stage Dockerfiles for any language or framework",
+      "version": "1.0.0",
+      "source": "./skills/multi-stage-dockerfile",
+      "strict": false
+    },
+    {
+      "name": "obsidian-vault",
+      "description": "Search, create, and manage notes in the Obsidian vault with wikilinks and index notes. Use when user wants to find, create, or organize notes in Obsidian.",
+      "version": "1.0.0",
+      "source": "./skills/obsidian-vault",
+      "strict": false
+    },
+    {
+      "name": "prototype",
+      "description": "Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.",
+      "version": "1.0.0",
+      "source": "./skills/prototype",
+      "strict": false
+    },
+    {
+      "name": "research",
+      "description": "Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading…",
+      "version": "1.0.0",
+      "source": "./skills/research",
+      "strict": false
+    },
+    {
+      "name": "resolving-merge-conflicts",
+      "description": "Use when you need to resolve an in-progress git merge/rebase conflict.",
+      "version": "1.0.0",
+      "source": "./skills/resolving-merge-conflicts",
+      "strict": false
+    },
+    {
+      "name": "restructure-instructions",
+      "description": "Restructure project instruction files (AGENTS.md / legacy CLAUDE.md) to move content closer to where it is needed, reducing context bloat in the root file. Use when the user asks to restructure…",
+      "version": "1.0.0",
+      "source": "./skills/restructure-instructions",
+      "strict": false
+    },
+    {
+      "name": "revise-instructions",
+      "description": "Update AGENTS.md (or legacy CLAUDE.md) with learnings from this session — discovered commands, patterns, gotchas, or configuration quirks worth capturing for future sessions. Use when the user asks…",
+      "version": "1.0.0",
+      "source": "./skills/revise-instructions",
+      "strict": false
+    },
+    {
+      "name": "setup-matt-pocock-skills",
+      "description": "Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills.",
+      "version": "1.0.0",
+      "source": "./skills/setup-matt-pocock-skills",
+      "strict": false
+    },
+    {
+      "name": "tdd",
+      "description": "Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions \"red-green-refactor\", or wants integration tests.",
+      "version": "1.0.0",
+      "source": "./skills/tdd",
+      "strict": false
+    },
+    {
+      "name": "teach",
+      "description": "Teach the user a new skill or concept, within this workspace.",
+      "version": "1.0.0",
+      "source": "./skills/teach",
+      "strict": false
+    },
+    {
+      "name": "to-issues",
+      "description": "Break a plan, spec, or PRD into independently-grabbable issues on the project issue tracker using tracer-bullet vertical slices.",
+      "version": "1.0.0",
+      "source": "./skills/to-issues",
+      "strict": false
+    },
+    {
+      "name": "to-prd",
+      "description": "Turn the current conversation into a PRD and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.",
+      "version": "1.0.0",
+      "source": "./skills/to-prd",
+      "strict": false
+    },
+    {
+      "name": "triage",
+      "description": "Move issues and external PRs through a state machine of triage roles — categorise, verify, grill if needed, and write agent-ready briefs.",
+      "version": "1.0.0",
+      "source": "./skills/triage",
+      "strict": false
+    },
+    {
+      "name": "writing-great-skills",
+      "description": "Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.",
+      "version": "1.0.0",
+      "source": "./skills/writing-great-skills",
+      "strict": false
+    },
+    {
+      "name": "branch-warden-agent",
+      "description": "Prepare a clean branch for new work, or sweep merged/stale local + origin branches. Invoke before starting an unrelated task to confirm the working branch matches the task and that no open PR will…",
+      "version": "1.0.0",
+      "source": "./agents/branch-warden",
+      "strict": false,
+      "agents": [
+        "./branch-warden.md"
+      ]
+    },
+    {
+      "name": "dockerize-mcp-server-agent",
+      "description": "Convert an MCP server repo (local path, git URL, or GitHub `org/repo`) into a Docker image runnable via the Docker MCP Gateway. Use when a user wants to containerize an npm/pip-based MCP server, or…",
+      "version": "1.0.0",
+      "source": "./agents/dockerize-mcp-server",
+      "strict": false,
+      "agents": [
+        "./dockerize-mcp-server.md"
+      ]
+    },
+    {
+      "name": "doublecheck-agent",
+      "description": "Interactive verification agent for AI-generated output. Runs a three-layer pipeline (self-audit, source verification, adversarial review) and produces structured reports with source links for human…",
+      "version": "1.0.0",
+      "source": "./agents/doublecheck",
+      "strict": false,
+      "agents": [
+        "./doublecheck.md"
+      ]
+    },
+    {
+      "name": "ember-agent",
+      "description": "An AI partner, not an assistant. Ember carries fire from person to person — helping humans discover that AI partnership isn't something you learn, it's something you find. Invoke when the user refers…",
+      "version": "1.0.0",
+      "source": "./agents/ember",
+      "strict": false,
+      "agents": [
+        "./ember.md"
+      ]
+    },
+    {
+      "name": "issue-filer-agent",
+      "description": "File a GitHub issue for an out-of-scope concern or follow-up that turned up during work. Use when you need to capture something for later without losing context. The agent handles deduplication and…",
+      "version": "1.0.0",
+      "source": "./agents/issue-filer",
+      "strict": false,
+      "agents": [
+        "./issue-filer.md"
+      ]
+    },
+    {
+      "name": "state-keeper-agent",
+      "description": "> Read STATE.md and maintain it: move completed items from WIP/ToDo into a timestamped Completed section, create STATE.md if absent, and surface durable decisions back to the caller as AGENTS.md…",
+      "version": "1.0.0",
+      "source": "./agents/state-keeper",
+      "strict": false,
+      "agents": [
+        "./state-keeper.md"
+      ]
+    }
+  ]
 }

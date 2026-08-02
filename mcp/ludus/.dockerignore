@@ -1,0 +1,9 @@
+node_modules/
+build/
+*.tgz
+package/
+.git/
+.gitignore
+CLAUDE.md
+README.md
+src/**/*.test.ts
