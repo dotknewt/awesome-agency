@@ -22,13 +22,11 @@ Scaffold a new agent under a plugin's `agents/` directory.
 
 3. **Resolve the target plugin directory:**
    - If cwd contains `.claude-plugin/plugin.json`, use cwd.
-   - Else search both `plugins/*/.claude-plugin/plugin.json` and `agents/*/.claude-plugin/plugin.json` (Glob); if exactly one match, use it; if multiple, use AskUserQuestion to let the user pick.
-   - If none found, ask the user for an explicit plugin path.
-   - Note whether the resolved path is under top-level `agents/` (standalone agent-persona plugin) or `plugins/` (toolkit-style plugin) — this determines step 7's instruction to `agent-creator`.
+   - Default target is this repo's top-level pool: `agents/<name>/<name>.md` (dir-per-agent). Only target a different path if the user explicitly asks for an agent inside another project/plugin.
 
-4. **Collision check:** If `<plugin>/agents/<name>.md` already exists, stop and report.
+4. **Collision check:** If `agents/<name>/` already exists, stop and report.
 
-5. **Ensure `<plugin>/agents/` exists** (create it if not).
+5. **Ensure `agents/<name>/` exists** (create it if not).
 
 6. **Gather missing context:** If no purpose seed was supplied, ask the user with one AskUserQuestion call covering:
    - Purpose / what the agent does
@@ -39,21 +37,19 @@ Scaffold a new agent under a plugin's `agents/` directory.
 
 7. **Delegate to `agent-creator`** via the Task tool. The prompt to the agent must include:
    - Identifier
-   - Target output path: `<plugin>/agents/<name>.md`
+   - Target output path: `agents/<name>/<name>.md`
    - Purpose and trigger phrases
    - Tool list, model, color
-   - Whether `<plugin>` is standalone (under top-level `agents/`) or nested (under `plugins/`)
-   - Instruction: write the file at exactly that path, and return a short summary. If and only if standalone, also update the top-level `agents/AGENTS.md` catalog (creating it if it doesn't exist yet). If nested, do not touch any AGENTS.md.
+   - Instruction: write the file at exactly that path, run `.github/scripts/generate-marketplace.py` to register the `<name>-agent` micro-entry, and return a short summary.
 
 8. **Confirm** to the user:
    ```
-   Created <plugin>/agents/<name>.md
+   Created agents/<name>/<name>.md
+   Regenerated .claude-plugin/marketplace.json (<name>-agent micro-entry).
+   Next: run the plugin-validator agent to check the structure. To ship it inside
+   a bundle too, symlink plugins/<bundle>/agents/<name>.md -> ../../../agents/<name>/<name>.md
+   and bump that bundle's plugin.json version.
    ```
-   Add `Updated agents/AGENTS.md` only when `<plugin>` was standalone (under top-level `agents/`).
-   ```
-   Next: run the plugin-validator agent to check the plugin structure.
-   ```
-   Do not register in `marketplace.json` — agents live inside plugins, not the marketplace.
 
 ## Notes
 

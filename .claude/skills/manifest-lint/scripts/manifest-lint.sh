@@ -2,16 +2,15 @@
 # Repo-wide lint for plugin.json / SKILL.md / marketplace.json manifests.
 # Usage: manifest-lint.sh [--help] [path ...]   (defaults to the whole repo)
 #
-# Reuses the shared validators from the hooks-toolkit plugin (JSON syntax,
+# Reuses the shared validators from the hooks-toolkit pool (JSON syntax,
 # required fields, kebab-case name, semver format) so there is one source of
-# truth for those rules, when the gitignored `toolkits/` sibling checkout
-# happens to be present locally (best-effort — see SKILL.md). On top of that
-# it adds checks the per-edit hook can't do in isolation:
+# truth for those rules — they live in-repo at hooks/hooks-toolkit/scripts/.
+# On top of that it adds checks the per-edit hook can't do in isolation:
 #   - name <-> directory match (plugin.json and SKILL.md)
-#   - plugin.json version vs. its marketplace.json entry
-#   - version bumped vs. the last committed version of the file (WARNs,
-#     rather than silently no-op-ing, when the path is git-ignored)
-#   - marketplace.json "source" entries match the git-subdir object shape
+#   - plugin.json version vs. its marketplace.json entry (when the entry has one)
+#   - version bumped vs. the last committed version of the file
+#   - marketplace.json "source" entries are relative ./ paths that exist
+#   - no broken symlinks under plugins/ or agents/
 #
 # Run with --help for full usage, flags, and exit codes.
 set -uo pipefail
@@ -38,14 +37,13 @@ Exit codes:
 
 Checks (see references/checks.md for the full list and how to fix each):
   - JSON syntax, required fields, kebab-case name, semver — reused from
-    toolkits/hooks-toolkit's validators when that gitignored sibling
-    checkout is present locally (best-effort; skipped with a WARN
-    otherwise).
+    the in-repo validators at hooks/hooks-toolkit/scripts/.
   - name <-> directory match, for plugin.json and SKILL.md.
-  - plugin.json version vs. its marketplace.json entry.
-  - version bumped vs. the last committed version of the file (WARNs
-    instead of silently no-op-ing when the path is git-ignored).
-  - marketplace.json "source" entries match the git-subdir object shape.
+  - plugin.json version vs. its marketplace.json entry (when the entry
+    carries a version — bundle entries deliberately don't).
+  - version bumped vs. the last committed version of the file.
+  - marketplace.json "source" entries are relative ./ paths that exist.
+  - no broken symlinks under plugins/ or agents/.
 EOF
 }
 
@@ -65,14 +63,14 @@ if [ -z "$REPO_ROOT" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HOOKS_TOOLKIT_SCRIPTS="$REPO_ROOT/toolkits/hooks-toolkit/scripts"
+HOOKS_TOOLKIT_SCRIPTS="$REPO_ROOT/hooks/hooks-toolkit/scripts"
 VALIDATE_PLUGIN_JSON="$HOOKS_TOOLKIT_SCRIPTS/validate-plugin-json.sh"
 VALIDATE_SKILL_FRONTMATTER="$HOOKS_TOOLKIT_SCRIPTS/validate-skill-frontmatter.sh"
 
 shared_validators_available=true
 if [ ! -x "$VALIDATE_PLUGIN_JSON" ] || [ ! -x "$VALIDATE_SKILL_FRONTMATTER" ]; then
   shared_validators_available=false
-  echo "WARN: hooks-toolkit validators not found at $HOOKS_TOOLKIT_SCRIPTS — toolkits/ is a gitignored sibling checkout and not guaranteed present locally (see AGENTS.md); skipping shared JSON/frontmatter checks (name/dir, version-consistency, and version-bump checks below still run)" >&2
+  echo "WARN: hooks-toolkit validators not found at $HOOKS_TOOLKIT_SCRIPTS (they are tracked in this repo — a missing copy means an incomplete checkout); skipping shared JSON/frontmatter checks (name/dir, version-consistency, and version-bump checks below still run)" >&2
 fi
 
 errors=0
@@ -105,21 +103,14 @@ marketplace_file="$REPO_ROOT/.claude-plugin/marketplace.json"
 # convention in this repo yet, so "last tag" is approximated as "last
 # committed version of this file" — the closest real baseline available.
 #
-# Caveat: this can only see agency's own tracked git history. Every real
-# plugin manifest it's meant to catch lives under the gitignored sibling
-# checkouts (agents/, skills/, toolkits/) — agency's history has no record
-# of their contents. `git cat-file -e HEAD:$rel` fails identically for that
-# case and for "brand-new file about to be committed", so distinguish them
-# via `git check-ignore` first and WARN visibly for the gitignored case
-# instead of silently returning success (which looked indistinguishable
-# from "nothing to check" and meant this check never actually fired for any
-# real plugin manifest).
+# All manifests are tracked in this repo now; the git-ignored branch below
+# only fires for stray local copies and WARNs instead of silently passing.
 check_version_bump() {
   local file="$1" field_jq="$2"
   local rel="${file#"$REPO_ROOT"/}"
 
   if git -C "$REPO_ROOT" check-ignore -q -- "$rel" 2>/dev/null; then
-    warn "$file" "version-bump check skipped: path is git-ignored in agency (this manifest lives in a sibling checkout — e.g. agents/, skills/, toolkits/ — that isn't part of agency's own git history, so there is no committed baseline to diff against here)"
+    warn "$file" "version-bump check skipped: path is git-ignored, so there is no committed baseline to diff against"
     return 0
   fi
 
@@ -202,36 +193,42 @@ if [ -f "$marketplace_file" ]; then
     rm -f "$err_file"
   fi
 
-  # Each plugins[] entry's "source" is a git-subdir object (not a bare local
-  # path) — e.g. {"source": "git-subdir", "url": "git@...", "path": "...",
-  # "ref": "main"}. Content is fetched remotely at install/update time, so
-  # there's no local path here to resolve; just validate the object shape.
+  # Each plugins[] entry's "source" is a relative ./ path inside this repo
+  # ("./plugins/<bundle>", "./skills/<skill>", "./agents/<agent>") — the
+  # marketplace is single-repo now. Validate the string shape and that the
+  # path exists. marketplace.json itself is generated by
+  # .github/scripts/generate-marketplace.py; run it with --check for drift.
   while IFS= read -r entry_json; do
     [ -z "$entry_json" ] && continue
     entry_name=$(jq -r '.name // ""' <<<"$entry_json" 2>/dev/null)
     [ -z "$entry_name" ] && continue
 
-    src_is_object=$(jq -r '(.source | type) == "object"' <<<"$entry_json" 2>/dev/null)
-    if [ "$src_is_object" != "true" ]; then
-      err "$marketplace_file" "entry '$entry_name' source is not an object (expected {source, url, path, ref} — see AGENTS.md); got: $(jq -c '.source' <<<"$entry_json" 2>/dev/null)"
+    src=$(jq -r 'if (.source | type) == "string" then .source else "" end' <<<"$entry_json" 2>/dev/null)
+    if [ -z "$src" ]; then
+      err "$marketplace_file" "entry '$entry_name' source is not a string (expected a relative ./ path — see AGENTS.md); got: $(jq -c '.source' <<<"$entry_json" 2>/dev/null)"
       continue
     fi
-
-    src_kind=$(jq -r '.source.source // ""' <<<"$entry_json" 2>/dev/null)
-    src_url=$(jq -r '.source.url // ""' <<<"$entry_json" 2>/dev/null)
-    src_path=$(jq -r '.source.path // ""' <<<"$entry_json" 2>/dev/null)
-    src_ref=$(jq -r '.source.ref // ""' <<<"$entry_json" 2>/dev/null)
-
-    [ -z "$src_kind" ] && err "$marketplace_file" "entry '$entry_name' source.source (the fetch mechanism, e.g. 'git-subdir') is missing"
-    if [ -z "$src_url" ]; then
-      err "$marketplace_file" "entry '$entry_name' source.url is missing"
-    elif [[ "$src_url" != git@*:*.git ]]; then
-      warn "$marketplace_file" "entry '$entry_name' source.url ($src_url) doesn't look like an SSH git url (expected git@host:owner/repo.git — HTTPS urls fail git-subdir's non-interactive clone, see AGENTS.md)"
+    case "$src" in
+      ./*) : ;;
+      *) err "$marketplace_file" "entry '$entry_name' source ($src) must start with ./" ; continue ;;
+    esac
+    if [ "$src" = "./" ]; then
+      err "$marketplace_file" "entry '$entry_name' uses source \"./\" — forbidden here: repo-root sources absorb every pooled agent/command via default discovery (see AGENTS.md)"
+      continue
     fi
-    [ -z "$src_path" ] && err "$marketplace_file" "entry '$entry_name' source.path is missing"
-    [ -z "$src_ref" ] && warn "$marketplace_file" "entry '$entry_name' source.ref is missing (recommend pinning explicitly, e.g. 'main')"
+    [ -e "$REPO_ROOT/$src" ] || err "$marketplace_file" "entry '$entry_name' source path does not exist: $src"
   done < <(jq -c '.plugins[]?' "$marketplace_file" 2>/dev/null)
 fi
+
+# --- broken symlink check ----------------------------------------------------
+# Bundles and agent dirs are built from symlinks into the pools; a broken one
+# ships a broken plugin.
+for d in "$REPO_ROOT/plugins" "$REPO_ROOT/agents"; do
+  [ -d "$d" ] || continue
+  while IFS= read -r -d '' link; do
+    err "$link" "broken symlink (target missing)"
+  done < <(find "$d" -xtype l -print0 2>/dev/null)
+done
 
 # --- summary ----------------------------------------------------------------
 echo ""
