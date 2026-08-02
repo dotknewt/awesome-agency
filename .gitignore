@@ -53,9 +53,3 @@ Temporary Items
 #
 settings.local.json
 .superpowers/
-
-# Sibling poly-repo checkouts, nested here purely for a single working directory.
-# Each is its own independent git repo with its own remote — never tracked by agency.
-/agents/
-/skills/
-/toolkits/
