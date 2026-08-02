@@ -16,7 +16,8 @@
   "enabledPlugins": {
     "instruction-management@agency": true,
     "superpowers@claude-plugins-official": true,
-    "engineering-toolkit@agency": true
+    "engineering-toolkit@agency": true,
+    "maintainer-toolkit@agency": true
   },
   "effortLevel": "high",
   "advisorModel": "claude-opus-4-7"
