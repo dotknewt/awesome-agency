@@ -58,7 +58,11 @@ def frontmatter_description(md_path: Path) -> str:
     dm = re.search(r"^description:\s*(.+?)(?=\n\S|\Z)", fm, re.MULTILINE | re.DOTALL)
     if not dm:
         raise SystemExit(f"no description in {md_path}")
-    desc = " ".join(dm.group(1).split())
+    raw = dm.group(1)
+    first, _, rest = raw.partition("\n")
+    if first.strip() in (">", ">-", ">+", "|", "|-", "|+"):
+        raw = rest
+    desc = " ".join(raw.split())
     if desc.startswith(('"', "'")) and desc.endswith(desc[0]) and len(desc) > 1:
         desc = desc[1:-1]
     desc = desc.replace('\\"', '"')
