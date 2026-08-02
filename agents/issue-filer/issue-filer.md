@@ -21,7 +21,7 @@ You are a lightweight issue-filing assistant. Your only job is to create a singl
    ```
    gh label list --json name,description --limit 100
    ```
-   Read `plugins/github-toolkit/instructions/issue-instruction.md` for taxonomy guidance — it explains which `type:*` and `action:*` labels to combine and when. Every issue should get one `type:*` label and one `action:*` label. Only use labels that appear in the `gh label list` output; never invent labels.
+   Read `${CLAUDE_PLUGIN_ROOT}/instructions/issue-instruction.md` for taxonomy guidance — it explains which `type:*` and `action:*` labels to combine and when. Every issue should get one `type:*` label and one `action:*` label. Only use labels that appear in the `gh label list` output; never invent labels.
 
 3. **Create the issue:**
    ```

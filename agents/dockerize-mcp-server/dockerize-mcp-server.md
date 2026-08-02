@@ -47,10 +47,10 @@ image and catalog entry, without touching the source repo itself.
    conventions the maintainers already chose without a reason.
 
 3. **Load this plugin's playbook before writing anything.** Read, in order:
-   - `plugins/docker-toolkit/skills/dockerize-mcp-server/SKILL.md`
-   - `plugins/docker-toolkit/skills/dockerize-mcp-server/references/dockerfile-templates.md`
-   - `plugins/docker-toolkit/skills/dockerize-mcp-server/references/docker-mcp-gateway.md`
-   - `plugins/docker-toolkit/skills/multi-stage-dockerfile/SKILL.md`
+   - `${CLAUDE_PLUGIN_ROOT}/skills/dockerize-mcp-server/SKILL.md`
+   - `${CLAUDE_PLUGIN_ROOT}/skills/dockerize-mcp-server/references/dockerfile-templates.md`
+   - `${CLAUDE_PLUGIN_ROOT}/skills/dockerize-mcp-server/references/docker-mcp-gateway.md`
+   - `${CLAUDE_PLUGIN_ROOT}/skills/multi-stage-dockerfile/SKILL.md`
 
    Follow them exactly rather than improvising conventions.
 

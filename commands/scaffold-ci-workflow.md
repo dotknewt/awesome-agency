@@ -3,7 +3,7 @@ description: Scaffold a GitHub Actions CI workflow file with canonical defaults 
 allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 
-Walk the user through creating a `.github/workflows/<name>.yml` file that follows the CI defaults in `plugins/github-toolkit/skills/github-workflow/SKILL.md`.
+Walk the user through creating a `.github/workflows/<name>.yml` file that follows the CI defaults in `${CLAUDE_PLUGIN_ROOT}/skills/github-workflow/SKILL.md`.
 
 ## Step 1: Gather inputs
 
@@ -19,7 +19,7 @@ If Custom, ask a follow-up: `paths:` (include list) or `paths-ignore:` (exclude 
 
 ## Step 2: Preview the file
 
-Show the user the full YAML that will be written before writing it. Derive it from the template at `plugins/github-toolkit/skills/github-workflow/references/ci-defaults.yml` with their inputs substituted:
+Show the user the full YAML that will be written before writing it. Derive it from the template at `${CLAUDE_PLUGIN_ROOT}/skills/github-workflow/references/ci-defaults.yml` with their inputs substituted:
 - `name:` → their workflow name (title-cased, e.g. "ci" → "CI")
 - Job id → `<workflow-name>` with hyphens
 - Path filter block → per their choice (include, ignore, or omit)

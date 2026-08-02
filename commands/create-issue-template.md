@@ -35,7 +35,7 @@ Show the proposed file in a fenced block and ask the user to approve or skip. Do
 
 ## Step 3: Reconcile issue-tracking labels
 
-Read the canonical label set from `plugins/github-toolkit/skills/github-scaffold/references/label-defaults.yml` (`category` + `triage` entries = the 9 labels this tool guarantees exist; `remove_if_present` = the fixed set of GitHub stock defaults to clean up). Create-if-missing only — never edit or delete a label that already exists under one of the 9 names, even if its color/description differs from the file.
+Read the canonical label set from `${CLAUDE_PLUGIN_ROOT}/skills/github-scaffold/references/label-defaults.yml` (`category` + `triage` entries = the 9 labels this tool guarantees exist; `remove_if_present` = the fixed set of GitHub stock defaults to clean up). Create-if-missing only — never edit or delete a label that already exists under one of the 9 names, even if its color/description differs from the file.
 
 ### 3a — Detect the target repo's label mechanism
 
