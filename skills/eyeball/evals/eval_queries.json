@@ -1,0 +1,22 @@
+[
+  { "query": "eyeball this NDA before I sign it, it's contract.pdf in my downloads", "should_trigger": true },
+  { "query": "can you use eyeball on this document to check the claims in the exec summary?", "should_trigger": true },
+  { "query": "run eyeball on this contract and check the termination clause for me", "should_trigger": true },
+  { "query": "eyeball the attached vendor agreement, focus on the indemnification section", "should_trigger": true },
+  { "query": "I don't trust this vendor's proposal — can you verify the claims in it actually match the source doc, with proof I can check myself?", "should_trigger": true },
+  { "query": "before I sign this lease, can you confirm the pet deposit clause really says what the leasing agent told me, with a screenshot of the exact text?", "should_trigger": true },
+  { "query": "my lawyer sent over this contract redline — fact-check the liability section against what's actually written and show me exactly where in the doc it says that", "should_trigger": true },
+  { "query": "I want to verify every claim in this due diligence report is backed by the source filing, with visual proof, not just a summary", "should_trigger": true },
+  { "query": "can you double-check that this terms of service page really says what our compliance team claims, and give me screenshots of the exact wording?", "should_trigger": true },
+  { "query": "before I approve this vendor SOW, verify the SLA numbers match the actual contract language and show me the highlighted source text", "should_trigger": true },
+  { "query": "just summarize this PDF for me, I don't need anything fancy", "should_trigger": false },
+  { "query": "can you translate this contract into Spanish?", "should_trigger": false },
+  { "query": "clean up the formatting of this Word doc, it's a mess with inconsistent headings", "should_trigger": false },
+  { "query": "can you rewrite this NDA to be less aggressive on the liability terms?", "should_trigger": false },
+  { "query": "what's this document about? give me the TL;DR in three bullet points", "should_trigger": false },
+  { "query": "extract all the dates mentioned in this contract into a table", "should_trigger": false },
+  { "query": "can you proofread this document for typos and grammar before I send it out?", "should_trigger": false },
+  { "query": "convert this PDF to an editable Word document for me", "should_trigger": false },
+  { "query": "write a short cover email to go along with this signed contract", "should_trigger": false },
+  { "query": "how many pages is this PDF and roughly how long would it take to read?", "should_trigger": false }
+]

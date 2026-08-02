@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "splunk-mcp": {
+      "command": "uvx",
+      "args": ["splunk-mcp"],
+      "env": {
+        "SPLUNK_TOKEN": "${SPLUNK_TOKEN}",
+        "SPLUNK_HOST": "${SPLUNK_HOST}"
+      }
+    }
+  }
+}

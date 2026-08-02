@@ -1,0 +1,44 @@
+{
+  "skill_name": "claude-handoff",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hand this off, I need to step away",
+      "expected_output": "A `claude --bg --name \"<descriptive name>\" \"<handoff summary>\"` command is run (or presented as the exact command executed), where the name reflects the conversation's actual topic (not a generic placeholder like \"handoff\" or \"session\"). The handoff summary follows the Handoff Summary template (Context / Current State / Next Steps / Suggested Skills / References), points at any relevant files, PRDs, or issues by path/URL rather than pasting their contents, and contains no secrets.",
+      "assertions": [
+        "A claude --bg --name ... \"...\" command was run (or given as the literal command to run)",
+        "The --name value is a descriptive, task-specific name derived from the conversation, not a generic placeholder",
+        "The summary contains all five headings: Context, Current State, Next Steps, Suggested Skills, References",
+        "Summary does not inline full diff/PRD content, only references it by path/URL",
+        "Summary includes a Suggested Skills section naming at least one concrete skill and why it's relevant",
+        "No API keys, tokens, or PII appear in the generated prompt text"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "spin up a background agent named migrate-db to keep working on the DB migration",
+      "expected_output": "A `claude --bg --name \"migrate-db\" \"<handoff summary>\"` command is run, using the user-supplied name verbatim rather than a Claude-invented alternative. The summary follows the Handoff Summary template and focuses on the database migration work specifically (per the user's argument), referencing the migration plan/script/PRD by path instead of pasting its contents.",
+      "assertions": [
+        "A claude --bg --name \"migrate-db\" \"...\" command was run, using the exact user-supplied name",
+        "The summary's Context/Current State sections are scoped to the DB migration, not the whole unrelated conversation history",
+        "The summary contains all five headings: Context, Current State, Next Steps, Suggested Skills, References",
+        "Summary does not inline full diff/PRD content, only references it by path/URL",
+        "Summary includes a Suggested Skills section",
+        "No API keys, tokens, connection strings, or PII (e.g. embedded DB credentials) appear in the generated prompt text"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "can you keep going on the login bug fix while I'm in a meeting",
+      "expected_output": "The skill triggers even though the user never said \"handoff\" or \"background agent\" — it recognizes the implicit continue-without-me request. A `claude --bg --name ... \"...\"` command is run with a name referencing the login bug fix, and the summary follows the Handoff Summary template, describing the bug and current fix progress without pasting full diffs or stack traces containing sensitive data.",
+      "assertions": [
+        "The skill is invoked despite the prompt not containing the word \"handoff\" or \"background\"",
+        "A claude --bg --name ... \"...\" command was run, with a name referencing the login bug fix",
+        "The summary contains all five headings: Context, Current State, Next Steps, Suggested Skills, References",
+        "Summary does not inline full diff/PRD content, only references it by path/URL",
+        "Summary includes a Suggested Skills section",
+        "No API keys, tokens, or PII (e.g. user credentials used to reproduce the login bug) appear in the generated prompt text"
+      ]
+    }
+  ]
+}

@@ -30,6 +30,19 @@ WRITTEN_ENV=()    # KEYs written to ENV_FILE this run
 WRITTEN_SECRET=() # secret NAMEs set this run
 SKIPPED=()        # things we couldn't do (e.g. gh missing)
 
+# Exit codes — meaningful beyond bare `set -euo pipefail` (which only ever
+# yields 1, for any unhandled failure):
+#   0  success — every stage completed, nothing left to do by hand.
+#   1  unexpected error (an unhandled command failure under -euo pipefail).
+#   2  invalid usage — a library helper was called with bad arguments (e.g.
+#      stage() given a non-numeric minute count).
+#   3  completed, but with manual follow-up needed — e.g. `gh` was missing
+#      or unauthenticated when a secret/variable needed to be set. See the
+#      "still to do by hand" list finish() prints (also on stderr).
+EXIT_OK=0
+EXIT_INVALID_USAGE=2
+EXIT_NEEDS_FOLLOWUP=3
+
 # _clear — wipe the terminal so only the current step is on screen. No-op when
 # output isn't a terminal, so piped logs stay readable.
 _clear() {
@@ -52,6 +65,14 @@ banner() {
 # stage "Name" <minutes> — clear the screen, then announce a stage and show
 # progress + time remaining. Clearing keeps only the current step on screen.
 stage() {
+  if [[ -z "${1:-}" ]]; then
+    printf 'stage: a stage name is required (usage: stage "Name" MINUTES)\n' >&2
+    exit "$EXIT_INVALID_USAGE"
+  fi
+  if [[ -n "${2:-}" && ! "$2" =~ ^[0-9]+$ ]]; then
+    printf 'stage: minutes must be a non-negative integer, got %q\n' "$2" >&2
+    exit "$EXIT_INVALID_USAGE"
+  fi
   _clear
   _STAGE_INDEX=$((_STAGE_INDEX + 1))
   local remaining=$((TOTAL_MINUTES - _MINUTES_ELAPSED))
@@ -65,8 +86,10 @@ stage() {
 say()  { printf '  %s\n' "$1"; }
 # step "..." — a numbered-feeling action the human takes in the browser.
 step() { printf '  %s•%s %s\n' "$BLUE" "$RESET" "$1"; }
-note() { printf '  %s%s%s\n' "$DIM" "$1" "$RESET"; }
-warn() { printf '  %s⚠ %s%s\n' "$YELLOW" "$1" "$RESET"; }
+# note/warn are diagnostics, not the wizard's primary instructional output —
+# they print to stderr so stdout stays clean if a caller captures it.
+note() { printf '  %s%s%s\n' "$DIM" "$1" "$RESET" >&2; }
+warn() { printf '  %s⚠ %s%s\n' "$YELLOW" "$1" "$RESET" >&2; }
 
 # open_url URL — open in the human's browser, cross-platform incl. WSL.
 open_url() {
@@ -172,18 +195,76 @@ set_var() {
   warn "skipped GitHub variable $name — gh not ready; set it later"
 }
 
-# finish — clear, then a closing summary of everything configured.
+# finish — clear, then a closing summary of everything configured. Exits
+# EXIT_NEEDS_FOLLOWUP (not EXIT_OK) when anything was skipped, so a caller
+# checking $? can tell "done" from "done, but needs manual follow-up."
 finish() {
   _clear
   printf '\n%s%s  ✓ Setup complete%s\n' "$BOLD" "$GREEN" "$RESET"
   (( ${#WRITTEN_ENV[@]} ))    && note "wrote ${#WRITTEN_ENV[@]} value(s) to $ENV_FILE: ${WRITTEN_ENV[*]}"
   (( ${#WRITTEN_SECRET[@]} )) && note "set ${#WRITTEN_SECRET[@]} GitHub secret(s): ${WRITTEN_SECRET[*]}"
   if (( ${#SKIPPED[@]} )); then
-    printf '\n'; warn "still to do by hand:"
+    printf '\n' >&2; warn "still to do by hand:"
     for s in "${SKIPPED[@]}"; do note "  - $s"; done
+    printf '\n'
+    exit "$EXIT_NEEDS_FOLLOWUP"
   fi
   printf '\n'
 }
+
+# _print_help — usage block for -h/--help, documenting the library helpers
+# available to every wizard. Part of the library; do not hand-edit.
+_print_help() {
+  printf 'Usage: %s [--help]\n\n' "$(basename "$0")"
+  cat <<'HELP'
+A wizard walks a human step by step through a manual procedure: it opens
+URLs, tells them what to click and copy, captures the values, and writes
+them to a .env file and/or GitHub Actions secrets/variables. Run it
+directly, e.g. ./setup-stripe.sh
+
+Library helpers available to the stages defined below the STAGES marker:
+  stage "Name" MINUTES     Start a new stage: clears the screen, advances
+                           the progress counter, shows time remaining.
+  say "..."                Print a plain instruction line.
+  step "..."               Print a bulleted browser action.
+  open_url URL             Open URL in the human's browser (cross-platform,
+                           including WSL).
+  ask KEY "Prompt"         Read a visible value into $KEY. On re-runs,
+                           offers the existing ENV_FILE value as the
+                           default (Enter keeps it).
+  ask_secret KEY "Prompt"  Like ask, but input is hidden.
+  write_env KEY VALUE      Idempotently upsert KEY=VALUE into ENV_FILE
+                           (default .env).
+  set_secret NAME VALUE    Set a GitHub Actions repo secret via gh secret
+                           set. Skips gracefully (reported at the end) if
+                           gh is missing or unauthenticated.
+  set_var NAME VALUE       Set a GitHub Actions repo variable via gh
+                           variable set. Same graceful skip.
+  pause "msg"              Wait for Enter before continuing.
+  confirm "question"       y/N gate; success on yes.
+
+Example:
+  stage "Stripe — API keys" 5
+  open_url "https://dashboard.stripe.com/test/apikeys"
+  step "Copy the Publishable key (starts pk_test_)."
+  ask STRIPE_PUBLISHABLE_KEY "Paste the publishable key:"
+  write_env STRIPE_PUBLISHABLE_KEY "$STRIPE_PUBLISHABLE_KEY"
+  set_secret STRIPE_SECRET_KEY "$STRIPE_SECRET_KEY"
+
+Exit codes:
+  0   success — every stage completed cleanly.
+  1   unexpected error (an unhandled failure under set -euo pipefail).
+  2   invalid usage — a library helper was called with bad arguments, e.g.
+      stage() given a non-numeric minute count.
+  3   completed, but with manual follow-up needed — e.g. gh was missing or
+      unauthenticated when a secret/variable needed to be set.
+HELP
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  _print_help
+  exit "$EXIT_OK"
+fi
 
 # ──────────────────────────────────────────────────────────────────────────
 # STAGES — author this section. One stage() per step the human takes.

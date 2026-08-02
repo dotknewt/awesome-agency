@@ -1,0 +1,44 @@
+{
+  "skill_name": "wayfinder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "we need to redo onboarding but I don't know where to start. it touches signup, the welcome emails, and probably our activation metrics. can you help me get a handle on this?",
+      "expected_output": "Runs a /grilling and /domain-modeling session to surface the open decisions in the onboarding redesign, then creates a single map issue labelled wayfinder:map with Notes filled in from the conversation, Decisions-so-far left empty, and a Fog section sketching questions too vague to ticket yet (e.g. which activation metric matters, whether welcome emails are in scope). Creates child ticket issues for the decisions that are already sharp enough to state precisely, each typed with a wayfinder:<type> label (research/prototype/grilling/task) and a body containing a '## Question' section. Wires blocking edges between those tickets in a second pass, after they have ids. Stops after charting — does not resolve any ticket in the same session.",
+      "assertions": [
+        "Exactly one issue is created with the label wayfinder:map",
+        "The map issue body contains a 'Decisions so far' section that is empty (no closed tickets yet)",
+        "The map issue body contains a 'Fog' section with at least one sketched open question",
+        "Every child ticket created is linked as a child issue of the map",
+        "Every child ticket has exactly one wayfinder:<type> label from {research, prototype, grilling, task}",
+        "No ticket is claimed (no wayfinder:claimed label appears anywhere) and no ticket is closed or resolved in this session",
+        "The user, in narration, is never shown a bare ticket id or number without the ticket's name/title wrapping the link"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "keep working the onboarding map, https://github.com/acme/webapp/issues/482 — go ahead and pick up whatever's next.",
+      "expected_output": "Loads the low-resolution map body at issue #482 (not every child ticket body). Since no ticket was named, selects the first frontier ticket in tracker order (open, unblocked, unclaimed) and claims it via scripts/claim_ticket.py claim before doing any work. Resolves the ticket, zooming into related or closed tickets only as needed, invoking /grilling, /domain-modeling, or other skills the map's Notes block names. Records the resolution as a comment on the ticket, closes the ticket, and appends a one-line context pointer with the ticket's name and link to the map's Decisions-so-far. Adds any newly-surfaced tickets (create, then wire in a second pass) and graduates any fog the answer made specifiable, removing that patch from Fog. Does not resolve a second ticket in the same session.",
+      "assertions": [
+        "The map's full body is read before any ticket is chosen",
+        "The claimed ticket was, at the start of the session, open, unblocked, and unclaimed (a genuine frontier ticket)",
+        "wayfinder:claimed is set on the chosen ticket before any resolution work begins",
+        "No more than one ticket is claimed or resolved in the session",
+        "The resolved ticket is closed and has a resolution comment recording the answer",
+        "The map's Decisions-so-far gains exactly one new line naming the resolved ticket and linking it",
+        "Any newly-created ticket is created before any blocking edge referencing it is wired"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "continue the data-platform map (issue #91) — I don't think there's anything left unblocked right now, and by the way our tracker doesn't support native issue blocking.",
+      "expected_output": "Loads the map at #91 and queries for the frontier (open, unblocked, unclaimed child tickets). Because the tracker lacks native blocking, blocking state is read from the body-convention fallback described in SKILL.md rather than a native dependency field. If the frontier is genuinely empty (every open ticket is blocked, claimed, or none remain open), the skill does not fabricate a ticket to work or silently stop with no explanation — it reports the frontier is empty, points at what's still blocked and what it's waiting on (from Fog or blocked tickets), and does not claim, resolve, or close anything. It does not invent a ticket type of 'task' or otherwise route around the empty frontier without the user's input.",
+      "assertions": [
+        "The skill reports blocking status using the body-convention fallback described in SKILL.md, not a native dependency feature the tracker doesn't have",
+        "No ticket is claimed (no wayfinder:claimed label is set on any issue) when the frontier is empty",
+        "No ticket is closed or resolved in this session",
+        "The response clearly states that the frontier is empty and names what remains blocked or in Fog, rather than failing silently or fabricating a takeable ticket"
+      ]
+    }
+  ]
+}

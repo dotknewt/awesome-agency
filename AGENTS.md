@@ -14,12 +14,21 @@ pools. The former sibling repos (`dotknewt/skills`, `dotknewt/agents`,
 Two distribution mechanisms coexist in `.claude-plugin/marketplace.json`:
 
 1. **Bundles** — `plugins/<name>/` contains a real `.claude-plugin/plugin.json`
-   plus **symlinks** into the top-level pools at default component locations
-   (`skills/<s>`, `agents/<a>.md`, `commands/<c>.md`, `hooks/hooks.json`,
-   `scripts`, `.mcp.json`). Claude Code dereferences symlinks into real files at
-   install time, and the install cache contains only the plugin directory.
-   Marketplace entries for bundles are minimal (`source: "./plugins/<name>"`,
-   no version — `plugin.json` is authoritative).
+   plus **symlinks** into the top-level pools (`skills/<s>`, `agents/<a>.md`,
+   `commands` → `../../commands/<name>`, `hooks/hooks.json`, `scripts`,
+   `.mcp.json`). Claude Code dereferences symlinks into real files at install
+   time, and the install cache contains only the plugin directory. Marketplace
+   entries for bundles are minimal (`source: "./plugins/<name>"`, no version —
+   `plugin.json` is authoritative).
+   Two symlink rules learned the hard way (live-source loading skips
+   **file-level** symlinks during default directory scans, while directory
+   symlinks and direct file reads work):
+   - Agents MUST be listed explicitly in the bundle's `plugin.json`
+     (`"agents": ["./agents/<a>.md", ...]`) — custom-file loading follows
+     symlinks; the default `./agents/` scan does not.
+   - The commands pool is per-bundle (`commands/<bundle>/*.md`) and each bundle
+     symlinks the whole directory (`plugins/<name>/commands → ../../commands/<name>`)
+     so the default scan walks real files through a directory symlink.
 2. **Micro-entries** — every skill and agent is individually installable via
    inline entries with narrow sources: `{name: "<skill>", source: "./skills/<skill>",
    strict: false}` and `{name: "<agent>-agent", source: "./agents/<agent>",

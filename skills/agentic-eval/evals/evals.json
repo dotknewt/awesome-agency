@@ -1,0 +1,31 @@
+{
+  "skill_name": "agentic-eval",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got a report-generation function in report_builder.py that drafts a summary from raw metrics. Can you add a self-critique loop to it so it checks its own draft and improves it before returning?",
+      "expected_output": "The function (or a wrapping function) generates an initial report, then loops: it critiques the draft against explicit criteria, and if the critique finds problems, regenerates/refines the draft. The loop is bounded by a max iteration count rather than running forever, and it stops early once the critique passes or convergence is detected, returning the final report text.",
+      "assertions": [
+        "The output includes a bounded iteration loop (e.g. a max_iterations parameter or a fixed-size for/while loop) around the generate-critique-refine cycle",
+        "The output includes an explicit convergence/stop condition — either an all-criteria-pass check, a score threshold, or a 'no improvement between iterations' check — not just running until max_iterations every time"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "build a rubric-based grader for these support-ticket summaries — I want to score them on accuracy, tone, and completeness",
+      "expected_output": "A grading mechanism (function, class, or script) that defines the three dimensions with numeric weights, scores each summary against them (e.g. via an LLM call or a provided scoring input), and combines the per-dimension scores into a single overall score using the weights. The result is returned or printed as parseable JSON rather than free-form prose.",
+      "assertions": [
+        "The rubric dimensions (accuracy, tone, completeness or equivalent) are each assigned a numeric weight, and the weights sum to 1 (within reasonable rounding tolerance)",
+        "The grader returns a JSON-parseable score — i.e. running json.loads() (or equivalent) on the output succeeds and yields the overall score plus per-dimension detail, not just prose text"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "we have two drafts of a compliance disclosure doc — can you compare them with an LLM judge and tell me which one is better and why, this needs to hold up if someone asks us to justify the call later",
+      "expected_output": "A comparison that names a winner (or calls it a tie) between the two drafts, but critically includes explicit reasoning tied to specific differences between the two documents — not just a bare verdict like 'Draft A is better.' Given the compliance context, the rationale should reference concrete criteria (e.g. clarity, completeness of required disclosures, ambiguity) rather than a vague overall impression.",
+      "assertions": [
+        "The comparison includes explicit rationale referencing specific content differences between the two drafts, not just a verdict (e.g. not merely 'Output A is better' with no supporting explanation)"
+      ]
+    }
+  ]
+}

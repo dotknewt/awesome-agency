@@ -87,7 +87,7 @@
     },
     {
       "name": "agentic-eval",
-      "description": "| Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - Implementing self-critique and reflection loops - Building evaluator-optimizer pipelines for…",
+      "description": "| Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output…",
       "version": "1.0.0",
       "source": "./skills/agentic-eval",
       "strict": false
@@ -115,7 +115,7 @@
     },
     {
       "name": "context-engineering",
-      "description": "> Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs…",
+      "description": "> Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs (red-team…",
       "version": "1.0.0",
       "source": "./skills/context-engineering",
       "strict": false
@@ -149,15 +149,8 @@
       "strict": false
     },
     {
-      "name": "edit-article",
-      "description": "Edit and improve articles by restructuring sections, improving clarity, and tightening prose. Use when user wants to edit, revise, or improve an article draft.",
-      "version": "1.0.0",
-      "source": "./skills/edit-article",
-      "strict": false
-    },
-    {
       "name": "eyeball",
-      "description": "Document analysis with inline source screenshots. When you ask Copilot to analyze a document, Eyeball generates a Word doc where every factual claim includes a highlighted screenshot from the source…",
+      "description": "Use this skill when the user wants to verify claims in a document against its source, fact-check a document, or get visual citation proof — e.g. \"eyeball this contract,\" \"check the liability section…",
       "version": "1.0.0",
       "source": "./skills/eyeball",
       "strict": false
@@ -283,7 +276,7 @@
     },
     {
       "name": "make-a-monorepo",
-      "description": "> Scaffold a flat monorepo from scratch or audit an existing project against monorepo conventions. Use when asked to create a monorepo, set up a multi-package repo, or audit/fix monorepo structure.…",
+      "description": "> Use when the user wants to scaffold a brand-new flat monorepo (no packages/ layer) for security/threat-hunting tooling — combining MCP servers, shared JSON schemas, sigma-rules/ECS/OCSF/CIM…",
       "version": "1.0.0",
       "source": "./skills/make-a-monorepo",
       "strict": false

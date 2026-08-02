@@ -1,7 +1,16 @@
 ---
 name: writing-fragments
-description: Writing, explore — mine raw fragments, no structure yet.
+description: Use when the user wants to freewrite, brainstorm, or capture raw notes and half-formed ideas for a piece of writing before any outline or structure exists — interviews them and appends fragments (sentences, vignettes, quotes, leading words) to a markdown file. Trigger even when they don't say "brainstorm" or "fragments" explicitly, e.g. "I have a vague idea for an essay about X", "let's talk through what I want to say about Y", "help me think out loud about Z", or "I keep noticing this pattern and want to write about it". Do NOT trigger once the user is ready to outline, sequence, or structure the piece into beats, paragraphs, or sections — that's a separate, later-stage skill (writing-beats, writing-shape).
 disable-model-invocation: true
+# `disable-model-invocation` stays top-level rather than moving under `metadata:`
+# (the skill-spec's documented extension point for undocumented keys): Claude Code
+# reads this key at the top level to gate auto-invocation of the skill, and treats
+# `metadata` as inert key-value storage per spec, not consulted for behavior.
+# Moving it would silently re-enable auto-triggering. Same convention followed by
+# every other SKILL.md in this repo (writing-beats, writing-shape, edit-article,
+# wizard, loop-me, claude-handoff) and documented explicitly in the agency repo at
+# .claude/skills/manifest-lint/SKILL.md and
+# .claude/skills/command-development/references/frontmatter-reference.md.
 ---
 
 <what-to-do>

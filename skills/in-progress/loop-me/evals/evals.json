@@ -1,0 +1,44 @@
+{
+  "skill_name": "loop-me",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "let's figure out my morning routine",
+      "expected_output": "A new workflows/*.md file (e.g. workflows/morning-routine.md) capturing the morning-routine loop as a finished spec: an explicit Trigger, any Checkpoints with a stated Brief, and no open question. The session gets there by asking one question at a time, each with a recommended answer, and reaches for the Trigger/Checkpoint/Push right/Brief vocabulary only where the loop actually calls for it — never as a mandatory checklist.",
+      "assertions": [
+        "A workflows/*.md file is created (not just discussed in chat)",
+        "The session asks one question at a time, not a batch of questions",
+        "Each question posed has a recommended answer attached",
+        "The resulting spec states an explicit Trigger (an event or a schedule)",
+        "Every Checkpoint in the spec has a stated Brief",
+        "No open question, TBD, or placeholder remains in the finished spec"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Revise workflows/inbox-triage.md — it doesn't say who gets pinged when an urgent bug report comes in, or what the checkpoint actually shows the reviewer.",
+      "expected_output": "workflows/inbox-triage.md is edited in place (not replaced by a new file) to close the two named gaps: an explicit escalation/notification step for urgent bug reports, and a stated Brief for the existing checkpoint. The rest of the spec's structure is preserved unless the grilling surfaces a reason to change it.",
+      "files": ["evals/files/workflows/inbox-triage.md"],
+      "assertions": [
+        "The existing workflows/inbox-triage.md file is updated rather than a new file being created",
+        "The revised spec states who or what gets pinged for an urgent bug report",
+        "Every Checkpoint in the revised spec has a stated Brief",
+        "No open question remains in the revised spec",
+        "Parts of the original spec unrelated to the two named gaps are preserved rather than rewritten wholesale"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Can you help me set up a workflow for how our team handles incoming Slack requests?",
+      "expected_output": "Because NOTES.md is empty, the session first interviews the user about their world — the tools they use, the channels they process, and their own terms for both — recording sharpened, canonical terms into NOTES.md before proposing any workflow structure. Only after NOTES.md has real content does the session move on to grilling toward a finished workflows/*.md spec, using the terminology just recorded.",
+      "files": ["evals/files/NOTES.md"],
+      "assertions": [
+        "The session interviews the user about their tools, channels, and terminology before proposing a workflow structure",
+        "NOTES.md is updated with the user's world and canonical terms before workflows/*.md is created or edited",
+        "Terms recorded in NOTES.md are reused consistently in the resulting workflow spec",
+        "The final workflow spec contains no open question",
+        "Every Checkpoint in the final spec, if any, has a stated Brief"
+      ]
+    }
+  ]
+}

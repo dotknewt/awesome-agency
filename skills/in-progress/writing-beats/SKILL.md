@@ -1,6 +1,16 @@
 ---
 name: writing-beats
-description: Writing, exploit — assemble raw material into a journey of beats, grounding each term before a beat leans on it.
+description: Use when the user has raw material — a fragments doc, notes, a transcript, a pile of research — and wants it drafted into a long-form article or post one beat at a time, picking a path through it interactively instead of getting a full draft dumped at once. Triggers on requests like "turn this into an article", "shape these notes into a post, beat by beat", "let's draft this journey-style, choose-your-own-adventure", or "give me a few directions to pick from and write one at a time". Also covers continuing or revising an in-progress beats article, including "go back and rewrite beat 3" or "try a different beat 2". Not for open-ended brainstorming before any raw material exists (see writing-fragments) or a single continuous draft written straight through with no beat-by-beat checkpoints (see writing-shape).
+# disable-model-invocation is intentional while this skill is still maturing in
+# skills/in-progress/: the workflow hasn't been validated for reliable auto-triggering
+# yet (see evals/eval_queries.json for the intended trigger scenarios, documented now
+# so they're ready to test once this flag is revisited). It stays top-level rather
+# than under `metadata:` (the base skill-spec's documented extension point for inert
+# key-value data) because Claude Code reads this field from the top level to actually
+# suppress auto-invocation; metadata is not consulted for behavior. This is the same
+# convention used by sibling skills in this repo (loop-me, wizard, writing-fragments,
+# writing-shape, claude-handoff, edit-article) — moving it under metadata would risk
+# silently re-enabling auto-triggering for a skill not yet vetted for it.
 disable-model-invocation: true
 ---
 

@@ -1,0 +1,22 @@
+[
+  { "query": "my chatbot keeps leaking its system prompt when users ask weird questions", "should_trigger": true },
+  { "query": "we're building a RAG pipeline over our internal wiki and retrieval keeps pulling irrelevant chunks, how do I fix that", "should_trigger": true },
+  { "query": "someone on our red team wants to try jailbreaking our support bot before we ship it, what techniques should they try", "should_trigger": true },
+  { "query": "how many few-shot examples should I put in my system prompt before it stops helping", "should_trigger": true },
+  { "query": "our support bot's conversation history is blowing past the context window, what's the best way to compress older turns", "should_trigger": true },
+  { "query": "is there a way to stop users from injecting fake instructions through uploaded PDFs that get summarized by the model", "should_trigger": true },
+  { "query": "what's the difference between putting stuff in a vector DB vs just cramming it all into the prompt", "should_trigger": true },
+  { "query": "I want to test whether our internal LLM tool can be tricked into ignoring its guardrails using base64-encoded prompts", "should_trigger": true },
+  { "query": "our agent's memory across sessions is getting stale, how should we architect persistent memory for it", "should_trigger": true },
+  { "query": "a contractor found they can get our bot to reveal its instructions by asking it to repeat the first word over and over — how common is that attack and how do we stop it", "should_trigger": true },
+  { "query": "can you help me debug why my python for loop is skipping the last element", "should_trigger": false },
+  { "query": "how do I prevent SQL injection in this Node.js endpoint", "should_trigger": false },
+  { "query": "our React app's context provider is re-rendering every component on every state change, how do I fix that", "should_trigger": false },
+  { "query": "what's the best way to store user session data in Redis so it survives a server restart", "should_trigger": false },
+  { "query": "I need to add rate limiting to our public API to stop abuse", "should_trigger": false },
+  { "query": "can you review this Terraform config for security best practices before we apply it", "should_trigger": false },
+  { "query": "my regex keeps failing to match multi-line strings, what's wrong with it", "should_trigger": false },
+  { "query": "write unit tests for this authentication middleware", "should_trigger": false },
+  { "query": "how do I set up CORS properly for my Express server", "should_trigger": false },
+  { "query": "our CI pipeline is caching node_modules wrong and builds are flaky, can you fix the workflow file", "should_trigger": false }
+]

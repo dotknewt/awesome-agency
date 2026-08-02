@@ -2,6 +2,7 @@
 name: agentic-eval
 description: |
   Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when:
+  - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output before finishing — e.g. "double check this," "critique your own answer before finishing," "review this before you're done" — even with no mention of building a pipeline or eval system
   - Implementing self-critique and reflection loops
   - Building evaluator-optimizer pipelines for quality-critical generation
   - Creating test-driven code refinement workflows
@@ -13,6 +14,8 @@ description: |
 # Agentic Evaluation Patterns
 
 Patterns for self-improvement through iterative evaluation and refinement.
+
+See also: `skills/context-engineering` for the retrieval/RAG side of context management, and the broader context-window/memory concepts these evaluation patterns operate within.
 
 ## Overview
 
@@ -26,11 +29,14 @@ Generate → Evaluate → Critique → Refine → Output
 
 ## When to Use
 
+- **Ad-hoc self-review**: The user asks you to double-check, critique, or review your own answer before finishing — e.g. "double check this," "critique your own answer before finishing," "review this before you're done" — no code or pipeline required, just apply the pattern in-session
 - **Quality-critical generation**: Code, reports, analysis requiring high accuracy
 - **Tasks with clear evaluation criteria**: Defined success metrics exist
 - **Content requiring specific standards**: Style guides, compliance, formatting
 
 ---
+
+> **Note on code snippets:** The Python in the patterns below (`llm(...)`, `run_tests(...)`, etc.) is illustrative pseudocode, not working code. `llm(...)` is a stand-in for whatever LLM call is actually available in context (an API client, a subagent invocation, a tool call), and `run_tests(...)` stands in for a real test runner. Adapt the structure and names to your environment — don't copy-paste expecting it to execute as-is.
 
 ## Pattern 1: Basic Reflection
 
@@ -166,6 +172,14 @@ def evaluate_with_rubric(output: str, rubric: dict) -> float:
 
 ---
 
+## Gotchas
+
+- **Self-critique rubber-stamps itself.** LLM self-critique frequently returns all-PASS on the first pass unless explicitly prompted to be adversarial. Ask the critique step to find at least one FAIL if any genuinely exists, or phrase the prompt as "find problems with this output" rather than "is this output good."
+- **Critique JSON often fails to parse.** `json.loads(critique)` (Pattern 1) and similar calls frequently throw on malformed output — trailing commentary, markdown code fences, truncated JSON. Wrap the parse in try/except and, on failure, re-prompt the model with the exact parse error rather than silently retrying or giving up.
+- **Score thresholds are arbitrary until calibrated.** A `score_threshold` like `0.8` (Pattern 2) or a rubric cutoff has no inherent meaning — it's a guess. Calibrate it against a handful of human-graded examples (does a 0.8 actually correspond to output a human would accept?) before trusting it to gate output.
+
+---
+
 ## Quick Start Checklist
 
 ```markdown
@@ -187,3 +201,15 @@ def evaluate_with_rubric(output: str, rubric: dict) -> float:
 - [ ] Log all iterations for debugging
 - [ ] Handle evaluation parse failures gracefully
 ```
+
+---
+
+## Available Scripts
+
+- **`scripts/rubric_grader.py`** — Standalone, stdlib-only implementation of the rubric-based scoring pattern (see Pattern 2 / Rubric-Based above). Takes a JSON payload of weighted dimension scores on stdin or via `--input`, validates it, computes the weighted overall score, and checks it against a threshold. Run `python3 scripts/rubric_grader.py --help` for usage; use it directly, or as a model for a project-specific grading script.
+
+---
+
+## See Also
+
+This skill is a pure pattern reference — code sketches meant to be adapted, not an executable system. A related but different-altitude capability exists elsewhere in this marketplace: an agent-based verification pipeline (`agents/agent-doublecheck`) that actually extracts claims from AI output, finds external sources, and flags hallucination risk. Reach for that when you need AI output checked against the outside world; reach for the patterns here when you need an iterative generate/evaluate/refine loop, self-critique, or a rubric/judge scoring mechanism.

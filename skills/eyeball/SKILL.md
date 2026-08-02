@@ -1,6 +1,12 @@
 ---
 name: eyeball
-description: 'Document analysis with inline source screenshots. When you ask Copilot to analyze a document, Eyeball generates a Word doc where every factual claim includes a highlighted screenshot from the source material so you can verify it with your own eyes.'
+description: Use this skill when the user wants to verify claims in a document against its source, fact-check a document, or get visual citation proof — e.g. "eyeball this contract," "check the liability section against the source," or requests to confirm a document's claims are backed by the actual text, even without the word "eyeball." Produces a Word doc where every claim is paired with a highlighted screenshot from the source (PDF, Word document, or web page) so claims can be verified by eye instead of taken on faith.
+# disable-model-invocation is intentional: the Activation section below expects
+# explicit user invocation ("use eyeball", "eyeball this document") rather than
+# autonomous triggering on ordinary document-reading or summarization requests.
+# See evals/eval_queries.json for the trigger-phrase test set this description
+# is calibrated against.
+disable-model-invocation: true
 ---
 
 # Eyeball
@@ -22,24 +28,19 @@ Then follow the workflow below.
 
 ## Tool Location
 
-The Eyeball Python utility is located at:
+The Eyeball Python utility ships with this skill at:
 ```
-<plugin_dir>/skills/eyeball/tools/eyeball.py
-```
-
-To find the actual path, run:
-```bash
-find ~/.copilot/installed-plugins -name "eyeball.py" -path "*/eyeball/*" 2>/dev/null
+${CLAUDE_PLUGIN_ROOT}/tools/eyeball.py
 ```
 
-If not found there, check the project directory or the user's home directory for the eyeball repo.
+`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code to this plugin's install directory — use it directly in the commands below rather than searching for the file. If it's ever unset in your environment, `tools/eyeball.py` sits one directory below this `SKILL.md` file; resolve the path from there instead.
 
 ## First-Run Setup
 
 Before first use, check that dependencies are installed:
 
 ```bash
-python3 <path-to>/eyeball.py setup-check
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/eyeball.py setup-check
 ```
 
 If anything is missing, install the required dependencies:
@@ -62,10 +63,10 @@ Follow these steps exactly. The order matters.
 Before writing any analysis, extract and read the full text of the source document:
 
 ```bash
-python3 <path-to>/eyeball.py extract-text --source "<path-or-url>"
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/eyeball.py extract-text --source "<path-or-url>"
 ```
 
-Read the output carefully. Identify actual section numbers, headings, page numbers, and key language.
+This prints a JSON object with a `pages` array (each entry has `page` and `text`). Read it carefully and identify actual section numbers, headings, page numbers, and key language.
 
 **CRITICAL:** Do not skip this step. Do not write analysis based on assumptions about how the document is structured. Read the actual text.
 
@@ -118,7 +119,7 @@ RIGHT -- includes the section number for precision, targets the correct page:
 Construct a JSON array of sections and call the build command:
 
 ```bash
-python3 <path-to>/eyeball.py build \
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/eyeball.py build \
   --source "<path-or-url>" \
   --output ~/Desktop/<title>.docx \
   --title "Analysis Title" \
@@ -140,6 +141,8 @@ python3 <path-to>/eyeball.py build \
     }
   ]'
 ```
+
+On success, `build` prints a JSON object to stdout, e.g. `{"status": "ok", "output": "<path>", "size_kb": 94.1, "sections": 2, "screenshots_found": 2, "screenshots_missing": 0}`. If `screenshots_missing` is greater than 0, check stderr and the "Notes" section below before delivering the document — some anchors likely weren't verbatim enough.
 
 Section object fields:
 - `heading` (required): Section heading in the output document

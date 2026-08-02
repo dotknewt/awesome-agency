@@ -37,7 +37,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 |---|---|
 | `skills/` | All skills, one directory each (`<name>/SKILL.md`). `skills/in-progress/` holds unshipped drafts. |
 | `agents/` | All agents, one directory each (`<name>/<name>.md`, plus symlinked dependencies so single-agent installs are self-contained). |
-| `commands/` | Slash-command definitions. |
+| `commands/` | Slash-command definitions, one subdirectory per owning bundle. |
 | `hooks/` | Hook sets — `<set>/hooks.json` + `<set>/scripts/`. |
 | `instructions/` | Reference instruction docs used by agents/commands. |
 | `mcp/` | Bundled MCP servers (`mcp/ludus/`). |

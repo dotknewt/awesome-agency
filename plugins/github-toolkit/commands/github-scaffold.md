@@ -1,1 +1,0 @@
-../../../commands/github-scaffold.md

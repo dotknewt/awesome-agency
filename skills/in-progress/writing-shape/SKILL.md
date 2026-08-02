@@ -1,6 +1,16 @@
 ---
 name: writing-shape
-description: Writing, exploit — shape raw material into an article, paragraph by paragraph.
+description: Use when the user has raw material — a pile of notes, a transcript, unstructured prose — and wants it shaped into a finished article one paragraph (or block) at a time, arguing through 2-3 candidate openings and format choices (prose vs. list, quote vs. paraphrase) with the user before each piece is appended to the article file, instead of getting a full draft dumped at once. Triggers on requests like "here's a braindump, turn it into an article", "help me turn this into a post", "shape this pile into something readable, paragraph by paragraph", or "build a writeup from these notes and argue the structure with me as we go" — even when they don't say "article" or "writing" explicitly. Not for open-ended brainstorming before raw material exists (see writing-fragments), a choose-your-own-adventure journey assembled beat by beat (see writing-beats), or line-editing an already-finished draft with no raw-material pile behind it (see edit-article).
+# disable-model-invocation is intentional while this skill is still maturing in
+# skills/in-progress/: the workflow hasn't been validated for reliable auto-triggering
+# yet (see evals/eval_queries.json for the intended trigger scenarios, documented now
+# so they're ready to test once this flag is revisited). It stays top-level rather
+# than under `metadata:` (the base skill-spec's documented extension point for inert
+# key-value data) because Claude Code reads this field from the top level to actually
+# suppress auto-invocation; metadata is not consulted for behavior. This is the same
+# convention used by sibling skills in this repo (loop-me, wizard, writing-fragments,
+# writing-beats, claude-handoff, edit-article) — moving it under metadata would risk
+# silently re-enabling auto-triggering for a skill not yet vetted for it.
 disable-model-invocation: true
 ---
 

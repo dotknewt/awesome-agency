@@ -1,0 +1,22 @@
+[
+  { "query": "hand this off, I need to step away", "should_trigger": true },
+  { "query": "can you keep working on this while I step away?", "should_trigger": true },
+  { "query": "spin up a background agent for this", "should_trigger": true },
+  { "query": "spin up a background agent named migrate-db to keep working on the DB migration", "should_trigger": true },
+  { "query": "can you keep going on the login bug fix while I'm in a meeting", "should_trigger": true },
+  { "query": "i gotta run to a meeting, can you just keep chugging on this in the bg?", "should_trigger": true },
+  { "query": "let's hand this conversation off to a fresh session so it can keep going without me", "should_trigger": true },
+  { "query": "kick off a bg agent to continue the refactor while I grab lunch", "should_trigger": true },
+  { "query": "I need to log off for the night — can you continue this task in a new session on your own?", "should_trigger": true },
+  { "query": "delegate the rest of this PR cleanup to a background agent", "should_trigger": true },
+  { "query": "can you background this shell command for me", "should_trigger": false },
+  { "query": "run npm run dev in the background so I can keep testing in this same chat", "should_trigger": false },
+  { "query": "what's the weather like today", "should_trigger": false },
+  { "query": "can you write a python script that reverses a string", "should_trigger": false },
+  { "query": "summarize this PR for the changelog", "should_trigger": false },
+  { "query": "can you explain what claude --bg actually does", "should_trigger": false },
+  { "query": "keep an eye on this log file and let me know if it changes", "should_trigger": false },
+  { "query": "run the test suite in a background terminal tab while I keep coding here with you", "should_trigger": false },
+  { "query": "write a summary of this conversation for my personal notes", "should_trigger": false },
+  { "query": "how do I resume a background agent I started earlier with claude agents", "should_trigger": false }
+]

@@ -1,0 +1,44 @@
+{
+  "skill_name": "edit-article",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hey can you clean up this blog post draft for me, it's kind of a ramble and I want it to actually read well before I post it. it's in evals/files/rambling_blog_draft.md",
+      "expected_output": "A section plan derived from the draft's headings (intro/story, the switch to async, downsides + fix, lessons learned, closing anecdote) is proposed and confirmed with the user before any rewriting. The rewritten article keeps the casual, first-person voice but tightens run-on sentences, removes filler ('so ok this is kind of a long story but basically'), and gives each idea its own paragraph so the piece reads as a coherent narrative rather than a stream of consciousness. No paragraph in the final output exceeds 240 characters. The edited result is delivered back per the skill's step 3 (in place if a real file path was used, otherwise offered as a new file or inline text/Artifact).",
+      "files": ["evals/files/rambling_blog_draft.md"],
+      "assertions": [
+        "Sections were confirmed with the user before rewriting began",
+        "No paragraph in the final rewritten article exceeds 240 characters",
+        "The rewritten article preserves the original meaning and casual tone rather than replacing it with generic corporate prose",
+        "The agent explicitly states how/where the edited article was delivered (in place, new file, or returned inline/as an Artifact)",
+        "Each rewritten section was presented back to the user (or the user was otherwise given a chance to react per-section) before the next section was rewritten"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you edit this technical article? A few of the paragraphs are way too dense and need to be broken up. File is evals/files/technical_article_long_paragraphs.md",
+      "expected_output": "A section plan matching the article's headings (Background, What connection pooling does, How we sized our pools, Rollout, Gotchas we hit) is proposed and confirmed, respecting that 'What connection pooling does' depends on 'Background' and 'How we sized our pools' depends on both prior sections. Each section is rewritten so no paragraph exceeds 240 characters, with the long paragraphs (originally 522, 563, and 517 characters) split into multiple shorter paragraphs that preserve the technical content. The Gotchas list items are left as-is or lightly tightened. The result is delivered per step 3.",
+      "files": ["evals/files/technical_article_long_paragraphs.md"],
+      "assertions": [
+        "Sections were confirmed with the user before rewriting began",
+        "No paragraph in the final rewritten article exceeds 240 characters, verifiable by running scripts/validate_paragraphs.py against the output and getting exit code 0",
+        "Section order respects the dependency graph described to the user (Background before What connection pooling does before How we sized our pools)",
+        "No technical detail (pool sizing heuristic, Little's Law reference, rollout approach) is dropped in the rewrite, only reorganized into shorter paragraphs",
+        "The agent explicitly states how/where the edited article was delivered"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "this update doesn't have any headings or clear sections, can you tighten it up and make it easier to follow? evals/files/no_headings_article.md",
+      "expected_output": "Since the source has no headings, the agent identifies implicit sections from the content itself (pilot start, the dashboard surfacing the line-3 defect pattern, the lighting fix and its payoff, the rollout to other plants, the open question) rather than skipping the section-planning step, and confirms that inferred plan with the user before rewriting. The rewrite keeps paragraphs under 240 characters and preserves the chronological/causal dependency between the sections (the fix depends on the pattern being found, the rollout depends on the fix working). The result is delivered per step 3.",
+      "files": ["evals/files/no_headings_article.md"],
+      "assertions": [
+        "The agent proposes an explicit section plan even though the source file has no markdown headings, rather than skipping straight to rewriting",
+        "The inferred section plan is confirmed with the user before rewriting begins",
+        "No paragraph in the final rewritten article exceeds 240 characters",
+        "Section order respects the dependency graph described to the user (e.g. the lighting-fix section does not appear before the section establishing the defect-rate pattern it fixes)",
+        "The agent explicitly states how/where the edited article was delivered"
+      ]
+    }
+  ]
+}

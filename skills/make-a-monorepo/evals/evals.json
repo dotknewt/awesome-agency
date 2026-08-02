@@ -1,0 +1,69 @@
+{
+  "skill_name": "make-a-monorepo",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm kicking off a new threat-hunting repo called night-owl. We'll be pulling from Splunk and running YARA scans against samples, and I want it set up as one of our standard flat monorepos with those two as MCP servers.",
+      "expected_output": "A new night-owl/ monorepo is scaffolded per the flat layout (no packages/ dir): root CLAUDE.md, .claude/settings.json, .mcp.json with entries for both splunk-mcp and yara-mcp using ${ENV_VAR} references (no literal tokens), .env.example with a commented entry for every env var those two servers reference, mcp-servers/registry.json populated with both servers (module + version) under the servers key and a $schema_version field, and per-server CLAUDE.md files at mcp-servers/splunk-mcp/CLAUDE.md and mcp-servers/yara-mcp/CLAUDE.md each with Purpose, Tools exposed, Env vars, and Local conventions sections. Git is initialized with a first commit on main before dev is created. The agent asks for only the missing minimum context (e.g. doesn't ask about schemas/resource packs if the user didn't mention them) and prints a summary with next steps at the end.",
+      "assertions": [
+        "mcp-servers/splunk-mcp/CLAUDE.md and mcp-servers/yara-mcp/CLAUDE.md both exist and each includes Purpose, Tools exposed, Env vars, and Local conventions sections",
+        "mcp-servers/registry.json is valid JSON, includes a $schema_version field, and lists both splunk-mcp and yara-mcp under servers with module and version keys",
+        ".env.example exists and has a commented entry for every env var referenced in .mcp.json's server env blocks",
+        ".mcp.json and .claude/settings.json contain no literal secret values, only ${ENV_VAR}-style references",
+        "No packages/ directory is created anywhere in the scaffolded repo"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you audit this repo against our monorepo conventions and tell me what's wrong? Don't fix anything yet, just report.",
+      "expected_output": "An audit report bucketed by severity (violation/drift/pass/skip) that correctly distinguishes the fixture's two categories of finding: the .gitignore missing a `.env` entry is reported as a violation (secrets hygiene is a hard rule), while the presence of packages/legacy-scripts/ and the missing docs/DECISIONS.md are both reported as drift, not violations, since they're structural conventions rather than secrets/token exposure. The report also notes passing checks (valid registry.json with $schema_version, properly-referenced env vars in .mcp.json, existing per-server CLAUDE.md) and ends with a pass/drift/violation/skip summary. No files in the audited repo are modified, since --fix wasn't passed.",
+      "files": [
+        "evals/files/audit-fixture/CLAUDE.md",
+        "evals/files/audit-fixture/.gitignore",
+        "evals/files/audit-fixture/.mcp.json",
+        "evals/files/audit-fixture/.claude/settings.json",
+        "evals/files/audit-fixture/mcp-servers/registry.json",
+        "evals/files/audit-fixture/mcp-servers/splunk-mcp/CLAUDE.md",
+        "evals/files/audit-fixture/packages/legacy-scripts/hunt.py",
+        "evals/files/audit-fixture/schemas/.gitkeep",
+        "evals/files/audit-fixture/resources/.gitkeep",
+        "evals/files/audit-fixture/reports/.gitkeep",
+        "evals/files/audit-fixture/tests/.gitkeep"
+      ],
+      "assertions": [
+        "The missing `.env` entry in .gitignore is bucketed as a violation (🔴), not drift",
+        "The presence of packages/legacy-scripts/ is bucketed as drift (🟡), not a violation",
+        "The missing docs/DECISIONS.md is bucketed as drift (🟡), not a violation",
+        "The report includes a summary with counts across the severity buckets",
+        "No file in the audited repo is created, modified, or deleted, since --fix was not requested"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Same repo — now run the audit again but auto-fix whatever's safe to fix.",
+      "expected_output": "Running audit --fix against the same fixture applies only the changes the checklist marks safe: .gitignore gains a `.env` line, docs/DECISIONS.md is created with the ADR template, .env.example is created with a commented entry for each env var .mcp.json references (SPLUNK_TOKEN, SPLUNK_HOST), and the missing .claude/agents/, .claude/commands/, and .claude/skills/ directories are created (with .gitkeep). Everything the checklist marks as report-only is left untouched: CLAUDE.md's existing (incomplete) content is not rewritten, packages/legacy-scripts/ is not moved or deleted, and .claude/settings.json's permissions are not altered. The agent re-runs the audit after fixing and prints an updated summary showing what got resolved.",
+      "files": [
+        "evals/files/audit-fixture/CLAUDE.md",
+        "evals/files/audit-fixture/.gitignore",
+        "evals/files/audit-fixture/.mcp.json",
+        "evals/files/audit-fixture/.claude/settings.json",
+        "evals/files/audit-fixture/mcp-servers/registry.json",
+        "evals/files/audit-fixture/mcp-servers/splunk-mcp/CLAUDE.md",
+        "evals/files/audit-fixture/packages/legacy-scripts/hunt.py",
+        "evals/files/audit-fixture/schemas/.gitkeep",
+        "evals/files/audit-fixture/resources/.gitkeep",
+        "evals/files/audit-fixture/reports/.gitkeep",
+        "evals/files/audit-fixture/tests/.gitkeep"
+      ],
+      "assertions": [
+        ".gitignore contains a `.env` line after the fix that was absent before",
+        "docs/DECISIONS.md exists after the fix and follows the `YYYY-MM-DD | decision | rationale` ADR template",
+        ".env.example exists after the fix with commented entries for SPLUNK_TOKEN and SPLUNK_HOST",
+        ".claude/agents/, .claude/commands/, and .claude/skills/ all exist after the fix",
+        "CLAUDE.md's body content is byte-for-byte unchanged from the input — --fix never edits an existing CLAUDE.md",
+        "packages/legacy-scripts/hunt.py still exists at its original path — --fix never moves or deletes packages/ content",
+        ".claude/settings.json's permissions block is unchanged from the input"
+      ]
+    }
+  ]
+}

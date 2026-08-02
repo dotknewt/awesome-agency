@@ -1,0 +1,22 @@
+[
+  { "query": "here's a braindump, turn it into an article", "should_trigger": true },
+  { "query": "help me turn this into a post", "should_trigger": true },
+  { "query": "I have a set of raw notes from a client debrief saved at notes/client-debrief-raw.md. I'd like you to shape them into a polished article, working through it a paragraph at a time and discussing format choices as we go.", "should_trigger": true },
+  { "query": "shape this pile into something readable, paragraph by paragraph", "should_trigger": true },
+  { "query": "build a writeup from these notes and argue the structure with me as we go", "should_trigger": true },
+  { "query": "Attached is data/interview-transcript.txt, an unstructured interview transcript. Please shape it into a finished article — show me a couple of candidate openings before you draft any body content.", "should_trigger": true },
+  { "query": "I've got this messy transcript from a podcast interview, turn it into a blog post but let's build it up piece by piece, not all at once.", "should_trigger": true },
+  { "query": "I have this pile of scattered thoughts about our pricing change in ~/Desktop/pricing-notes.md, can we build something readable out of it a chunk at a time?", "should_trigger": true },
+  { "query": "yo i have a doc full of half formed notes on the outage postmortem, wanna help me turn it into somethin ppl can actually read? go slow, one para at a time", "should_trigger": true },
+  { "query": "We've got a wall of research and quotes for the year-end retrospective post. Can you work through it with me section by section, arguing through the opening before we commit to it?", "should_trigger": true },
+  { "query": "can you proofread this article draft and fix the typos and grammar? It's already finished, no restructuring needed.", "should_trigger": false },
+  { "query": "tighten up the prose in this post and make the transitions smoother — the content and structure are fine as-is.", "should_trigger": false },
+  { "query": "this draft reads clunky, can you smooth it out and make it flow better?", "should_trigger": false },
+  { "query": "I don't have any notes down yet — can you interview me to help me figure out what I even want to write about?", "should_trigger": false },
+  { "query": "let's freewrite for a bit, I have a vague idea for an essay but nothing concrete written down", "should_trigger": false },
+  { "query": "shape these notes into a post, beat by beat — give me a few directions to pick from at each step, choose-your-own-adventure style", "should_trigger": false },
+  { "query": "turn this transcript into an article journey-style — I want to pick a path through it at each beat instead of one continuous draft", "should_trigger": false },
+  { "query": "can you just reformat this markdown doc at docs/spec.md — fix the heading levels and bullet indentation, don't rewrite any of the wording", "should_trigger": false },
+  { "query": "can you fact-check this finished article against my raw research notes and flag anything unsupported?", "should_trigger": false },
+  { "query": "summarize this meeting transcript into three bullet points for a recap email", "should_trigger": false }
+]

@@ -1,0 +1,22 @@
+[
+  { "query": "let's figure out my morning routine", "should_trigger": true },
+  { "query": "I want to spec out how I triage my team's Slack requests before we hand it to an agent", "should_trigger": true },
+  { "query": "Revise workflows/onboarding.md — it's missing a checkpoint", "should_trigger": true },
+  { "query": "Grill me about the loops in my job so we can find what's worth automating", "should_trigger": true },
+  { "query": "My NOTES.md is basically empty — can you interview me about my tools and then help me draft my first workflow?", "should_trigger": true },
+  { "query": "There's a recurring thing every time a new support ticket lands and I keep doing the same three steps by hand — can we turn that into a real spec?", "should_trigger": true },
+  { "query": "what loops in my life haven't I specified yet? let's pick one and get it to done", "should_trigger": true },
+  { "query": "help me nail down exactly what should happen automatically vs. what needs my eyes on it for the weekly report", "should_trigger": true },
+  { "query": "can we design a workflow for how I process my inbox each morning, one question at a time", "should_trigger": true },
+  { "query": "I keep manually copying numbers between two spreadsheets every Friday — is this worth writing up as a proper loop?", "should_trigger": true },
+  { "query": "Can you actually build the automation described in workflows/inbox-triage.md now?", "should_trigger": false },
+  { "query": "Run the morning-routine workflow for me right now", "should_trigger": false },
+  { "query": "Write unit tests for scripts/validate.py", "should_trigger": false },
+  { "query": "Help me draft a PRD for our new checkout feature", "should_trigger": false },
+  { "query": "What's the correct cron syntax to run a job every morning at 8am?", "should_trigger": false },
+  { "query": "Summarize this meeting transcript for me", "should_trigger": false },
+  { "query": "Let's brainstorm article ideas for my blog about productivity loops", "should_trigger": false },
+  { "query": "Hand this conversation off to a background agent so it can keep debugging while I'm away", "should_trigger": false },
+  { "query": "Fix the bug where the Checkpoint field is undefined in our workflow engine's TypeScript types", "should_trigger": false },
+  { "query": "Chart a map of everything we need to figure out before launching this project", "should_trigger": false }
+]

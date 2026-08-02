@@ -1,0 +1,22 @@
+[
+  { "query": "Can you edit this draft so it flows better before I send it to my editor? It's attached as draft.md.", "should_trigger": true },
+  { "query": "this blog post reads really clunky, can you smooth it out for me? it's in drafts/launch-post.md", "should_trigger": true },
+  { "query": "tighten this up: [pasted 6-paragraph draft about our Q3 roadmap]", "should_trigger": true },
+  { "query": "I wrote this piece for our engineering blog and it feels disorganized, the sections jump around — can you help me restructure it and clean up the prose in article.md", "should_trigger": true },
+  { "query": "hey can u make this read less choppy lol here's the draft, some of the paragraphs are massive", "should_trigger": true },
+  { "query": "My editor said this needs a pass before we publish — reorganize the sections and cut the fluff in the attached doc", "should_trigger": true },
+  { "query": "revise the attached article draft for clarity, coherence, and length", "should_trigger": true },
+  { "query": "the intro to this newsletter is a mess and some of these paragraphs run forever, can you make it flow logically?", "should_trigger": true },
+  { "query": "polish this op-ed, the paragraphs run way too long and the argument jumps around before it lands its point", "should_trigger": true },
+  { "query": "can you punch up this article? it's technically accurate but a total slog to read start to finish", "should_trigger": true },
+  { "query": "write a new article about the history of jazz for our music blog", "should_trigger": false },
+  { "query": "just fix the typos in this doc, don't change anything else", "should_trigger": false },
+  { "query": "can you translate this article into Spanish?", "should_trigger": false },
+  { "query": "summarize this article in three bullet points for my boss", "should_trigger": false },
+  { "query": "give me feedback on my thesis statement, don't rewrite it, just tell me what's weak about it", "should_trigger": false },
+  { "query": "can you fact-check the claims in this draft before we publish it?", "should_trigger": false },
+  { "query": "reformat this article as markdown with proper headers, don't change any of the wording", "should_trigger": false },
+  { "query": "can you write a catchy headline and meta description for this post?", "should_trigger": false },
+  { "query": "count how many paragraphs in this article are over 240 characters and list them", "should_trigger": false },
+  { "query": "write a python script that counts paragraph lengths in a text file", "should_trigger": false }
+]

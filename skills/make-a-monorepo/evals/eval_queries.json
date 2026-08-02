@@ -1,0 +1,22 @@
+[
+  { "query": "We've got a pile of MCP servers, some shared JSON schemas, and a growing folder of incident reports scattered across different repos — can you pull them into one place with a proper root CLAUDE.md?", "should_trigger": true },
+  { "query": "My team's threat-hunting tooling is a mess — sigma rules in one place, the splunk connector in another, no shared schema. Set up a single repo that ties it all together.", "should_trigger": true },
+  { "query": "Can you check whether our security tooling repo still matches the CLAUDE.md conventions we set up six months ago? Things have drifted and I don't trust it anymore.", "should_trigger": true },
+  { "query": "I want to scaffold a new repo for our SOC automation stuff — a couple MCP servers, ECS/OCSF resource packs, and a docs folder for decision records.", "should_trigger": true },
+  { "query": "Before I onboard a new hunter to this repo, can you verify the directory structure and naming still line up with what's documented, and fix anything that's a safe auto-fix?", "should_trigger": true },
+  { "query": "we need one home for our yara-mcp and splunk-mcp servers plus the ioc schemas they share, can you wire that up from scratch", "should_trigger": true },
+  { "query": "Is there any drift between what's actually in this project and what the root CLAUDE.md claims about it? Also flag it if secrets snuck into any config file.", "should_trigger": true },
+  { "query": "spin up a fresh repo for our detection engineering work — sigma rules, a couple mcp servers for splunk and virustotal, a reports folder, the whole setup we usually do for these", "should_trigger": true },
+  { "query": "our .env got committed to this repo at some point and I'm worried other stuff drifted too, can you scan it and tell me how bad each issue is", "should_trigger": true },
+  { "query": "I keep hand-rolling the same directory layout for every new security-tooling project (mcp-servers, schemas, resources, reports, docs) — can you just generate it properly this time with the registry and CLAUDE.md and everything wired up", "should_trigger": true },
+  { "query": "Set up npm workspaces so our frontend and backend packages can share a tsconfig and a single node_modules", "should_trigger": false },
+  { "query": "We want to migrate our JS monorepo to Turborepo for build caching — can you wire up turbo.json and the pipeline config", "should_trigger": false },
+  { "query": "Scaffold a new Python project with the standard src/ layout, a pyproject.toml, and pytest set up", "should_trigger": false },
+  { "query": "Can you set up a Cargo workspace so these three Rust crates share a lockfile?", "should_trigger": false },
+  { "query": "Our lerna config is outdated, can you help migrate it to pnpm workspaces instead", "should_trigger": false },
+  { "query": "Review this PR for SQL injection risks in the new log ingestion endpoint before we merge it", "should_trigger": false },
+  { "query": "Can you write unit tests for the parser module in schemas/parser.py, it's not covered at all right now", "should_trigger": false },
+  { "query": "Help me debug why my MCP server keeps disconnecting from Claude Desktop after a couple minutes idle", "should_trigger": false },
+  { "query": "Check this Dockerfile for security best practices before we ship the image", "should_trigger": false },
+  { "query": "Split our giant Django app into multiple installable packages under a packages/ folder using Nx, keeping the current repo", "should_trigger": false }
+]

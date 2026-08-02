@@ -9,3 +9,4 @@ Skills that are still being developed. They're not ready to ship — expect roug
 - **[writing-fragments](./writing-fragments/SKILL.md)** — Grilling session that mines you for fragments — heterogeneous nuggets of writing — and appends them to a single document as raw material for a future article.
 - **[writing-shape](./writing-shape/SKILL.md)** — Take a markdown file of raw material and shape it into an article paragraph by paragraph, arguing format choices at each step.
 - **[claude-handoff](./claude-handoff/SKILL.md)** — Hand the current conversation off to a fresh background agent that picks up the work immediately, seeded with a handoff summary via `claude --bg`. User-invoked.
+- **[edit-article](./edit-article/SKILL.md)** — Revise an article draft section by section, proposing and confirming a plan up front, with a 240-character-per-paragraph cap for scannability. User-invoked.

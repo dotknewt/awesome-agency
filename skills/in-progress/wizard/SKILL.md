@@ -1,6 +1,6 @@
 ---
 name: wizard
-description: Generate an interactive bash wizard that walks a human through a manual procedure — third-party setup, a one-off migration, an A→B state transition — opening URLs, capturing values, confirming each step, and writing .env files and GitHub Actions secrets.
+description: Use this skill when the user needs to walk through a manual, multi-step procedure step by step — third-party service setup, a one-off migration, or moving a project from one state to another (A→B) — that involves opening URLs, copying values by hand, and writing them to .env files or GitHub Actions secrets/variables. Generates an interactive bash wizard with progress tracking, confirmation gates, hidden secret entry, and idempotent writes. Apply this even if the user doesn't say "wizard" — phrases like "walk me through setting up X", "help me migrate Y", "guide me through configuring Z", or "I need to connect this repo to <service>" all call for this skill.
 disable-model-invocation: true
 ---
 

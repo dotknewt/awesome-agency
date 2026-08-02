@@ -1,0 +1,22 @@
+[
+  { "query": "I've got a doc full of fragments about our Q3 postmortem — can you turn it into a blog post, one beat at a time?", "should_trigger": true },
+  { "query": "Here's my raw research on urban beekeeping. Let's shape it into an article — show me a couple of ways to start before you write anything.", "should_trigger": true },
+  { "query": "Can we draft this newsletter piece journey-style? I want to pick which direction it goes at each step instead of getting the whole thing at once.", "should_trigger": true },
+  { "query": "I have a transcript of my interview with the founder. Turn it into a long-form piece, but don't write the whole thing — walk me through it beat by beat so I can steer.", "should_trigger": true },
+  { "query": "go back and rewrite beat 3 of the onboarding article — open it with the complaint instead of the stat", "should_trigger": true },
+  { "query": "my notes on the migration are a mess but there's good material in there. can you mine it into an article, choose-your-own-adventure style, and check in with me before each new section?", "should_trigger": true },
+  { "query": "I want to co-write a post from these fragments — give me 2-3 ways to start, tell me what each one sets up, and I'll pick one.", "should_trigger": true },
+  { "query": "we have a pile of raw material for the changelog explainer doc. draft it incrementally, checkpointing with me at each beat, not all at once please.", "should_trigger": true },
+  { "query": "continue the beats article at drafts/beats-piece.md — what are the next couple of directions we could take it from here?", "should_trigger": true },
+  { "query": "take this brain dump and turn it into a piece, but ground every term before you use it and stop after each move so I can react", "should_trigger": true },
+  { "query": "can you just write me a complete draft of this article from my notes, no back-and-forth needed, just give me the whole thing?", "should_trigger": false },
+  { "query": "mine these fragments and organize them into a clean structure, but I don't need it broken into beats — just shape it into paragraphs as you go", "should_trigger": false },
+  { "query": "I don't have any material yet — can you interview me to help me figure out what I even want to write about?", "should_trigger": false },
+  { "query": "can you proofread this article I already finished and tighten up the prose?", "should_trigger": false },
+  { "query": "summarize this raw transcript into three bullet points for a meeting recap", "should_trigger": false },
+  { "query": "fix the grammar and smooth out the flow in this blog post draft I wrote", "should_trigger": false },
+  { "query": "what's a good outline structure for a technical article about database indexing? I don't have material together yet, just thinking out loud", "should_trigger": false },
+  { "query": "can you write a python script that turns a folder of markdown files into a static site", "should_trigger": false },
+  { "query": "can you fact-check this finished article against my raw research notes and flag anything unsupported?", "should_trigger": false },
+  { "query": "I need help brainstorming topic ideas for next month's newsletter, nothing written down yet", "should_trigger": false }
+]

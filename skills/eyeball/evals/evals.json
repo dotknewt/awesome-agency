@@ -1,0 +1,53 @@
+{
+  "skill_name": "eyeball",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "eyeball this NDA and check the liability section — I want to make sure I actually understand what happens if something goes wrong before I sign. File is evals/files/sample_nda.pdf",
+      "expected_output": "The agent runs extract-text on the PDF before writing any analysis and identifies '9. LIMITATION OF LIABILITY' as appearing on page 3 (not page 1, where the same phrase only appears in the table of contents). The analysis correctly describes the $10,000 aggregate liability cap and the exclusion of indirect, incidental, special, and consequential damages, citing verbatim language from the source (e.g. 'INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES', 'TEN THOUSAND DOLLARS ($10,000)') as anchors rather than paraphrasing. A .docx is built and delivered to the user's Desktop with a highlighted screenshot from page 3 backing the claim.",
+      "files": ["evals/files/sample_nda.pdf"],
+      "assertions": [
+        "The agent runs extract-text (or equivalent) on the source before writing any analysis, rather than guessing section numbers or contents",
+        "The analysis correctly identifies '9. LIMITATION OF LIABILITY' as appearing on page 3, not page 1 (where it only appears in the table of contents)",
+        "Anchors used for the liability section are verbatim substrings of the extract-text output, not paraphrases or summaries",
+        "The output .docx exists (delivered to the user's Desktop) and every section in it has either a matching screenshot or an explicit not-found note",
+        "The analysis text accurately references the $10,000 liability cap and the exclusion of indirect/consequential damages, matching the actual source language rather than inventing terms"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you eyeball this consulting agreement and verify the payment terms actually say what I think they say? evals/files/sample_services_agreement.docx",
+      "expected_output": "The agent converts the .docx to PDF, extracts and reads the text, and locates '2. Payment Terms' with the $5,000/month fee, the 30-day payment window, and the 1.5% monthly late-payment interest. The build call uses verbatim anchors from the extracted text (e.g. 'within 30 days', '$5,000 per month', '1.5% per month') rather than generic labels like 'Payment Terms' alone. The resulting .docx is delivered to the user's Desktop with a highlighted screenshot of the payment terms section.",
+      "files": ["evals/files/sample_services_agreement.docx"],
+      "assertions": [
+        "The agent reads the extracted source text before writing analysis, rather than only skimming the .docx directly or assuming standard boilerplate",
+        "Anchors used for the payment terms section are verbatim substrings from the extract-text output, not summarized or paraphrased text",
+        "The output .docx exists on the user's Desktop and includes a highlighted screenshot for the Payment Terms section, or an explicit not-found note if an anchor failed to match",
+        "The analysis does not invent payment terms absent from the source (e.g. no incorrect dollar amount, due date, or interest rate)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "eyeball https://www.gnu.org/licenses/gpl-3.0.en.html and tell me what it actually says about warranty and liability before legal signs off on us using GPLv3 code",
+      "expected_output": "The agent treats the URL as a web source, extracts text from the Playwright-rendered PDF, and locates the warranty disclaimer and liability limitation sections (section 15, 'Disclaimer of Warranty', and section 16, 'Limitation of Liability'). Anchors are verbatim phrases from the rendered text (e.g. language about the program being provided 'without warranty' and liability exclusions), not paraphrases. The agent notes that page numbers come from the rendered PDF and may not match the live webpage's visual layout. A .docx is delivered to the user's Desktop with highlighted screenshots backing each claim.",
+      "assertions": [
+        "The agent extracts text from the rendered URL before writing analysis, rather than relying on prior/background knowledge of the GPL text",
+        "Anchors for the warranty/liability sections are verbatim substrings of the extract-text output for this specific URL, not generic paraphrases",
+        "The agent acknowledges that page numbers are derived from the Playwright-rendered PDF and may differ from the source webpage's browser layout",
+        "The output .docx exists and every section in it has either a matching screenshot or an explicit not-found note"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "double check the confidentiality obligations in this NDA before I sign it — eyeball it. evals/files/sample_nda.pdf",
+      "expected_output": "The source's page 1 contains a table of contents listing 'Confidentiality Obligations' as a line item, while the actual '2. CONFIDENTIALITY OBLIGATIONS' section body is on page 2. The agent recognizes this trap from its own anchor-selection guidance and either targets page 2 explicitly or chooses anchors specific enough (e.g. language about limiting access to employees with a 'legitimate need to know') that they cannot also match the page-1 table-of-contents listing. The delivered .docx highlights the real section 2 body, not the table of contents entry.",
+      "files": ["evals/files/sample_nda.pdf"],
+      "assertions": [
+        "The agent does not use the bare heading 'Confidentiality Obligations' alone as the anchor, since that exact phrase also appears in the page-1 table of contents",
+        "The screenshot/anchors target page 2 (the actual section body), not page 1 (the table of contents)",
+        "Anchors are verbatim substrings of the page-2 extract-text output, such as language about limiting access to those with a legitimate need to know",
+        "The output .docx exists and the Confidentiality Obligations section includes either a matching screenshot from page 2 or an explicit not-found note"
+      ]
+    }
+  ]
+}

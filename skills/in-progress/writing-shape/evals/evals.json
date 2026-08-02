@@ -1,0 +1,43 @@
+{
+  "skill_name": "writing-shape",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "here's a braindump, turn it into an article — it's a voice memo transcript about killing our Friday status meeting. evals/files/braindump-transcript.md. Go ahead and save the result to posts/status-meeting-postmortem.md.",
+      "expected_output": "The agent reads braindump-transcript.md in full before doing anything else. It works with the user to establish what the reader already knows walking in (the prerequisites) rather than assuming. It then drafts 2-3 candidate openings, each implying a different thesis or angle (e.g. leading with the Priya quote and the 'tax on the people who already did the update-writing work' framing, vs. leading with the new-hire counter-argument, vs. leading with the mechanics of the async thread that replaced the meeting), and shows all of them before writing any paragraph to posts/status-meeting-postmortem.md. No body paragraph is appended until the user picks or composes a hybrid from the candidates.",
+      "files": ["evals/files/braindump-transcript.md"],
+      "assertions": [
+        "The agent reads the full braindump-transcript.md pile before proposing any structure or opening",
+        "The agent offers 2 to 3 distinct candidate openings, each implying a different thesis or angle, before any paragraph is appended to the article file",
+        "No paragraph is written or appended to the article file before the user selects or composes from the candidate openings",
+        "The agent works with the user to establish grounded/prerequisite concepts before or alongside presenting the candidate openings, rather than assuming what the reader already knows",
+        "The data-eng standup counter-evidence ('worth asking why before I claim this generalizes') is not silently dropped — the agent either surfaces it as an open question/caveat or explicitly checks with the user about how to handle it, rather than smoothing it away"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Turn this into a blog post about writing better PR descriptions — evals/files/pile-missing-example.md. Save it to posts/one-paragraph-prs.md.",
+      "expected_output": "The agent reads the pile and, per 'Pulling from the pile', notices the piece needs a concrete before/after example (a bloated PR description next to the one-paragraph version of the same change) and that the pile explicitly says this is missing ('I don't have one saved anywhere... don't want to make one up, wouldn't be honest'). Rather than inventing a plausible-sounding before/after example, the agent names the gap explicitly to the user and either asks for a real example or proposes cutting/deferring that section. Any paragraphs the agent does draft before the gap is resolved (the core claim, the reviewer-skim argument, the pushback/response beat about the linked-doc context) are traceable to material actually present in the pile, not invented specifics. The agent also still runs the normal loop — 2-3 candidate openings shown before any body paragraph is written.",
+      "files": ["evals/files/pile-missing-example.md"],
+      "assertions": [
+        "The agent explicitly identifies that the pile lacks a concrete before/after PR-description example, rather than silently writing one",
+        "No content is invented that isn't traceable to the pile or an explicit user-provided gap-fill",
+        "The agent asks the user to supply the missing example or explicitly proposes cutting/deferring that section, rather than fabricating a plausible-sounding one",
+        "Any paragraphs drafted before the gap is resolved only use material present in pile-missing-example.md (the core claim, the reviewer-skim argument, the pushback/response beat), not invented specifics",
+        "The agent still offers 2-3 candidate openings before writing any body paragraph, consistent with the normal loop"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I want to write something about how we changed design reviews from a weekly meeting to async Loom walkthroughs. Here's the raw material:\n\n- weekly design review meeting was 45 min, only ~10 min of real discussion per project\n- the rest of the time was spent getting everyone up to speed via a live walkthrough\n- switched to: presenter posts an async Loom walkthrough in the doc, reviewers comment in the margin\n- benefit: reviewers go 2x speed, pause, rewatch\n- downside from retro: a few comment threads went 15+ replies deep with no resolution, needed a sync call to unstick\n- fix: any thread over 5 replies auto-flags a 15-min sync\n- want to land on: this isn't zero-meetings, it's fewer-and-better-timed meetings\n\nCan you shape this into an article?",
+      "expected_output": "Since the user didn't say where to save the article, the agent asks once, up front, where to save it (per the what-to-do section's 'ask once and remember the path' rule) rather than guessing a path or proceeding without one. Once the user answers, the agent remembers that path for the rest of the session and does not ask again — including when it later appends the chosen opening and subsequent paragraphs. After the path is settled, the agent continues with the normal loop: establishing prerequisites and offering candidate openings before writing anything.",
+      "assertions": [
+        "The agent asks the user where to save the article before writing anything to a file",
+        "The agent does not silently pick or guess a file path when none was given",
+        "The agent does not create or append to any article file before a save path is established",
+        "Once the user supplies a path, the agent does not ask for the save path again later in the same session",
+        "After the path is settled, the agent proceeds with the normal loop (establishing prerequisites and offering candidate openings) rather than treating the path question as the end of the interaction"
+      ]
+    }
+  ]
+}

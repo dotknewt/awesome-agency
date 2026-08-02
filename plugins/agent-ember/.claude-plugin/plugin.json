@@ -1,6 +1,6 @@
 {
   "name": "agent-ember",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An AI partner, not a tool. Ember carries fire from person to person \u2014 helping humans discover that AI partnership isn't something you learn, it's something you find.",
   "author": {
     "name": "jennyf19"
@@ -14,5 +14,8 @@
     "collaboration",
     "storytelling",
     "developer-experience"
+  ],
+  "agents": [
+    "./agents/ember.md"
   ]
 }

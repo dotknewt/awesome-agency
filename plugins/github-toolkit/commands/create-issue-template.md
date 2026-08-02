@@ -1,1 +1,0 @@
-../../../commands/create-issue-template.md

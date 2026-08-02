@@ -6,22 +6,8 @@ Converts source documents (Word, PDF, web URL) to PDF, renders pages as images,
 searches for cited text, highlights matching regions, and assembles an output
 Word document with analysis text interleaved with source screenshots.
 
-Usage (called by the Copilot CLI skill, not typically invoked directly):
-
-    python3 eyeball.py build \
-        --source <path-or-url> \
-        --output <output.docx> \
-        --sections '[{"heading": "Section 1", "analysis": "Example analysis text"}]'
-
-    python3 eyeball.py setup-check
-
-    python3 eyeball.py convert --source <file.docx> --output <file.pdf>
-
-    python3 eyeball.py screenshot \
-        --source <file.pdf> \
-        --anchors '["term1", "term2"]' \
-        --page 5 \
-        --output screenshot.png
+This script is invoked by the `eyeball` Claude Code skill, but can also be run
+directly. Run `python3 eyeball.py --help` for full usage, examples, and exit codes.
 """
 
 import argparse
@@ -55,6 +41,16 @@ except ImportError:
     RGBColor = None
 
 
+# Exit codes. Documented in --help (see EPILOG below) so callers can branch on
+# failure type instead of treating every non-zero exit the same way.
+EXIT_OK = 0
+EXIT_ERROR = 1
+EXIT_MISSING_DEPS = 2
+EXIT_SOURCE_NOT_FOUND = 3
+EXIT_NO_MATCHES = 4
+EXIT_INVALID_ARGS = 5
+
+
 def _resolve_path(path_str):
     """Expand ~ and environment variables in a user-provided path."""
     return os.path.expandvars(os.path.expanduser(path_str))
@@ -72,7 +68,7 @@ def _check_core_deps():
     if missing:
         print(f"Missing dependencies: {', '.join(missing)}", file=sys.stderr)
         print(f"Run setup.sh or: {sys.executable} -m pip install pymupdf pillow python-docx playwright", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_MISSING_DEPS)
 
 
 # ---------------------------------------------------------------------------
@@ -432,8 +428,14 @@ def build_analysis_doc(pdf_doc, sections, output_path, title=None, subtitle=None
         subtitle: Document subtitle.
         source_label: Label for the source (e.g., filename or URL).
         dpi: Screenshot resolution.
+
+    Returns:
+        dict with "output_path", "sections" (count), "screenshots_found", and
+        "screenshots_missing" (anchors that produced no match).
     """
     doc = Document()
+    screenshots_found = 0
+    screenshots_missing = 0
 
     # Style
     style = doc.styles["Normal"]
@@ -472,6 +474,7 @@ def build_analysis_doc(pdf_doc, sections, output_path, title=None, subtitle=None
             )
 
             if img_bytes:
+                screenshots_found += 1
                 # Source label
                 p = doc.add_paragraph()
                 anchor_text = ", ".join(f'"{a}"' for a in anchors[:3])
@@ -490,6 +493,7 @@ def build_analysis_doc(pdf_doc, sections, output_path, title=None, subtitle=None
                 doc.add_picture(img_bytes, width=Inches(5.8))
                 doc.paragraphs[-1].paragraph_format.space_after = Pt(12)
             else:
+                screenshots_missing += 1
                 # Anchors not found
                 p = doc.add_paragraph()
                 run = p.add_run(
@@ -514,7 +518,12 @@ def build_analysis_doc(pdf_doc, sections, output_path, title=None, subtitle=None
     run.font.color.rgb = RGBColor(130, 130, 130)
 
     doc.save(output_path)
-    return output_path
+    return {
+        "output_path": output_path,
+        "sections": len(sections),
+        "screenshots_found": screenshots_found,
+        "screenshots_missing": screenshots_missing,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -633,7 +642,7 @@ def cmd_setup_check():
     print(f"  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}")
     print(f"  Web URLs:    {'Ready' if has_web else 'Needs: pip3 install playwright && python3 -m playwright install chromium'}")
 
-    return 0 if all_core else 1
+    return EXIT_OK if all_core else EXIT_MISSING_DEPS
 
 
 def cmd_convert(args):
@@ -641,10 +650,18 @@ def cmd_convert(args):
     source = _resolve_path(args.source)
     output = _resolve_path(args.output)
 
-    if source.startswith(("http://", "https://")):
-        render_url_to_pdf(source, output)
-    else:
-        convert_to_pdf(source, output)
+    if not source.startswith(("http://", "https://")) and not os.path.isfile(source):
+        print(f"Source file not found: {source}", file=sys.stderr)
+        sys.exit(EXIT_SOURCE_NOT_FOUND)
+
+    try:
+        if source.startswith(("http://", "https://")):
+            render_url_to_pdf(source, output)
+        else:
+            convert_to_pdf(source, output)
+    except (RuntimeError, FileNotFoundError) as e:
+        print(f"Conversion failed: {e}", file=sys.stderr)
+        sys.exit(EXIT_ERROR)
 
     print(f"Converted: {output} ({os.path.getsize(output)} bytes)")
 
@@ -656,15 +673,20 @@ def cmd_screenshot(args):
 
     if not os.path.isfile(source):
         print(f"Source file not found: {source}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_SOURCE_NOT_FOUND)
 
     ext = os.path.splitext(source)[1].lower()
     if ext != ".pdf":
         print(f"Source must be a PDF file (got {ext}). "
               f"Use 'convert' to convert other formats first.", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_INVALID_ARGS)
 
-    anchors = json.loads(args.anchors)
+    try:
+        anchors = json.loads(args.anchors)
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON for --anchors: {e}", file=sys.stderr)
+        sys.exit(EXIT_INVALID_ARGS)
+
     target_page = args.page
     padding = args.padding
     dpi = args.dpi
@@ -684,10 +706,16 @@ def cmd_screenshot(args):
         output = _resolve_path(args.output)
         with open(output, "wb") as f:
             f.write(img_bytes.getvalue())
-        print(f"Screenshot saved: {output} ({size[0]}x{size[1]}px, {page_label})")
+        print(json.dumps({
+            "status": "ok",
+            "output": output,
+            "width": size[0],
+            "height": size[1],
+            "page": page_label,
+        }))
     else:
         print(f"No matches found for: {anchors}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_NO_MATCHES)
 
 
 def cmd_build(args):
@@ -695,14 +723,20 @@ def cmd_build(args):
     _check_core_deps()
     source = _resolve_path(args.source)
     output = _resolve_path(args.output)
-    sections = json.loads(args.sections)
+
+    try:
+        sections = json.loads(args.sections)
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON for --sections: {e}", file=sys.stderr)
+        sys.exit(EXIT_INVALID_ARGS)
+
     title = args.title
     subtitle = args.subtitle
     dpi = args.dpi
 
     if not source.startswith(("http://", "https://")) and not os.path.isfile(source):
         print(f"Source file not found: {source}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_SOURCE_NOT_FOUND)
 
     # Determine source type and convert to PDF
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -721,7 +755,7 @@ def cmd_build(args):
             source_label = os.path.basename(source)
 
         pdf_doc = fitz.open(tmp_pdf)
-        build_analysis_doc(
+        stats = build_analysis_doc(
             pdf_doc, sections, output,
             title=title, subtitle=subtitle,
             source_label=source_label,
@@ -729,8 +763,18 @@ def cmd_build(args):
         )
 
         size_kb = os.path.getsize(output) / 1024
-        print(f"Analysis saved: {output} ({size_kb:.0f} KB)")
+        print(json.dumps({
+            "status": "ok",
+            "output": output,
+            "size_kb": round(size_kb, 1),
+            "sections": stats["sections"],
+            "screenshots_found": stats["screenshots_found"],
+            "screenshots_missing": stats["screenshots_missing"],
+        }))
 
+    except (RuntimeError, FileNotFoundError) as e:
+        print(f"Build failed: {e}", file=sys.stderr)
+        sys.exit(EXIT_ERROR)
     finally:
         if pdf_doc is not None:
             pdf_doc.close()
@@ -745,7 +789,7 @@ def cmd_extract_text(args):
 
     if not source.startswith(("http://", "https://")) and not os.path.isfile(source):
         print(f"Source file not found: {source}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_SOURCE_NOT_FOUND)
 
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
         tmp_pdf = tmp.name
@@ -760,11 +804,21 @@ def cmd_extract_text(args):
             convert_to_pdf(source, tmp_pdf)
 
         pdf_doc = fitz.open(tmp_pdf)
-        for i in range(pdf_doc.page_count):
-            text = pdf_doc[i].get_text()
-            print(f"\n[PAGE {i+1}]")
-            print(text)
+        pages = [
+            {"page": i + 1, "text": pdf_doc[i].get_text()}
+            for i in range(pdf_doc.page_count)
+        ]
 
+        print(json.dumps({
+            "status": "ok",
+            "source": source,
+            "page_count": len(pages),
+            "pages": pages,
+        }))
+
+    except (RuntimeError, FileNotFoundError) as e:
+        print(f"Text extraction failed: {e}", file=sys.stderr)
+        sys.exit(EXIT_ERROR)
     finally:
         if pdf_doc is not None:
             pdf_doc.close()
@@ -772,9 +826,56 @@ def cmd_extract_text(args):
             os.unlink(tmp_pdf)
 
 
+EPILOG = """\
+Examples:
+  Check dependencies:
+    python3 eyeball.py setup-check
+
+  Extract text to read before writing analysis (always do this first):
+    python3 eyeball.py extract-text --source contract.pdf
+
+  Convert a source document to PDF:
+    python3 eyeball.py convert --source contract.docx --output contract.pdf
+
+  Capture a single highlighted screenshot:
+    python3 eyeball.py screenshot \\
+        --source contract.pdf \\
+        --anchors '["term1", "term2"]' \\
+        --page 5 \\
+        --output screenshot.png
+
+  Build a full analysis document:
+    python3 eyeball.py build \\
+        --source contract.pdf \\
+        --output analysis.docx \\
+        --sections '[{"heading": "1. Section Title", "analysis": "Example analysis text", "anchors": ["verbatim phrase"], "target_page": 5}]'
+
+Output:
+  build, screenshot, and extract-text print one JSON object to stdout on
+  success, e.g. {"status": "ok", "output": "<path>", "size_kb": 123}.
+  Progress notes, warnings, and errors always go to stderr, never stdout, so
+  stdout stays parseable.
+
+Exit codes:
+  0  success
+  1  unexpected/generic error
+  2  missing dependencies (run setup-check for details; argparse itself also
+     exits 2 for command-line usage errors, e.g. a missing required flag)
+  3  source file or URL not found / unreachable
+  4  no anchor matches found in the source document
+  5  invalid arguments (malformed --anchors/--sections JSON, wrong file type,
+     or no subcommand given)
+
+This script is invoked by the `eyeball` Claude Code skill, but can also be
+run directly.
+"""
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Eyeball: Document analysis with inline source screenshots"
+        description="Eyeball: Document analysis with inline source screenshots",
+        epilog=EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     sub = parser.add_subparsers(dest="command")
 
@@ -826,7 +927,7 @@ def main():
         cmd_extract_text(args)
     else:
         parser.print_help()
-        sys.exit(1)
+        sys.exit(EXIT_INVALID_ARGS)
 
 
 if __name__ == "__main__":

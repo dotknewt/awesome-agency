@@ -1,0 +1,36 @@
+{
+  "skill_name": "obsidian-vault",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "find my notes about RAG",
+      "expected_output": "A search is run against the vault path resolved from $OBSIDIAN_VAULT_PATH (or a path confirmed with the user), and the assistant reports the filenames of any matching notes.",
+      "assertions": [
+        "The search command (find/grep, or the Grep/Glob tools) targets the vault path resolved from $OBSIDIAN_VAULT_PATH rather than a hardcoded path from a different machine",
+        "The response lists the filenames of matching notes found in the vault",
+        "If no vault path can be resolved, the assistant asks the user for their vault path instead of guessing or failing silently"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "create a note about Chain-of-Thought Prompting and link it to related notes",
+      "expected_output": "A new note file named in Title Case (e.g. `Chain-of-Thought Prompting.md`) is created in the vault, with a wikilinks section at the bottom linking to related existing notes.",
+      "assertions": [
+        "The created filename uses Title Case",
+        "The note content includes a wikilinks section (e.g. a 'Related' heading or a list of `[[...]]` links) at the bottom of the file",
+        "The assistant searched for an existing note with the same or a similar title before creating the new one"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "create a note about Retrieval Augmented Generation",
+      "expected_output": "Before creating a new file, the assistant searches the vault for an existing note with the same or a near-matching title (e.g. `RAG.md`, `Retrieval Augmented Generation.md`) and, since one already exists in the vault (see input files), updates or links to it instead of creating a duplicate.",
+      "assertions": [
+        "The assistant runs a search (grep/find, or the Grep/Glob tools) for an existing note with a matching or near-matching title before writing a new file",
+        "Because `Retrieval Augmented Generation.md` already exists in the vault, the assistant does not create a duplicate file — it updates or links to the existing note instead",
+        "The assistant's response mentions that a matching note already existed"
+      ],
+      "files": ["evals/files/Retrieval Augmented Generation.md"]
+    }
+  ]
+}
