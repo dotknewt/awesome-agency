@@ -9,7 +9,7 @@ description: >
   changes. Arguments: none (changed scope since merge-base with the default branch),
   "full" (whole-repo sweep), or "since <ref>". Nothing is applied without the user's
   approval.
-tools: Read, Grep, Glob, Bash, Agent
+allowed-tools: Read Grep Glob Bash Agent Edit
 ---
 
 # Maintain — drift-audit orchestrator

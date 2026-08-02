@@ -47,9 +47,9 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 - `skills/` — all skills (`<name>/SKILL.md`); `skills/in-progress/` = unshipped drafts, never listed in the marketplace
 - `agents/` — dir-per-agent (`<name>/<name>.md` + symlinked deps so solo installs are self-contained)
 - `commands/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`, `mcp/ludus/` — remaining pools
-- `plugins/<name>/` — bundle manifests + symlinks (9 bundles)
+- `plugins/<name>/` — bundle manifests + symlinks (one dir per bundle)
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
-- `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling
+- `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
 - `TODO.md` — backlog notes; `STATE.md` — session bookmarks (stub unless an effort is active)
 
@@ -58,7 +58,10 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 Run `.github/scripts/generate-marketplace.py` after any pool or bundle change;
 CI runs it with `--check` and fails on drift. Exclusions/renames (bundle-bound
 skills like `work-object-guard`, the `instruction-management-skill` collision
-rename) are constants at the top of that script.
+rename) are constants at the top of that script. New bundles must also be added
+to `BUNDLE_ORDER` in that script — the generator hard-fails on any
+`plugins/<name>/` directory not listed there (the list also controls marketplace
+entry order).
 
 The marketplace `"name"` (`agency`) is preserved deliberately — installs are keyed
 as `<plugin>@<marketplace>`, and existing projects reference `...@agency`.
@@ -69,7 +72,7 @@ Renaming it would force a mass reinstall everywhere.
 - Bundle versions live ONLY in `plugins/<name>/.claude-plugin/plugin.json`. Bump
   on any change to the bundle's members or metadata. Micro-entries use a flat
   `1.0.0` (bump `MICRO_VERSION` in the generator if a coordinated refresh is needed).
-- `repository`/`homepage` in every plugin.json point at `https://github.com/dotknewt/agency`.
+- `repository` in every plugin.json points at `https://github.com/dotknewt/agency`.
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
   needs pool content (instructions, skills), symlink it into `agents/<name>/` so the

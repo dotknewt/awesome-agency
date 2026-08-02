@@ -1,6 +1,6 @@
 # Maintainer-Toolkit Design
 
-Approved 2026-08-02. Source: TODO.md `# maintainer-agents`.
+Approved 2026-08-02. Source: TODO.md `# maintainer-agents` (entry removed by this change).
 
 ## Purpose
 A shippable plugin bundle that keeps a repo's secondary artifacts — documentation,

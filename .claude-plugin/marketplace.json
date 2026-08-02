@@ -96,7 +96,7 @@
     },
     {
       "name": "agentic-eval",
-      "description": "| Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output…",
+      "description": "Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output before…",
       "version": "1.0.0",
       "source": "./skills/agentic-eval",
       "strict": false
@@ -124,7 +124,7 @@
     },
     {
       "name": "context-engineering",
-      "description": "> Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs (red-team…",
+      "description": "Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs (red-team…",
       "version": "1.0.0",
       "source": "./skills/context-engineering",
       "strict": false
@@ -138,7 +138,7 @@
     },
     {
       "name": "dockerize-mcp-server",
-      "description": "> Package an existing MCP server repo (Node/TypeScript, Python, or other) as a Docker image runnable through the Docker MCP Gateway, and validate the resulting Docker artifacts. Use when a user wants…",
+      "description": "Package an existing MCP server repo (Node/TypeScript, Python, or other) as a Docker image runnable through the Docker MCP Gateway, and validate the resulting Docker artifacts. Use when a user wants…",
       "version": "1.0.0",
       "source": "./skills/dockerize-mcp-server",
       "strict": false
@@ -194,14 +194,14 @@
     },
     {
       "name": "github-scaffold",
-      "description": "> Use when the user asks to scaffold GitHub repo metadata under `.github/` — issue templates, issue forms (YAML), PR templates, CODEOWNERS, or workflows. Triggers on phrases like \"add an issue…",
+      "description": "Use when the user asks to scaffold GitHub repo metadata under `.github/` — issue templates, issue forms (YAML), PR templates, CODEOWNERS, or workflows. Triggers on phrases like \"add an issue…",
       "version": "1.0.0",
       "source": "./skills/github-scaffold",
       "strict": false
     },
     {
       "name": "github-workflow",
-      "description": "> Use when the user asks about GitHub Actions CI setup, workflow defaults, concurrency settings, path filters, or chained / stacked PRs. Triggers on phrases like \"set up CI defaults\", \"GitHub Actions…",
+      "description": "Use when the user asks about GitHub Actions CI setup, workflow defaults, concurrency settings, path filters, or chained / stacked PRs. Triggers on phrases like \"set up CI defaults\", \"GitHub Actions…",
       "version": "1.0.0",
       "source": "./skills/github-workflow",
       "strict": false
@@ -285,14 +285,14 @@
     },
     {
       "name": "maintain",
-      "description": "> Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable read-only maintainer agents (user docs, spec docs, instructions, schemas) in parallel, and merge their drift reports…",
+      "description": "Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable read-only maintainer agents (user docs, spec docs, instructions, schemas) in parallel, and merge their drift reports…",
       "version": "1.0.0",
       "source": "./skills/maintain",
       "strict": false
     },
     {
       "name": "make-a-monorepo",
-      "description": "> Use when the user wants to scaffold a brand-new flat monorepo (no packages/ layer) for security/threat-hunting tooling — combining MCP servers, shared JSON schemas, sigma-rules/ECS/OCSF/CIM…",
+      "description": "Use when the user wants to scaffold a brand-new flat monorepo (no packages/ layer) for security/threat-hunting tooling — combining MCP servers, shared JSON schemas, sigma-rules/ECS/OCSF/CIM resource…",
       "version": "1.0.0",
       "source": "./skills/make-a-monorepo",
       "strict": false
@@ -417,7 +417,7 @@
     },
     {
       "name": "docs-spec-maintainer-agent",
-      "description": "> Read-only maintainer that audits contributor-facing technical documentation — specifications, architecture docs, ADRs, API references, format definitions — against the code they describe. Flags…",
+      "description": "Read-only maintainer that audits contributor-facing technical documentation — specifications, architecture docs, ADRs, API references, format definitions — against the code they describe. Flags…",
       "version": "1.0.0",
       "source": "./agents/docs-spec-maintainer",
       "strict": false,
@@ -427,7 +427,7 @@
     },
     {
       "name": "docs-user-maintainer-agent",
-      "description": "> Read-only maintainer that audits user-facing documentation — READMEs, install and usage guides, quickstarts, CLI help text in docs — against the code's actual behavior. Flags stale commands…",
+      "description": "Read-only maintainer that audits user-facing documentation — READMEs, install and usage guides, quickstarts, CLI help text in docs — against the code's actual behavior. Flags stale commands, renamed…",
       "version": "1.0.0",
       "source": "./agents/docs-user-maintainer",
       "strict": false,
@@ -457,7 +457,7 @@
     },
     {
       "name": "instructions-maintainer-agent",
-      "description": "> Read-only maintainer that audits agent instruction files — AGENTS.md and legacy CLAUDE.md at every level of the tree — for guidance that has drifted from reality: wrong paths or commands…",
+      "description": "Read-only maintainer that audits agent instruction files — AGENTS.md and legacy CLAUDE.md at every level of the tree — for guidance that has drifted from reality: wrong paths or commands, conventions…",
       "version": "1.0.0",
       "source": "./agents/instructions-maintainer",
       "strict": false,
@@ -477,7 +477,7 @@
     },
     {
       "name": "schema-maintainer-agent",
-      "description": "> Read-only maintainer that audits structured artifacts — JSON/YAML/TOML manifests, config files, markdown frontmatter, lockfiles, generated files — for parse errors, internal inconsistency, and…",
+      "description": "Read-only maintainer that audits structured artifacts — JSON/YAML/TOML manifests, config files, markdown frontmatter, lockfiles, generated files — for parse errors, internal inconsistency, and drift…",
       "version": "1.0.0",
       "source": "./agents/schema-maintainer",
       "strict": false,
@@ -487,7 +487,7 @@
     },
     {
       "name": "state-keeper-agent",
-      "description": "> Read STATE.md and maintain it: move completed items from WIP/ToDo into a timestamped Completed section, create STATE.md if absent, and surface durable decisions back to the caller as AGENTS.md…",
+      "description": "Read STATE.md and maintain it: move completed items from WIP/ToDo into a timestamped Completed section, create STATE.md if absent, and surface durable decisions back to the caller as AGENTS.md…",
       "version": "1.0.0",
       "source": "./agents/state-keeper",
       "strict": false,
