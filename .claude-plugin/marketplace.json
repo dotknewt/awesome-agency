@@ -70,6 +70,15 @@
       }
     },
     {
+      "name": "maintainer-toolkit",
+      "description": "Drift-audit maintenance for any repo: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, and structured schemas/manifests, then merges their findings into one prioritized report of proposed fixes. Report-and-propose only - nothing is applied without approval.",
+      "source": "./plugins/maintainer-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "agent-doublecheck",
       "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
       "source": "./plugins/agent-doublecheck",
@@ -275,6 +284,13 @@
       "strict": false
     },
     {
+      "name": "maintain",
+      "description": "> Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable read-only maintainer agents (user docs, spec docs, instructions, schemas) in parallel, and merge their drift reports…",
+      "version": "1.0.0",
+      "source": "./skills/maintain",
+      "strict": false
+    },
+    {
       "name": "make-a-monorepo",
       "description": "> Use when the user wants to scaffold a brand-new flat monorepo (no packages/ layer) for security/threat-hunting tooling — combining MCP servers, shared JSON schemas, sigma-rules/ECS/OCSF/CIM…",
       "version": "1.0.0",
@@ -400,6 +416,26 @@
       ]
     },
     {
+      "name": "docs-spec-maintainer-agent",
+      "description": "> Read-only maintainer that audits contributor-facing technical documentation — specifications, architecture docs, ADRs, API references, format definitions — against the code they describe. Flags…",
+      "version": "1.0.0",
+      "source": "./agents/docs-spec-maintainer",
+      "strict": false,
+      "agents": [
+        "./docs-spec-maintainer.md"
+      ]
+    },
+    {
+      "name": "docs-user-maintainer-agent",
+      "description": "> Read-only maintainer that audits user-facing documentation — READMEs, install and usage guides, quickstarts, CLI help text in docs — against the code's actual behavior. Flags stale commands…",
+      "version": "1.0.0",
+      "source": "./agents/docs-user-maintainer",
+      "strict": false,
+      "agents": [
+        "./docs-user-maintainer.md"
+      ]
+    },
+    {
       "name": "doublecheck-agent",
       "description": "Interactive verification agent for AI-generated output. Runs a three-layer pipeline (self-audit, source verification, adversarial review) and produces structured reports with source links for human…",
       "version": "1.0.0",
@@ -420,6 +456,16 @@
       ]
     },
     {
+      "name": "instructions-maintainer-agent",
+      "description": "> Read-only maintainer that audits agent instruction files — AGENTS.md and legacy CLAUDE.md at every level of the tree — for guidance that has drifted from reality: wrong paths or commands…",
+      "version": "1.0.0",
+      "source": "./agents/instructions-maintainer",
+      "strict": false,
+      "agents": [
+        "./instructions-maintainer.md"
+      ]
+    },
+    {
       "name": "issue-filer-agent",
       "description": "File a GitHub issue for an out-of-scope concern or follow-up that turned up during work. Use when you need to capture something for later without losing context. The agent handles deduplication and…",
       "version": "1.0.0",
@@ -427,6 +473,16 @@
       "strict": false,
       "agents": [
         "./issue-filer.md"
+      ]
+    },
+    {
+      "name": "schema-maintainer-agent",
+      "description": "> Read-only maintainer that audits structured artifacts — JSON/YAML/TOML manifests, config files, markdown frontmatter, lockfiles, generated files — for parse errors, internal inconsistency, and…",
+      "version": "1.0.0",
+      "source": "./agents/schema-maintainer",
+      "strict": false,
+      "agents": [
+        "./schema-maintainer.md"
       ]
     },
     {
