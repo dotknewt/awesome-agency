@@ -4,41 +4,79 @@ This file provides guidance to AI agents (Claude Code, Codex, Cursor, etc.) when
 
 # agency
 
-`agency` is the thin, aggregating Claude Code plugin marketplace at the root of a multi-repo split. It hosts no *distributable* plugin content itself — every marketplace-listed plugin is sourced from one of three sibling repos, each independently addable as its own marketplace too:
+`agency` is dotKnewt's single-repo Claude Code plugin marketplace. All distributable
+content lives here in shared top-level pools; plugins are thin bundles over those
+pools. The former sibling repos (`dotknewt/skills`, `dotknewt/agents`,
+`dotknewt/toolkits`) were consolidated into this repo and archived.
 
-- [`dotknewt/skills`](https://github.com/dotknewt/skills) — standalone single-skill plugins (bare `SKILL.md` dirs, no `plugin.json`)
-- [`dotknewt/agents`](https://github.com/dotknewt/agents) — agent-persona plugins, each bundling an agent `.md` with its own dedicated skills
-- [`dotknewt/toolkits`](https://github.com/dotknewt/toolkits) — composite plugins bundling skills+agents+commands+hooks together, including `ludus-toolkit` (bundles a full separate npm/TS MCP server project — merged into `toolkits` after briefly living in its own repo; sourced the same `git-subdir` way as every other toolkit, not a whole-repo source)
+## Architecture (load-bearing — verified against Claude Code behavior)
 
-This split lets users install a single skill, a single agent, a whole toolkit, or any combination — instead of one all-or-nothing repo.
+Two distribution mechanisms coexist in `.claude-plugin/marketplace.json`:
 
-`agency`'s own working tree also has three things that are **not** part of the marketplace:
-- `.claude/` — local-only Claude Code config for developing plugins in this repo (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`, `statusline-setup`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills covering agent/command/hook/mcp/plugin development). No `plugin.json` — never published, just tooling for building what ships to the sibling repos.
-- `specs/agents/Agent-Specification.md`, `specs/skills/Skill-Specification.md` — reference specs consumed by the `.claude/` tooling above.
-- `/agents/`, `/skills/`, `/toolkits/` at repo root — gitignored checkouts of the sibling repos above, nested here purely so local work has one working directory. Each is its own independent repo with its own remote; none of it is tracked by `agency`'s git history (see `.gitignore`).
+1. **Bundles** — `plugins/<name>/` contains a real `.claude-plugin/plugin.json`
+   plus **symlinks** into the top-level pools at default component locations
+   (`skills/<s>`, `agents/<a>.md`, `commands/<c>.md`, `hooks/hooks.json`,
+   `scripts`, `.mcp.json`). Claude Code dereferences symlinks into real files at
+   install time, and the install cache contains only the plugin directory.
+   Marketplace entries for bundles are minimal (`source: "./plugins/<name>"`,
+   no version — `plugin.json` is authoritative).
+2. **Micro-entries** — every skill and agent is individually installable via
+   inline entries with narrow sources: `{name: "<skill>", source: "./skills/<skill>",
+   strict: false}` and `{name: "<agent>-agent", source: "./agents/<agent>",
+   strict: false, agents: ["./<agent>.md"]}`. The agents pool is dir-per-agent
+   (`agents/<name>/<name>.md`) for exactly this reason.
 
-## `marketplace.json` conventions
-
-Every entry's `source` is a cross-repo reference, not a local path:
-
-```json
-{ "source": "git-subdir", "url": "git@github.com:dotknewt/<repo>.git", "path": "<name>", "ref": "main" }
-```
-
-**Must use SSH urls** (`git@github.com:...`), not HTTPS — these are private repos and HTTPS clone fails with `fatal: unable to get password from user` (no credential helper configured for git-subdir's non-interactive clone).
-
-The marketplace `"name"` (`agency`) is preserved deliberately — installs are keyed as `<plugin-name>@<marketplace-name>`, and other projects (and this repo's own `.claude/settings.json`) already reference `...@agency`. Renaming it would force a mass reinstall everywhere.
-
-Validate before committing: `claude plugin validate .` Refresh a live install with `claude plugin marketplace update agency`. Note that `claude plugin install` caches by `<name>/<version>` — if you change a plugin's source but not its version, `install` may report "already installed" without re-fetching. Verify a source change with an explicit `uninstall` + `install`.
+**Do not** create marketplace entries with `source: "./"` — Claude Code
+unconditionally default-scans `./agents/` and `./commands/` at the plugin source
+root (empty arrays do not suppress; the `commands` field is additive), so a
+repo-root source would absorb every pooled agent and command. Also: entry-level
+`hooks` must be an inline object (file-path form fails to load), and shipped
+content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 
 ## Repository layout
 
-- `.claude-plugin/marketplace.json` — the manifest; see conventions above
-- `.claude/` — local plugin-development tooling (agents/commands/skills); see above
-- `specs/` — `Agent-Specification.md` and `Skill-Specification.md` reference docs for the `.claude/` tooling
-- `TODO.md` — cross-repo backlog notes (not repo-specific to `agency` alone)
-- `.github/workflows/validate.yml` — lightweight jq-only schema check on `marketplace.json` (valid JSON, required fields, kebab-case names, unique names). It does **not** validate plugin content anymore, since that content lives in sibling repos now — `dotknewt/toolkits` carries its own `validate.yml` for that, using scripts that used to live in this repo's `hooks-toolkit` and are now local to `toolkits-repo`.
-- `STATE.md` — session bookmarks; currently just a stub (the multi-repo split it tracked is complete) — don't expect current content there until a new effort starts using it
+- `skills/` — all skills (`<name>/SKILL.md`); `skills/in-progress/` = unshipped drafts, never listed in the marketplace
+- `agents/` — dir-per-agent (`<name>/<name>.md` + symlinked deps so solo installs are self-contained)
+- `commands/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`, `mcp/ludus/` — remaining pools
+- `plugins/<name>/` — bundle manifests + symlinks (9 bundles)
+- `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
+- `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling
+- `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
+- `TODO.md` — backlog notes; `STATE.md` — session bookmarks (stub unless an effort is active)
+
+## marketplace.json is generated
+
+Run `.github/scripts/generate-marketplace.py` after any pool or bundle change;
+CI runs it with `--check` and fails on drift. Exclusions/renames (bundle-bound
+skills like `work-object-guard`, the `instruction-management-skill` collision
+rename) are constants at the top of that script.
+
+The marketplace `"name"` (`agency`) is preserved deliberately — installs are keyed
+as `<plugin>@<marketplace>`, and existing projects reference `...@agency`.
+Renaming it would force a mass reinstall everywhere.
+
+## Conventions
+
+- Bundle versions live ONLY in `plugins/<name>/.claude-plugin/plugin.json`. Bump
+  on any change to the bundle's members or metadata. Micro-entries use a flat
+  `1.0.0` (bump `MICRO_VERSION` in the generator if a coordinated refresh is needed).
+- `repository`/`homepage` in every plugin.json point at `https://github.com/dotknewt/agency`.
+- Skill/agent content must reference its own aux files relative to the skill dir,
+  or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
+  needs pool content (instructions, skills), symlink it into `agents/<name>/` so the
+  micro-install stays self-contained.
+- `claude plugin install` caches by `<name>/<version>` — a source change without a
+  version bump may report "already installed" without re-fetching. Verify with
+  explicit `uninstall` + `install`.
+- Refresh a live install with `claude plugin marketplace update agency`.
+
+## Validation
+
+- CI: `.github/workflows/validate.yml` — generator drift check, marketplace shape
+  (jq), source-path existence, broken-symlink scan (`find plugins agents -xtype l`),
+  `plugin.json` validation and SKILL.md frontmatter validation via
+  `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`.
+- Locally: `claude plugin validate .` for a quick manifest check.
 
 ## No build or test step
 

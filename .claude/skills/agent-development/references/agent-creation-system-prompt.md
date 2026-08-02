@@ -164,7 +164,7 @@ Validate with: `scripts/validate-agent.sh agents/[identifier].md`
 This agent automates agent creation using the proven patterns from Claude Code's internal implementation, making it easy for users to create high-quality autonomous agents.
 ````
 
-Note: `agent-creator.md`'s color-choice guidance in step 3 above still lists `magenta` (and the live agent itself uses `color: magenta`) rather than the canonical `purple`. That's the same known-stale value flagged in `SKILL.md` — reproduced here verbatim because this file mirrors the real prompt exactly, not because `magenta` should be used for new agents. Prefer `purple` per `specs/agents/Agent-Specification.md` when writing new agents by hand.
+Note: `agent-creator.md`'s color-choice guidance in step 3 above still lists `magenta` (and the live agent itself uses `color: magenta`) rather than the canonical `purple`. That's the same known-stale value flagged in `SKILL.md` — reproduced here verbatim because this file mirrors the real prompt exactly, not because `magenta` should be used for new agents. Prefer `purple` per `docs/specs/agents/Agent-Specification.md` when writing new agents by hand.
 
 ## Usage Pattern
 

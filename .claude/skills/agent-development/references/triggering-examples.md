@@ -2,7 +2,7 @@
 
 Complete guide to writing `<example>`/`<commentary>` blocks that cause an agent to be dispatched reliably.
 
-This is the convention actually used by every agent in `.claude/agents/` (`agent-creator.md`, `plugin-validator.md`, `skill-reviewer.md`) and documented as canonical in `specs/agents/Agent-Specification.md`. `scripts/validate-agent.sh` checks for it. If you see an agent file using a plain-prose description with no `<example>` blocks, that file has drifted from the convention — bring it back in line rather than treating it as a second valid style.
+This is the convention actually used by every agent in `.claude/agents/` (`agent-creator.md`, `plugin-validator.md`, `skill-reviewer.md`) and documented as canonical in `docs/specs/agents/Agent-Specification.md`. `scripts/validate-agent.sh` checks for it. If you see an agent file using a plain-prose description with no `<example>` blocks, that file has drifted from the convention — bring it back in line rather than treating it as a second valid style.
 
 ## Where trigger examples live
 

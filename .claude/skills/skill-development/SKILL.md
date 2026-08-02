@@ -93,7 +93,7 @@ Ask: "Review my skill and check if it follows best practices"
 
 Also confirm: writing style is imperative/infinitive throughout, examples are complete, scripts are executable, and referenced content isn't duplicated between SKILL.md and references/.
 
-To test triggering reliability and output quality more rigorously, write `evals/evals.json` (task-level test cases) and `evals/eval_queries.json` (labeled trigger-phrase queries) following `specs/skills/eval.md` and `specs/skills/optimize.md` — repo context only, these specs live outside this skill's own package. This skill's own `evals/` directory is a worked example of both files.
+To test triggering reliability and output quality more rigorously, write `evals/evals.json` (task-level test cases) and `evals/eval_queries.json` (labeled trigger-phrase queries) following `docs/specs/skills/eval.md` and `docs/specs/skills/optimize.md` — repo context only, these specs live outside this skill's own package. This skill's own `evals/` directory is a worked example of both files.
 
 ### Step 6: Iterate
 
