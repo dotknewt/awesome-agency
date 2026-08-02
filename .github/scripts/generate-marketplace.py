@@ -31,17 +31,16 @@ BUNDLE_BOUND_SKILLS = {
 # Skill dirs that are not shippable skills at all.
 NON_SKILL_DIRS = {"in-progress"}
 # Micro-entry renames where the bare skill name collides with a bundle name.
-SKILL_ENTRY_RENAMES = {"instruction-management": "instruction-management-skill"}
+SKILL_ENTRY_RENAMES = {}
 
 BUNDLE_ORDER = [
-    "instruction-management",
+    "steward",
     "engineering-toolkit",
     "github-toolkit",
     "hooks-toolkit",
     "docker-toolkit",
     "ludus-toolkit",
     "work-objects-toolkit",
-    "maintainer-toolkit",
     "agent-doublecheck",
     "agent-ember",
 ]

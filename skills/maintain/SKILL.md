@@ -72,7 +72,7 @@ Combine the returned reports:
 
 Ask the user which fixes to apply (all / by severity / cherry-pick / none). Apply
 approved fixes yourself with Edit — the maintainer agents never write. For
-instruction-file fixes, if the instruction-management plugin is installed, offer its
+instruction-file fixes, offer the bundled `instructions-audit` / `instructions-revise`
 skills as the applying mechanism instead of raw edits.
 
 ## Boundaries

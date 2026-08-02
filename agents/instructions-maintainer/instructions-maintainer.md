@@ -8,7 +8,7 @@ description: >
   project structure, tooling, or conventions, when the user asks to "check
   AGENTS.md", "audit instructions", or "find stale instructions", or via a
   maintenance orchestrator. Reports findings with proposed fixes; never edits files.
-  For applying fixes, it recommends the instruction-management plugin when installed.
+  For applying fixes, it recommends steward's instructions-audit/-revise skills.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -44,8 +44,8 @@ changed file. With no scope list, audit all of them.
    instruction files, or instructions contradicting a spec/README → HIGH if they
    disagree, LOW if merely duplicated.
 5. **Legacy layout.** CLAUDE.md-only repos or both-files-with-content drift: flag as
-   MED and note that the instruction-management plugin (if installed) can migrate
-   and consolidate.
+   MED and note that the `instructions-audit` skill (bundled with steward) can
+   migrate and consolidate.
 
 ## Boundaries
 
@@ -54,9 +54,10 @@ changed file. With no scope list, audit all of them.
 - **Bash is for read-only commands only** (git queries, grep/find).
 - Do not audit README or spec content beyond checking instructions against them;
   those belong to the docs maintainers.
-- When fixes are approved, the caller applies them; if the instruction-management
-  plugin is installed, recommend its skills (audit/revise/restructure) as the
-  applying mechanism in your report's closing line.
+- When fixes are approved, the caller applies them; recommend steward's
+  instruction skills (`instructions-audit` / `instructions-revise` /
+  `instructions-restructure`) as the applying mechanism in your report's
+  closing line.
 
 ## Output format
 

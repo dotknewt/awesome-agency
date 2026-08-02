@@ -1,10 +1,10 @@
 ---
-name: instruction-management
+name: instructions-audit
 description: Audit and improve AGENTS.md project instructions (and legacy CLAUDE.md). Use when the user asks to check, audit, update, improve, fix, restructure, or clean up AGENTS.md / CLAUDE.md, or mentions "agent memory", "project memory", "project instructions", "instruction file", "instruction maintenance", "instruction structure", or filenames like AGENTS.md, agents.md, CLAUDE.md. Scans the repo, evaluates quality against a rubric, prints a report, and proposes targeted edits. When the repo still uses CLAUDE.md only, also proposes migrating to AGENTS.md.
 tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
-# Instruction Management
+# Instructions Audit
 
 Goal: keep instruction files complete enough that agents rarely need Explore subagents or ad-hoc Glob/Grep/Read searches to find what's already documented.
 
@@ -121,8 +121,8 @@ For each instruction file, score against the rubric. See [references/quality-cri
 
 After the report in Phase 3, invoke each sub-skill via the Skill tool (in order):
 
-1. `revise-instructions` — capture anything new discovered this session.
-2. `restructure-instructions` — move any misplaced content to its correct depth.
+1. `instructions-revise` — capture anything new discovered this session.
+2. `instructions-restructure` — move any misplaced content to its correct depth.
 
 Then handle any residual updates inline as described below.
 
@@ -204,8 +204,8 @@ See [references/templates.md](references/templates.md) for `AGENTS.md` templates
 6. **Undocumented gotchas** — non-obvious patterns not captured
 7. **Legacy `CLAUDE.md` without `AGENTS.md`** — migration candidate
 8. **Drift between `CLAUDE.md` and `AGENTS.md`** — two sources of truth
-9. **Root AGENTS.md contains subdirectory-specific detail** — if content only applies when working under a specific directory (e.g. `mcp/`, `packages/api/`), it belongs in that directory's own AGENTS.md, not root. Root detail bloats every session regardless of task. Handled by the `restructure-instructions` sub-skill in Phase 4.
-10. **Root AGENTS.md missing `@subdir/AGENTS.md` references** — when a subdirectory has its own AGENTS.md, root should reference it with `@subdir/AGENTS.md` so agents know where to look without loading the content until they're in that directory. Handled by the `restructure-instructions` sub-skill in Phase 4.
+9. **Root AGENTS.md contains subdirectory-specific detail** — if content only applies when working under a specific directory (e.g. `mcp/`, `packages/api/`), it belongs in that directory's own AGENTS.md, not root. Root detail bloats every session regardless of task. Handled by the `instructions-restructure` sub-skill in Phase 4.
+10. **Root AGENTS.md missing `@subdir/AGENTS.md` references** — when a subdirectory has its own AGENTS.md, root should reference it with `@subdir/AGENTS.md` so agents know where to look without loading the content until they're in that directory. Handled by the `instructions-restructure` sub-skill in Phase 4.
 11. **Root AGENTS.md missing Memory vs. State callout** — if the root AGENTS.md has no `## Memory vs. State` section, suggest adding the standard snippet (AGENTS.md = north star for stable decisions, docs/STATE.md = session bookmarks updated frequently).
 
 ## User Tips to Share

@@ -1,13 +1,13 @@
 ---
-name: revise-instructions
+name: instructions-revise
 description: Update AGENTS.md (or legacy CLAUDE.md) with learnings from this session — discovered commands, patterns, gotchas, or configuration quirks worth capturing for future sessions. Use when the user asks to capture, save, remember, or record session learnings into project instructions, or after a session that surfaced non-obvious context a fresh agent would benefit from.
 ---
 
-# Revise Instructions
+# Instructions Revise
 
 Review this session for learnings about working with this codebase. Update the instruction file with context that would help future sessions be more effective.
 
-This skill writes to `AGENTS.md` by default. If the repo only has `CLAUDE.md`, surface the migration option (see `../instruction-management/references/migration.md`) before adding new content there.
+This skill writes to `AGENTS.md` by default. If the repo only has `CLAUDE.md`, surface the migration option (see `../instructions-audit/references/migration.md`) before adding new content there.
 
 ## Step 1: Reflect
 
@@ -72,7 +72,7 @@ After applying changes, run:
 
 ```bash
 project_hash=$(printf '%s' "${CLAUDE_PROJECT_DIR:-.}" | md5sum | cut -c1-8)
-rm -f "/tmp/revise-instructions-nudge/$project_hash"
+rm -f "/tmp/instructions-revise-nudge/$project_hash"
 ```
 
 This resets the stop-hook nudge counter so the hook can fire again if the session continues touching more files.

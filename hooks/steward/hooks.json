@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/revise-instructions-nudge.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/instructions-revise-nudge.sh",
             "timeout": 10
           }
         ]

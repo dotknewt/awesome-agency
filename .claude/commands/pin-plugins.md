@@ -109,7 +109,7 @@ add `enabledPlugins` and `extraKnownMarketplaces` near the end if they are new k
 Show a compact diff summary:
 ```
 Pinned to .claude/settings.json:
-  + instruction-management@agency
+  + steward@agency
   + github-toolkit@agency
   (marketplace agency added to extraKnownMarketplaces)
 

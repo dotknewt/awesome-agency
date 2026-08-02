@@ -57,8 +57,8 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 
 Run `.github/scripts/generate-marketplace.py` after any pool or bundle change;
 CI runs it with `--check` and fails on drift. Exclusions/renames (bundle-bound
-skills like `work-object-guard`, the `instruction-management-skill` collision
-rename) are constants at the top of that script. New bundles must also be added
+skills like `work-object-guard`, and any skill whose bare name collides with a
+bundle name) are constants at the top of that script. New bundles must also be added
 to `BUNDLE_ORDER` in that script — the generator hard-fails on any
 `plugins/<name>/` directory not listed there (the list also controls marketplace
 entry order).
