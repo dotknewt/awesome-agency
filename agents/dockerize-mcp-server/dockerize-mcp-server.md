@@ -1,6 +1,7 @@
 ---
 name: dockerize-mcp-server
 description: Convert an MCP server repo (local path, git URL, or GitHub `org/repo`) into a Docker image runnable via the Docker MCP Gateway. Use when a user wants to containerize an npm/pip-based MCP server, or to validate an existing MCP server's Dockerfile, catalog, and gateway wiring. Explores potentially large source repos in its own context window, then writes a Dockerfile, catalog entry, and run instructions into a new artifact directory.
+model: opus
 tools:
   - Read
   - Glob

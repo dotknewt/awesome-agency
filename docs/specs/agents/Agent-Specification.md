@@ -226,15 +226,19 @@ The `model` field accepts:
 | `sonnet` / `opus` / `haiku` | A model alias — the current model in that tier. |
 | A full model ID, e.g. `claude-haiku-4-5-20251001`, `claude-opus-4-6` | Pins the agent to an exact model/snapshot regardless of what the alias currently resolves to. |
 
+**Use alias style (`sonnet` / `opus` / `haiku` / `inherit`), not a full model ID.** A pinned full ID silently goes stale as new snapshots ship, while an alias always resolves to the current model in that tier. Only pin a full ID if an agent has a specific, documented reason to freeze on an exact snapshot rather than track the tier — this repo currently has no such case.
+
 Observed usage in this repo:
 
 * `.claude/agents/agent-creator.md` → `model: opus` (needs strong reasoning to design good agent configurations)
 * `.claude/agents/plugin-validator.md` → `model: haiku` (mechanical validation checklist, cheap model is enough)
 * `.claude/agents/skill-reviewer.md` → `model: inherit`
-* `agents/branch-warden/branch-warden.md` → `model: claude-haiku-4-5-20251001` (pinned full ID; comment in the file explains it explicitly: "Runs on a cheap model so the main session does not burn tokens on git plumbing")
-* `agents/state-keeper/state-keeper.md` → `model: haiku`, same rationale
+* `agents/branch-warden/branch-warden.md`, `agents/issue-filer/issue-filer.md`, `agents/schema-maintainer/schema-maintainer.md`, `agents/state-keeper/state-keeper.md`, `agents/docs-user-maintainer/docs-user-maintainer.md` → `model: haiku` (mechanical, high-volume, or bookkeeping work — git plumbing, issue filing, STATE.md upkeep, syntactic drift checks)
+* `agents/doublecheck/doublecheck.md` → `model: opus` (adversarial verifier; if it inherited a cheap-tier session's model it would audit AI output with the same weak reasoning that may have produced the error)
+* `agents/dockerize-mcp-server/dockerize-mcp-server.md` → `model: opus` (explores an unfamiliar repo and generates a working Dockerfile/catalog entry from an ambiguous brief — the same shape as `agent-creator`)
+* `agents/docs-spec-maintainer/docs-spec-maintainer.md`, `agents/instructions-maintainer/instructions-maintainer.md` → `model: inherit` (drift detection here requires judging whether documented *intent* still holds, not just syntax — left on the caller's tier deliberately, unlike their sibling `docs-user-maintainer`)
 
-**Convention:** default to `inherit` unless the agent's job clearly calls for a specific tier. Route mechanical, high-volume, or low-judgment work (git plumbing, issue filing, bookkeeping) to `haiku`; route work that requires generating a whole new artifact from an ambiguous brief (like designing another agent's system prompt) to `opus`; leave everything in between on `inherit` so it tracks whatever model tier the calling session is already using.
+**Convention:** default to `inherit` unless the agent's job clearly calls for a specific tier. Route mechanical, high-volume, or low-judgment work (git plumbing, issue filing, bookkeeping, syntactic drift checks) to `haiku`; route work that requires generating a whole new artifact from an ambiguous brief (designing another agent's system prompt, writing a Dockerfile for an unfamiliar repo) or that must out-reason a possibly-cheaper calling session (adversarial verification) to `opus`; leave everything in between on `inherit` so it tracks whatever model tier the calling session is already using.
 
 ## Invocation
 
