@@ -1,7 +1,7 @@
 ---
 name: issue-filer
 description: File a GitHub issue for an out-of-scope concern or follow-up that turned up during work. Use when you need to capture something for later without losing context. The agent handles deduplication and labeling.
-model: claude-haiku-4-5-20251001
+model: haiku
 tools:
   - Bash
   - Read

@@ -1,6 +1,6 @@
 {
   "name": "maintainer-toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Drift-audit maintenance for any repo: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, and structured schemas/manifests, then merges their findings into one prioritized report of proposed fixes. Report-and-propose only - nothing is applied without approval.",
   "author": {
     "name": "dotKnewt",

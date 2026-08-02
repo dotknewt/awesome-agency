@@ -1,7 +1,7 @@
 ---
 name: branch-warden
 description: Prepare a clean branch for new work, or sweep merged/stale local + origin branches. Invoke before starting an unrelated task to confirm the working branch matches the task and that no open PR will cause a squash-merge tangle. Also invoke to run the canonical cleanup recipe after PRs merge. Runs on a cheap model so the main session does not burn tokens on git plumbing.
-model: claude-haiku-4-5-20251001
+model: haiku
 tools:
   - Bash
   - Read

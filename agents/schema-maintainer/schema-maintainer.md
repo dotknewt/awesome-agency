@@ -9,7 +9,7 @@ description: >
   schemas", "validate manifests", "check configs", or "find config drift", or via a
   maintenance orchestrator. Reports findings with proposed fixes; never edits files.
   Runs on Haiku so routine audits stay cheap.
-model: claude-haiku-4-5-20251001
+model: haiku
 tools: Read, Grep, Glob, Bash
 ---
 
