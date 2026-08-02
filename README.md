@@ -43,6 +43,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `mcp/` | Bundled MCP servers (`mcp/ludus/`). |
 | `plugins/` | Bundle definitions: `.claude-plugin/plugin.json`, README, and symlinks into the pools above. Claude Code dereferences the symlinks at install time. |
 | `docs/specs/` | Agent/skill/work-object specifications used by the dev tooling. |
+| `docs/superpowers/specs/` | Dated feature design docs from the planning workflow. |
 | `.claude/` | Repo-local development tooling (not distributed). |
 
 ## Bundles
@@ -56,11 +57,15 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
 | `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
+| `maintainer-toolkit` | Drift-audit maintenance — `/maintain` orchestrator plus read-only maintainer agents for docs, instructions, and schemas. |
 | `agent-doublecheck` | Three-layer verification pipeline for AI output. |
 | `agent-ember` | Ember, an AI-partnership persona agent. |
 
 `work-object-guard` is the one skill without a standalone entry — it depends on
 its bundle's scripts and hook, so install `work-objects-toolkit` instead.
+Similarly, prefer installing `maintainer-toolkit` over the standalone `maintain`
+skill — the orchestrator dispatches the four maintainer agents that only ship
+with the bundle.
 
 ## Contributing / maintaining
 

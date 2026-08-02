@@ -4,7 +4,7 @@
 
 # Specification
 
-> The complete format specification for Claude Code subagents ("agents"), as used across this repository's project-level tooling (`.claude/agents/`) and its distributable plugins (`toolkits/*/agents/`, `agents/*/agents/`).
+> The complete format specification for Claude Code subagents ("agents"), as used across this repository's project-level tooling (`.claude/agents/`) and its distributable content (the `agents/<name>/<name>.md` pool, symlinked into bundles at `plugins/*/agents/`).
 
 ## Directory structure
 
@@ -16,19 +16,20 @@ Where the file lives determines its scope:
 | --- | --- | --- |
 | `.claude/agents/*.md` | Current project only | Dev-tooling agents specific to this repo, e.g. `.claude/agents/agent-creator.md`, `.claude/agents/plugin-validator.md`, `.claude/agents/skill-reviewer.md` |
 | `~/.claude/agents/*.md` | Every project on the machine | Personal agents not tied to any one repo (not used in this repo, but supported) |
-| `<plugin>/agents/*.md` | Wherever the plugin is enabled | Distributable agents shipped inside a plugin, e.g. `toolkits/github-toolkit/agents/branch-warden.md`, `agents/agent-ember/agents/ember.md` |
+| `agents/<agent-name>/<agent-name>.md` | Shared pool (canonical source) | Every distributable agent, e.g. `agents/branch-warden/branch-warden.md`, `agents/ember/ember.md`. Each is published as a standalone `<name>-agent` marketplace micro-entry by `.github/scripts/generate-marketplace.py`. |
+| `plugins/<plugin>/agents/*.md` | Wherever the plugin is enabled | Symlinks into the pool, listed **explicitly** in the bundle's `plugin.json` `agents` array (the default directory scan skips file-level symlinks), e.g. `plugins/github-toolkit/agents/branch-warden.md` |
 
 ```
-.claude/agents/               # project-scoped agents (this repo's own tooling)
+.claude/agents/                # project-scoped agents (this repo's own tooling)
 ├── agent-creator.md
 ├── plugin-validator.md
 └── skill-reviewer.md
 
-toolkits/<plugin-name>/agents/ # plugin-scoped agents inside a toolkit
-└── <agent-name>.md
+agents/<agent-name>/           # shared pool — canonical source, dir-per-agent
+└── <agent-name>.md            # (+ symlinked deps so solo installs are self-contained)
 
-agents/<plugin-name>/agents/   # plugin-scoped agents inside a standalone agent-persona plugin
-└── <agent-name>.md
+plugins/<plugin>/agents/       # bundle membership — symlinks into the pool
+└── <agent-name>.md ⇒ ../../../agents/<agent-name>/<agent-name>.md
 ```
 
 Both `.claude/agents/` and `~/.claude/agents/` are scanned recursively, so subfolders (e.g. `agents/review/`) are permitted for organization — the subfolder path does not affect how the agent is identified or invoked, since identity comes only from the `name` field. Inside a **plugin's** `agents/` directory, subfolders do matter: they become part of the agent's scoped identifier (see [Invocation](#invocation)).
@@ -134,7 +135,7 @@ Canonical values (per the upstream Claude Code docs): `red`, `blue`, `green`, `y
   color: cyan      # skill-reviewer.md
   ```
 
-  Many agents in this repo (all of the `toolkits/*/agents/*.md` and `agents/*/agents/*.md` examples) omit `color` entirely. It has no functional effect, so omitting it is fine.
+  Many agents in this repo (all of the pool agents under `agents/*/`) omit `color` entirely. It has no functional effect, so omitting it is fine.
 </Card>
 
 ### Body content
@@ -230,8 +231,8 @@ Observed usage in this repo:
 * `.claude/agents/agent-creator.md` → `model: opus` (needs strong reasoning to design good agent configurations)
 * `.claude/agents/plugin-validator.md` → `model: haiku` (mechanical validation checklist, cheap model is enough)
 * `.claude/agents/skill-reviewer.md` → `model: inherit`
-* `toolkits/github-toolkit/agents/branch-warden.md` → `model: claude-haiku-4-5-20251001` (pinned full ID; comment in the file explains it explicitly: "Runs on a cheap model so the main session does not burn tokens on git plumbing")
-* `toolkits/instruction-management/agents/state-keeper.md` → `model: haiku`, same rationale
+* `agents/branch-warden/branch-warden.md` → `model: claude-haiku-4-5-20251001` (pinned full ID; comment in the file explains it explicitly: "Runs on a cheap model so the main session does not burn tokens on git plumbing")
+* `agents/state-keeper/state-keeper.md` → `model: haiku`, same rationale
 
 **Convention:** default to `inherit` unless the agent's job clearly calls for a specific tier. Route mechanical, high-volume, or low-judgment work (git plumbing, issue filing, bookkeeping) to `haiku`; route work that requires generating a whole new artifact from an ambiguous brief (like designing another agent's system prompt) to `opus`; leave everything in between on `inherit` so it tracks whatever model tier the calling session is already using.
 
@@ -247,12 +248,13 @@ Agents are invoked through the `Agent` tool (this tool was called `Task` prior t
 
 ## Validation
 
-There is no first-party `agent-ref` CLI analogous to `skills-ref` in this repo. Two local scripts approximate it (referenced from the `agent-development` skill and used by `.claude/agents/plugin-validator.md`):
+There is no first-party `agent-ref` CLI analogous to `skills-ref` in this repo. One local script approximates it (referenced from the `agent-development` skill and used by `.claude/agents/plugin-validator.md`):
 
 ```bash
-scripts/validate-agent.sh agents/<agent-name>.md
-scripts/test-agent-trigger.sh
+.claude/skills/agent-development/scripts/validate-agent.sh agents/<agent-name>/<agent-name>.md
 ```
+
+Known limitation: the script reads only the same-line value of `description:`, so block-scalar descriptions (`description: >`) trigger a false "description too short" warning — ignore it for agents using that style.
 
 At minimum, before publishing a new agent file, confirm:
 
