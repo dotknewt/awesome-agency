@@ -2,7 +2,8 @@
 name: maintain
 description: >
   Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable
-  read-only maintainer agents (user docs, spec docs, instructions, schemas) in
+  read-only maintainer agents (user docs, spec docs, instructions, schemas,
+  conventions) in
   parallel, and merge their drift reports into one prioritized list of proposed
   fixes. Use when the user asks to "run maintenance", "check for drift", "audit the
   repo", "are the docs/instructions/schemas up to date", or after landing a batch of
@@ -36,7 +37,7 @@ back to a full sweep.
 ## Phase 2 — Route
 
 Decide which maintainers apply. Dispatch a maintainer when ANY of its triggers hit
-(for `full`, dispatch all four):
+(for `full`, dispatch all five):
 
 | Maintainer | Dispatch when |
 |---|---|
@@ -44,6 +45,7 @@ Decide which maintainers apply. Dispatch a maintainer when ANY of its triggers h
 | docs-user-maintainer | Changed files include user-facing docs (README, usage/install guides), OR changed code alters user-visible behavior (commands, flags, features) |
 | docs-spec-maintainer | Changed files include spec/architecture docs, OR changed code alters structure a spec describes (modules, formats, interfaces) |
 | instructions-maintainer | Changed files include AGENTS.md/CLAUDE.md, OR changes touch project structure, tooling, scripts, or conventions instructions typically state |
+| conventions-maintainer | Changed files include planning/user docs (docs/TODO.md, docs/STATE.md, docs/user/), the root README, pyproject.toml, or Python CLI code (`[project.scripts]` entry points, Typer/click apps) |
 
 When in doubt for a maintainer, dispatch it — a clean report is cheap; missed drift
 is not. Tell the user which maintainers you are dispatching and why, one line each.
@@ -73,7 +75,10 @@ Combine the returned reports:
 Ask the user which fixes to apply (all / by severity / cherry-pick / none). Apply
 approved fixes yourself with Edit — the maintainer agents never write. For
 instruction-file fixes, offer the bundled `instructions-audit` / `instructions-revise`
-skills as the applying mechanism instead of raw edits.
+skills as the applying mechanism instead of raw edits. For conventions gaps (missing
+`docs/TODO.md` or `docs/STATE.md`, misplaced user docs, CLI-standards drift), offer
+the bundled `conventions` skill's scaffold mode as the applying mechanism (it routes
+STATE.md creation through `state-keeper`).
 
 ## Boundaries
 

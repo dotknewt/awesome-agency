@@ -51,7 +51,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | Plugin | What it does |
 |---|---|
 | `engineering-toolkit` | Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD, code review. |
-| `steward` | Repo stewardship — `/maintain` drift-audit orchestrator with read-only maintainer agents for docs, instructions, and schemas, plus skills that audit/revise/restructure AGENTS.md, scaffold conventions, and keep docs/STATE.md current. |
+| `steward` | Repo stewardship — `/maintain` drift-audit orchestrator with read-only maintainer agents for docs, instructions, schemas, and conventions, plus skills that audit/revise/restructure AGENTS.md, scaffold conventions, and keep docs/STATE.md current. |
 | `github-toolkit` | Issue templates, CI scaffolding, branch-warden + issue-filer agents. |
 | `hooks-toolkit` | Safety/hygiene hooks — force-push guard, secret scanner, manifest validators. |
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
@@ -63,7 +63,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 `work-object-guard` is the one skill without a standalone entry — it depends on
 its bundle's scripts and hook, so install `work-objects-toolkit` instead.
 Similarly, prefer installing `steward` over the standalone `maintain`
-skill — the orchestrator dispatches the four maintainer agents that only ship
+skill — the orchestrator dispatches the five maintainer agents that only ship
 with the bundle.
 
 ## Contributing / maintaining

@@ -86,7 +86,7 @@ Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, env
 - **Skill** `ludus-troubleshoot` — diagnose and resolve Ludus deployment, networking, template, WireGuard, Proxmox, and Ansible issues.
 - **MCP** — bundled Ludus MCP server for driving the Ludus API from Claude.
 
-### steward (v1.0.0)
+### steward (v1.1.0)
 
 Unified repo stewardship — drift-audit orchestration plus the skills that apply the fixes. Merges the former `maintainer-toolkit` and `instruction-management` plugins.
 
@@ -94,6 +94,7 @@ Unified repo stewardship — drift-audit orchestration plus the skills that appl
 - **Agent** `docs-spec-maintainer` — audits specs/architecture/API docs against the code they describe.
 - **Agent** `instructions-maintainer` — audits AGENTS.md / legacy CLAUDE.md for stale or missing guidance.
 - **Agent** `schema-maintainer` — audits manifests, configs, frontmatter, generated files; runs repo validators; runs on Haiku.
+- **Agent** `conventions-maintainer` — audits docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and Python CLI standards (uv, Typer, --help, completion) against the cross-project conventions; runs on Haiku.
 - **Agent** `state-keeper` — read docs/STATE.md and maintain it: move completed items into a timestamped Completed section, surface durable decisions as AGENTS.md candidates; runs on Haiku.
 - **Skill** `maintain` — orchestrator: scopes what changed, dispatches the applicable maintainer agents in parallel, merges their drift reports into one prioritized list of proposed fixes.
 - **Skill** `instructions-audit` — audit and improve AGENTS.md/CLAUDE.md against a quality rubric, propose targeted edits.
@@ -125,7 +126,7 @@ Installable individually; not part of any plugin bundle.
 |---|---|
 | Plugin bundles | 9 |
 | Skills (shipped) | 45 (40 bundled + 5 unbundled) |
-| Agents | 10 |
+| Agents | 11 |
 | Commands | 4 |
 | Plugins with hooks | 3 (`hooks-toolkit`, `steward`, `work-objects-toolkit`) |
 | Plugins with a bundled MCP server | 1 (`ludus-toolkit`) |

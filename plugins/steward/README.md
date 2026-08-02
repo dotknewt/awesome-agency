@@ -57,6 +57,9 @@ many files (tunable via `INSTRUCTIONS_NUDGE_THRESHOLD` / `INSTRUCTIONS_NUDGE_DEL
 - `conventions` (skill) — dotKnewt's cross-project conventions: planning docs in
   `docs/TODO.md` / `docs/STATE.md`, user docs in `docs/user/`, uv + Typer standards
   for Python CLIs. Scaffolds fresh projects and answers "where does this go?".
+- `conventions-maintainer` (agent) — the sweep-side auditor for the same
+  conventions: flags docs-layout and CLI-standards drift during `/maintain` runs;
+  the `conventions` skill's scaffold mode applies approved fixes. Runs on Haiku.
 - `state-keeper` (agent) — maintains `docs/STATE.md`: rolls completed WIP/ToDo items
   into a timestamped Completed section and surfaces durable decisions as AGENTS.md
   candidates. Runs on Haiku.
@@ -70,6 +73,7 @@ many files (tunable via `INSTRUCTIONS_NUDGE_THRESHOLD` / `INSTRUCTIONS_NUDGE_DEL
 | `docs-spec-maintainer` | Audits specs/architecture/API docs against the code they describe |
 | `instructions-maintainer` | Audits AGENTS.md / legacy CLAUDE.md for stale or missing guidance |
 | `schema-maintainer` | Audits manifests, configs, frontmatter, generated files; runs repo validators (Haiku) |
+| `conventions-maintainer` | Audits docs layout and Python CLI standards against the cross-project conventions (Haiku) |
 | `instructions-audit` (skill) | Audits instruction quality against a rubric; proposes and applies edits |
 | `instructions-revise` (skill) | Captures session learnings into AGENTS.md |
 | `instructions-restructure` (skill) | Moves instruction content to the depth where it applies |

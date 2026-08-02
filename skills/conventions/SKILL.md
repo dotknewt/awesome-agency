@@ -36,3 +36,6 @@ When invoked to set up conventions on a project (fresh or existing):
   [references/cli-standards.md](references/cli-standards.md)
 - Wrapping up a session → invoke `state-keeper` with path
   `docs/STATE.md`; park backlog ideas in `docs/TODO.md`.
+- Drift checks → the `conventions-maintainer` agent audits a repo
+  against these references as part of steward's `maintain` sweep; this
+  skill's scaffold mode is the applying mechanism for approved fixes.

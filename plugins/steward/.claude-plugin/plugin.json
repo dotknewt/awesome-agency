@@ -1,7 +1,7 @@
 {
   "name": "steward",
-  "version": "1.0.0",
-  "description": "Unified repo stewardship: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, and structured schemas/manifests, merges their drift findings into one prioritized report, and applies approved fixes through bundled skills that audit, revise, and restructure AGENTS.md (and legacy CLAUDE.md), scaffold project conventions, and keep docs/STATE.md current. Report-and-propose - nothing is applied without approval.",
+  "version": "1.1.0",
+  "description": "Unified repo stewardship: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, cross-project conventions, and structured schemas/manifests, merges their drift findings into one prioritized report, and applies approved fixes through bundled skills that audit, revise, and restructure AGENTS.md (and legacy CLAUDE.md), scaffold project conventions, and keep docs/STATE.md current. Report-and-propose - nothing is applied without approval.",
   "author": {
     "name": "dotKnewt",
     "email": "dotknewt@keemail.me"
@@ -18,10 +18,12 @@
     "agents-md",
     "claude-md",
     "project-context",
+    "conventions",
     "agents"
   ],
   "agents": [
     "./agents/state-keeper.md",
+    "./agents/conventions-maintainer.md",
     "./agents/schema-maintainer.md",
     "./agents/docs-user-maintainer.md",
     "./agents/docs-spec-maintainer.md",
