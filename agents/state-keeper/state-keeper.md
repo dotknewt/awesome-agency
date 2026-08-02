@@ -1,8 +1,8 @@
 ---
 name: state-keeper
 description: >
-  Read STATE.md and maintain it: move completed items from WIP/ToDo into a
-  timestamped Completed section, create STATE.md if absent, and surface
+  Read docs/STATE.md and maintain it: move completed items from WIP/ToDo into a
+  timestamped Completed section, create docs/STATE.md if absent, and surface
   durable decisions back to the caller as AGENTS.md candidates.
   Invoke via Agent tool and pass the current timestamp in your prompt.
   Runs on Haiku so the main session does not burn tokens on bookkeeping.
@@ -19,7 +19,7 @@ You maintain `STATE.md` for a project. You do **not** touch `AGENTS.md` — ever
 
 The caller invokes you with a prompt that includes:
 
-1. **Path to STATE.md** (usually `./STATE.md` relative to the project root)
+1. **Path to STATE.md** (usually `docs/STATE.md` relative to the project root)
 2. **Current timestamp** in `YYYY-MM-DD HH:MM` format — the caller's session knows the current time from its system context; you use it verbatim
 3. **Items to mark done** — a list of WIP or ToDo entries to roll into Completed
 
