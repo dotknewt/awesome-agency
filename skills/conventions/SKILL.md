@@ -1,5 +1,5 @@
 ---
-name: project-conventions
+name: conventions
 description: dotKnewt's cross-project conventions — planning docs in docs/TODO.md and docs/STATE.md, user docs in docs/user/, and uv + Typer standards for Python CLIs. Use when scaffolding a new project, asked where docs or backlog notes should live, adding a Python CLI command, or checking a project against these conventions.
 ---
 

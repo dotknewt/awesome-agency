@@ -76,17 +76,6 @@ Composable safety and hygiene hooks for Claude Code — force-push guard, secret
 - **Command** `/install-hook` — wire a named hook from this plugin into the user's Claude Code `settings.json`.
 - **Hooks** (`hooks/hooks.json`): `PreToolUse` (block force-push to main, scan writes/edits for secrets), `PostToolUse` (validate plugin manifests, validate skill frontmatter), `SessionStart` (branch check), `UserPromptSubmit` (inject branch rules), `Stop` (commit checklist).
 
-### instruction-management (v1.6.0)
-
-Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) — audit quality, capture session learnings, keep instructions current.
-
-- **Agent** `state-keeper` — read docs/STATE.md and maintain it: move completed items into a timestamped Completed section, surface durable decisions as AGENTS.md candidates; runs on Haiku.
-- **Skill** `instruction-management` — audit and improve AGENTS.md/CLAUDE.md against a quality rubric, propose targeted edits.
-- **Skill** `project-conventions` — cross-project conventions: docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and uv + Typer standards for Python CLIs.
-- **Skill** `restructure-instructions` — move instruction-file content closer to where it's needed, reducing root-file context bloat.
-- **Skill** `revise-instructions` — update instructions with learnings from a session (commands, patterns, gotchas).
-- **Hooks**: `Stop` — nudge the user to capture session learnings in AGENTS.md when the session touched many files.
-
 ### ludus-toolkit (v0.1.0)
 
 Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, environment guidance, and troubleshooting, plus a bundled MCP server for driving the Ludus API from Claude.
@@ -96,6 +85,22 @@ Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, env
 - **Skill** `ludus-range-config` — create, edit, and validate Ludus range configuration YAML (VMs, domains, networking, router settings, roles).
 - **Skill** `ludus-troubleshoot` — diagnose and resolve Ludus deployment, networking, template, WireGuard, Proxmox, and Ansible issues.
 - **MCP** — bundled Ludus MCP server for driving the Ludus API from Claude.
+
+### steward (v1.0.0)
+
+Unified repo stewardship — drift-audit orchestration plus the skills that apply the fixes. Merges the former `maintainer-toolkit` and `instruction-management` plugins.
+
+- **Agent** `docs-user-maintainer` — audits user-facing docs (READMEs, guides) against actual behavior; runs on Haiku.
+- **Agent** `docs-spec-maintainer` — audits specs/architecture/API docs against the code they describe.
+- **Agent** `instructions-maintainer` — audits AGENTS.md / legacy CLAUDE.md for stale or missing guidance.
+- **Agent** `schema-maintainer` — audits manifests, configs, frontmatter, generated files; runs repo validators; runs on Haiku.
+- **Agent** `state-keeper` — read docs/STATE.md and maintain it: move completed items into a timestamped Completed section, surface durable decisions as AGENTS.md candidates; runs on Haiku.
+- **Skill** `maintain` — orchestrator: scopes what changed, dispatches the applicable maintainer agents in parallel, merges their drift reports into one prioritized list of proposed fixes.
+- **Skill** `instructions-audit` — audit and improve AGENTS.md/CLAUDE.md against a quality rubric, propose targeted edits.
+- **Skill** `instructions-revise` — update instructions with learnings from a session (commands, patterns, gotchas).
+- **Skill** `instructions-restructure` — move instruction-file content closer to where it's needed, reducing root-file context bloat.
+- **Skill** `conventions` — cross-project conventions: docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and uv + Typer standards for Python CLIs.
+- **Hooks**: `Stop` — nudge the user to capture session learnings in AGENTS.md when the session touched many files.
 
 ### work-objects-toolkit (v0.1.0)
 
@@ -119,8 +124,8 @@ Installable individually; not part of any plugin bundle.
 | Category | Count |
 |---|---|
 | Plugin bundles | 9 |
-| Skills (shipped) | 43 (38 bundled + 5 unbundled) |
-| Agents | 6 |
+| Skills (shipped) | 45 (40 bundled + 5 unbundled) |
+| Agents | 10 |
 | Commands | 4 |
-| Plugins with hooks | 3 (`hooks-toolkit`, `instruction-management`, `work-objects-toolkit`) |
+| Plugins with hooks | 3 (`hooks-toolkit`, `steward`, `work-objects-toolkit`) |
 | Plugins with a bundled MCP server | 1 (`ludus-toolkit`) |

@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "instruction-management",
-      "description": "Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) - audit quality, capture session learnings, and keep project instructions current.",
-      "source": "./plugins/instruction-management",
+      "name": "steward",
+      "description": "Unified repo stewardship: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, and structured schemas/manifests, merges their drift findings into one prioritized report, and applies approved fixes through bundled skills that audit, revise, and restructure AGENTS.md (and legacy CLAUDE.md), scaffold project conventions, and keep docs/STATE.md current. Report-and-propose - nothing is applied without approval.",
+      "source": "./plugins/steward",
       "author": {
         "name": "dotKnewt",
         "email": "dotknewt@keemail.me"
@@ -70,15 +70,6 @@
       }
     },
     {
-      "name": "maintainer-toolkit",
-      "description": "Drift-audit maintenance for any repo: a /maintain orchestrator deploys read-only maintainer agents for user docs, spec docs, project instructions, and structured schemas/manifests, then merges their findings into one prioritized report of proposed fixes. Report-and-propose only - nothing is applied without approval.",
-      "source": "./plugins/maintainer-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
       "name": "agent-doublecheck",
       "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
       "source": "./plugins/agent-doublecheck",
@@ -127,6 +118,13 @@
       "description": "Concepts and techniques for memory and context engineering with LLMs — covering three angles: supporting development (prompting patterns, RAG, context window management), exploiting LLMs (red-team…",
       "version": "1.0.0",
       "source": "./skills/context-engineering",
+      "strict": false
+    },
+    {
+      "name": "conventions",
+      "description": "dotKnewt's cross-project conventions — planning docs in docs/TODO.md and docs/STATE.md, user docs in docs/user/, and uv + Typer standards for Python CLIs. Use when scaffolding a new project, asked…",
+      "version": "1.0.0",
+      "source": "./skills/conventions",
       "strict": false
     },
     {
@@ -249,10 +247,24 @@
       "strict": false
     },
     {
-      "name": "instruction-management-skill",
+      "name": "instructions-audit",
       "description": "Audit and improve AGENTS.md project instructions (and legacy CLAUDE.md). Use when the user asks to check, audit, update, improve, fix, restructure, or clean up AGENTS.md / CLAUDE.md, or mentions…",
       "version": "1.0.0",
-      "source": "./skills/instruction-management",
+      "source": "./skills/instructions-audit",
+      "strict": false
+    },
+    {
+      "name": "instructions-restructure",
+      "description": "Restructure project instruction files (AGENTS.md / legacy CLAUDE.md) to move content closer to where it is needed, reducing context bloat in the root file. Use when the user asks to restructure…",
+      "version": "1.0.0",
+      "source": "./skills/instructions-restructure",
+      "strict": false
+    },
+    {
+      "name": "instructions-revise",
+      "description": "Update AGENTS.md (or legacy CLAUDE.md) with learnings from this session — discovered commands, patterns, gotchas, or configuration quirks worth capturing for future sessions. Use when the user asks…",
+      "version": "1.0.0",
+      "source": "./skills/instructions-revise",
       "strict": false
     },
     {
@@ -312,13 +324,6 @@
       "strict": false
     },
     {
-      "name": "project-conventions",
-      "description": "dotKnewt's cross-project conventions — planning docs in docs/TODO.md and docs/STATE.md, user docs in docs/user/, and uv + Typer standards for Python CLIs. Use when scaffolding a new project, asked…",
-      "version": "1.0.0",
-      "source": "./skills/project-conventions",
-      "strict": false
-    },
-    {
       "name": "prototype",
       "description": "Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.",
       "version": "1.0.0",
@@ -337,20 +342,6 @@
       "description": "Use when you need to resolve an in-progress git merge/rebase conflict.",
       "version": "1.0.0",
       "source": "./skills/resolving-merge-conflicts",
-      "strict": false
-    },
-    {
-      "name": "restructure-instructions",
-      "description": "Restructure project instruction files (AGENTS.md / legacy CLAUDE.md) to move content closer to where it is needed, reducing context bloat in the root file. Use when the user asks to restructure…",
-      "version": "1.0.0",
-      "source": "./skills/restructure-instructions",
-      "strict": false
-    },
-    {
-      "name": "revise-instructions",
-      "description": "Update AGENTS.md (or legacy CLAUDE.md) with learnings from this session — discovered commands, patterns, gotchas, or configuration quirks worth capturing for future sessions. Use when the user asks…",
-      "version": "1.0.0",
-      "source": "./skills/revise-instructions",
       "strict": false
     },
     {

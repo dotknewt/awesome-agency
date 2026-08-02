@@ -51,19 +51,18 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | Plugin | What it does |
 |---|---|
 | `engineering-toolkit` | Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD, code review. |
-| `instruction-management` | Maintain and improve AGENTS.md / CLAUDE.md project instructions. |
+| `steward` | Repo stewardship — `/maintain` drift-audit orchestrator with read-only maintainer agents for docs, instructions, and schemas, plus skills that audit/revise/restructure AGENTS.md, scaffold conventions, and keep docs/STATE.md current. |
 | `github-toolkit` | Issue templates, CI scaffolding, branch-warden + issue-filer agents. |
 | `hooks-toolkit` | Safety/hygiene hooks — force-push guard, secret scanner, manifest validators. |
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
 | `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
-| `maintainer-toolkit` | Drift-audit maintenance — `/maintain` orchestrator plus read-only maintainer agents for docs, instructions, and schemas. |
 | `agent-doublecheck` | Three-layer verification pipeline for AI output. |
 | `agent-ember` | Ember, an AI-partnership persona agent. |
 
 `work-object-guard` is the one skill without a standalone entry — it depends on
 its bundle's scripts and hook, so install `work-objects-toolkit` instead.
-Similarly, prefer installing `maintainer-toolkit` over the standalone `maintain`
+Similarly, prefer installing `steward` over the standalone `maintain`
 skill — the orchestrator dispatches the four maintainer agents that only ship
 with the bundle.
 

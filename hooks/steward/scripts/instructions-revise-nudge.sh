@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Stop hook: suggest /revise-instructions when the session touched many files.
+# Stop hook: suggest /instructions-revise when the session touched many files.
 # Nudges at most once per session; re-nudges only if file count grows by
 # INSTRUCTIONS_NUDGE_DELTA or more since the last nudge.
 #
@@ -20,7 +20,7 @@ if ! git -C "$project_dir" rev-parse --git-dir &>/dev/null; then
 fi
 
 # Sentinel file per project dir — stores file count at last nudge.
-sentinel_dir="/tmp/revise-instructions-nudge"
+sentinel_dir="/tmp/instructions-revise-nudge"
 mkdir -p "$sentinel_dir"
 project_hash=$(printf '%s' "$project_dir" | md5sum | cut -c1-8)
 sentinel="$sentinel_dir/$project_hash"
@@ -45,6 +45,6 @@ if [ -f "$sentinel" ]; then
 fi
 
 printf '%s' "$total" > "$sentinel"
-printf '{"decision":"approve","systemMessage":"This session touched ~%s file(s). Consider asking to capture key learnings in AGENTS.md (the revise-instructions skill) before finishing."}\n' "$total"
+printf '{"decision":"approve","systemMessage":"This session touched ~%s file(s). Consider asking to capture key learnings in AGENTS.md (the instructions-revise skill) before finishing."}\n' "$total"
 
 exit 0
