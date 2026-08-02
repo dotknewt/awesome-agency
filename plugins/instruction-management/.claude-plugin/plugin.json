@@ -1,0 +1,19 @@
+{
+  "name": "instruction-management",
+  "version": "1.5.2",
+  "description": "Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) - audit quality, capture session learnings, and keep project instructions current.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/agency",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "agents-md",
+    "claude-md",
+    "instructions",
+    "project-context",
+    "agents"
+  ]
+}

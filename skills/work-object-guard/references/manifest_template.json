@@ -1,0 +1,8 @@
+{
+  "commit_before": "<sha-before-change>",
+  "commit_after": "<sha-after-change, must equal actual HEAD>",
+  "branch": "<branch-name>",
+  "generated_at": "<ISO8601 timestamp>",
+  "diff_command": "git diff <before>..<after> -- <paths>",
+  "test_command": "<exact test/build command that produced test-output.txt>"
+}

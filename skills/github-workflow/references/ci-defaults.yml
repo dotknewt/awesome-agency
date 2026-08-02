@@ -1,0 +1,42 @@
+# Canonical CI defaults template
+# Copy and adapt for any new .github/workflows/*.yml
+#
+# Key properties:
+#   - push only fires on main (PR events cover feature branches)
+#   - concurrency cancels superseded PR runs, leaves main runs alone
+#   - paths-ignore skips the workflow for pure docs/config changes
+#   - workflow_dispatch allows manual reruns
+
+name: <workflow-name>
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "instructions/**"
+      - "docs/**"
+      - ".gitignore"
+      - "LICENSE"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "instructions/**"
+      - "docs/**"
+      - ".gitignore"
+      - "LICENSE"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  <job-name>:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      # ... your steps here

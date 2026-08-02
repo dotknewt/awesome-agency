@@ -1,0 +1,62 @@
+# Local Docker MCP catalog for ludus-mcp.
+#
+# This is a "file catalog" attached to a profile and consumed by the gateway:
+#   docker mcp gateway run --profile <profile-id>
+#
+# Before using it:
+#   1. Build the image:  docker build -t ludus-mcp:local .
+#   2. Store the API key as a secret (keychain), mapped to LUDUS_API_KEY below:
+#        printf '%s' '<YOUR_LUDUS_API_KEY>' | docker mcp secret set ludus-mcp.api_key
+#   3. Create a profile, attach this catalog, and set the URL (resolved into
+#      LUDUS_URL via the {{ludus-mcp.url}} template below). The old
+#      `docker mcp config write` is gone — use the profile CLI instead:
+#        docker mcp profile create --name ludus
+#        docker mcp profile server add ludus --server file://ludus-catalog.yaml
+#        docker mcp profile config ludus --set ludus-mcp.url=https://198.51.100.1:8080
+#      If Ludus runs on THIS machine's localhost, use host.docker.internal (not
+#      127.0.0.1) so the container can reach it, e.g. https://host.docker.internal:8080
+registry:
+  ludus-mcp:
+    description: Manage Ludus cyber ranges (deploy, template, snapshot, test) via the Ludus API.
+    title: Ludus MCP
+    type: server
+    image: ludus-mcp:local
+    ref: ""
+    source: https://gitlab.com/badsectorlabs/ludus-mcp
+    upstream: https://gitlab.com/badsectorlabs/ludus-mcp
+    icon: https://docs.ludus.cloud/img/logo.png
+    tools:
+      - name: list_ludus_operations
+      - name: describe_ludus_operation
+      - name: call_ludus_api
+      - name: refresh_ludus_catalog
+    secrets:
+      - name: ludus-mcp.api_key
+        env: LUDUS_API_KEY
+        example: <YOUR_LUDUS_API_KEY>
+    env:
+      - name: LUDUS_URL
+        value: '{{ludus-mcp.url}}'
+    config:
+      - name: ludus-mcp
+        description: Ludus server connection
+        type: object
+        properties:
+          url:
+            type: string
+          upload_dir:
+            type: string
+        required:
+          - url
+    # Optional: to support call_ludus_api file-upload (multipart) operations,
+    # mount a host directory and pass container-side paths (e.g. /uploads/x.tar.gz):
+    # volumes:
+    #   - /absolute/host/path:/uploads
+    metadata:
+      category: security
+      tags:
+        - security
+        - cyber-range
+        - ludus
+      license: MIT License
+      owner: badsectorlabs

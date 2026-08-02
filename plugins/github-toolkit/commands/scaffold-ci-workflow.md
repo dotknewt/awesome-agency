@@ -1,0 +1,1 @@
+../../../commands/scaffold-ci-workflow.md

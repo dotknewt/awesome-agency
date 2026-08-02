@@ -1,0 +1,38 @@
+{
+  "name": "@badsectorlabs/ludus-mcp",
+  "version": "0.3.0",
+  "description": "MCP server for managing Ludus cyber ranges from AI assistants.",
+  "type": "module",
+  "bin": {
+    "ludus-mcp": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && cp src/openapi.yaml build/openapi.yaml && chmod +x build/index.js",
+    "dev": "tsc --watch",
+    "test": "node --test --import tsx 'src/**/*.test.ts'",
+    "inspect": "npx @modelcontextprotocol/inspector node build/index.js"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^12.1.0",
+    "@modelcontextprotocol/sdk": "^1.4.0",
+    "undici": "^7.0.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/badsectorlabs/ludus-mcp.git"
+  },
+  "license": "MIT"
+}

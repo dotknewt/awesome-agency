@@ -1,0 +1,16 @@
+{
+  "description": "Nudge the user to capture session learnings in AGENTS.md when the session has touched many files.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/revise-instructions-nudge.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
