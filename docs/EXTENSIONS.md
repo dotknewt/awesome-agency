@@ -76,12 +76,13 @@ Composable safety and hygiene hooks for Claude Code — force-push guard, secret
 - **Command** `/install-hook` — wire a named hook from this plugin into the user's Claude Code `settings.json`.
 - **Hooks** (`hooks/hooks.json`): `PreToolUse` (block force-push to main, scan writes/edits for secrets), `PostToolUse` (validate plugin manifests, validate skill frontmatter), `SessionStart` (branch check), `UserPromptSubmit` (inject branch rules), `Stop` (commit checklist).
 
-### instruction-management (v1.5.3)
+### instruction-management (v1.6.0)
 
 Tools to maintain and improve project instruction files (AGENTS.md and legacy CLAUDE.md) — audit quality, capture session learnings, keep instructions current.
 
-- **Agent** `state-keeper` — read STATE.md and maintain it: move completed items into a timestamped Completed section, surface durable decisions as AGENTS.md candidates; runs on Haiku.
+- **Agent** `state-keeper` — read docs/STATE.md and maintain it: move completed items into a timestamped Completed section, surface durable decisions as AGENTS.md candidates; runs on Haiku.
 - **Skill** `instruction-management` — audit and improve AGENTS.md/CLAUDE.md against a quality rubric, propose targeted edits.
+- **Skill** `project-conventions` — cross-project conventions: docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and uv + Typer standards for Python CLIs.
 - **Skill** `restructure-instructions` — move instruction-file content closer to where it's needed, reducing root-file context bloat.
 - **Skill** `revise-instructions` — update instructions with learnings from a session (commands, patterns, gotchas).
 - **Hooks**: `Stop` — nudge the user to capture session learnings in AGENTS.md when the session touched many files.

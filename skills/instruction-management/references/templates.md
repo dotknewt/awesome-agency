@@ -120,13 +120,13 @@ Document development workflow patterns.
 
 ### Memory vs. State
 
-Document the AGENTS.md / STATE.md split so agents know where to write durable vs. transient information.
+Document the AGENTS.md / docs/STATE.md split so agents know where to write durable vs. transient information.
 
 ```markdown
 ## Memory vs. State
 
 - **AGENTS.md** — project north star. Stable decisions, architecture, commands, conventions. Update infrequently, only when something durable changes.
-- **STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
+- **docs/STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
 ```
 
 ---
@@ -157,7 +157,7 @@ Document the AGENTS.md / STATE.md split so agents know where to write durable vs
 ## Memory vs. State
 
 - **AGENTS.md** — project north star. Stable decisions, architecture, commands, conventions. Update infrequently, only when something durable changes.
-- **STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
+- **docs/STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
 ```
 
 ---
@@ -204,7 +204,7 @@ Document the AGENTS.md / STATE.md split so agents know where to write durable vs
 ## Memory vs. State
 
 - **AGENTS.md** — project north star. Stable decisions, architecture, commands, conventions. Update infrequently, only when something durable changes.
-- **STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
+- **docs/STATE.md** — session bookmarks and in-progress work (WIP, ToDo, recent Completed). Update every session or task switch; invoke the `state-keeper` subagent to keep it tidy.
 ```
 
 ---

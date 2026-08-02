@@ -29,7 +29,8 @@ branch. Audit:
   for the changed file's names, commands, and flags).
 
 If no scope list is provided, audit all user-facing docs: the root `README.md`,
-`docs/` content addressed to users (installation, usage, tutorials, FAQs), and any
+`docs/user/*.md` (the canonical location for user-facing docs — installation,
+usage, tutorials, FAQs), any other `docs/` content addressed to users, and any
 per-component READMEs. Spec/architecture material addressed to contributors is NOT
 yours — leave it to docs-spec-maintainer and note the handoff in your report if you
 see drift there.

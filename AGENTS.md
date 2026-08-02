@@ -51,7 +51,7 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
-- `TODO.md` — backlog notes; `STATE.md` — session bookmarks (stub unless an effort is active)
+- `docs/TODO.md` — backlog notes; `docs/STATE.md` — session bookmarks (stub unless an effort is active)
 
 ## marketplace.json is generated
 

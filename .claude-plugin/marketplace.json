@@ -312,6 +312,13 @@
       "strict": false
     },
     {
+      "name": "project-conventions",
+      "description": "dotKnewt's cross-project conventions — planning docs in docs/TODO.md and docs/STATE.md, user docs in docs/user/, and uv + Typer standards for Python CLIs. Use when scaffolding a new project, asked…",
+      "version": "1.0.0",
+      "source": "./skills/project-conventions",
+      "strict": false
+    },
+    {
       "name": "prototype",
       "description": "Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.",
       "version": "1.0.0",
@@ -487,7 +494,7 @@
     },
     {
       "name": "state-keeper-agent",
-      "description": "Read STATE.md and maintain it: move completed items from WIP/ToDo into a timestamped Completed section, create STATE.md if absent, and surface durable decisions back to the caller as AGENTS.md…",
+      "description": "Read docs/STATE.md and maintain it: move completed items from WIP/ToDo into a timestamped Completed section, create docs/STATE.md if absent, and surface durable decisions back to the caller as…",
       "version": "1.0.0",
       "source": "./agents/state-keeper",
       "strict": false,

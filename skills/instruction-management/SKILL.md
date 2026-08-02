@@ -206,7 +206,7 @@ See [references/templates.md](references/templates.md) for `AGENTS.md` templates
 8. **Drift between `CLAUDE.md` and `AGENTS.md`** — two sources of truth
 9. **Root AGENTS.md contains subdirectory-specific detail** — if content only applies when working under a specific directory (e.g. `mcp/`, `packages/api/`), it belongs in that directory's own AGENTS.md, not root. Root detail bloats every session regardless of task. Handled by the `restructure-instructions` sub-skill in Phase 4.
 10. **Root AGENTS.md missing `@subdir/AGENTS.md` references** — when a subdirectory has its own AGENTS.md, root should reference it with `@subdir/AGENTS.md` so agents know where to look without loading the content until they're in that directory. Handled by the `restructure-instructions` sub-skill in Phase 4.
-11. **Root AGENTS.md missing Memory vs. State callout** — if the root AGENTS.md has no `## Memory vs. State` section, suggest adding the standard snippet (AGENTS.md = north star for stable decisions, STATE.md = session bookmarks updated frequently).
+11. **Root AGENTS.md missing Memory vs. State callout** — if the root AGENTS.md has no `## Memory vs. State` section, suggest adding the standard snippet (AGENTS.md = north star for stable decisions, docs/STATE.md = session bookmarks updated frequently).
 
 ## User Tips to Share
 
@@ -236,4 +236,4 @@ When presenting recommendations, remind the user:
 - Testing (commands, patterns)
 - Gotchas (quirks, common mistakes)
 - Workflow (when to do what)
-- Memory vs. State (AGENTS.md = north star, STATE.md = session bookmarks)
+- Memory vs. State (AGENTS.md = north star, docs/STATE.md = session bookmarks)
