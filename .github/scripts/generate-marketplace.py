@@ -41,6 +41,7 @@ BUNDLE_ORDER = [
     "docker-toolkit",
     "ludus-toolkit",
     "work-objects-toolkit",
+    "maintainer-toolkit",
     "agent-doublecheck",
     "agent-ember",
 ]
