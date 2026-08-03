@@ -1,0 +1,23 @@
+{
+  "name": "extension-audit",
+  "version": "0.1.0",
+  "description": "Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for Claude and Copilot extension artifacts.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/awesome-agency",
+  "license": "MIT",
+  "keywords": [
+    "audit",
+    "security",
+    "supply-chain",
+    "integrity",
+    "marketplace",
+    "claude-code",
+    "copilot"
+  ],
+  "agents": [
+    "./agents/extension-reviewer.md"
+  ]
+}

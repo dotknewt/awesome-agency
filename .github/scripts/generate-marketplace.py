@@ -27,6 +27,7 @@ OUT = ROOT / ".claude-plugin" / "marketplace.json"
 # scripts or hooks) and therefore get no standalone micro-entry.
 BUNDLE_BOUND_SKILLS = {
     "work-object-guard",  # needs ${CLAUDE_PLUGIN_ROOT}/scripts + PreToolUse hook
+    "extension-audit",  # ships a bundled CLI under scripts/
 }
 # Skill dirs that are not shippable skills at all.
 NON_SKILL_DIRS = {"in-progress"}
@@ -44,6 +45,7 @@ BUNDLE_ORDER = [
     "work-objects-toolkit",
     "agent-doublecheck",
     "agent-ember",
+    "extension-audit",
 ]
 
 MICRO_VERSION = "1.0.0"

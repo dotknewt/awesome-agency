@@ -94,6 +94,15 @@
       }
     },
     {
+      "name": "extension-audit",
+      "description": "Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for Claude and Copilot extension artifacts.",
+      "source": "./plugins/extension-audit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "agentic-eval",
       "description": "Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output before…",
       "version": "1.0.0",
@@ -476,6 +485,16 @@
       "strict": false,
       "agents": [
         "./ember.md"
+      ]
+    },
+    {
+      "name": "extension-reviewer-agent",
+      "description": "Use this agent when the user asks to \"review an extension\", \"audit a plugin before installing it\", \"scan a skill or agent for risks\", or \"check extension integrity and marketplace metadata\". It…",
+      "version": "1.0.0",
+      "source": "./agents/extension-reviewer",
+      "strict": false,
+      "agents": [
+        "./extension-reviewer.md"
       ]
     },
     {

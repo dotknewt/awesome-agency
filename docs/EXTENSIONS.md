@@ -103,6 +103,13 @@ Unified repo stewardship — drift-audit orchestration plus the skills that appl
 - **Skill** `conventions` — cross-project conventions: docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and uv + Typer standards for Python CLIs.
 - **Hooks**: `Stop` — nudge the user to capture session learnings in AGENTS.md when the session touched many files.
 
+### extension-audit (v0.1.0)
+
+Static, report-only review of Claude Code and Copilot extension artifacts before installation or publication.
+
+- **Agent** `extension-reviewer` — inventories capabilities, checks security heuristics and hook scope, verifies integrity, validates marketplace metadata, and scores semantic quality without executing target code.
+- **Skill** `extension-audit` — runs the bundled standard-library CLI for combined or focused inventory, security, quality, integrity, and marketplace checks.
+
 ### work-objects-toolkit (v0.1.0)
 
 Evidence-linked work objects — one `work/<id>-<slug>/` dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.
@@ -124,9 +131,9 @@ Installable individually; not part of any plugin bundle.
 
 | Category | Count |
 |---|---|
-| Plugin bundles | 9 |
-| Skills (shipped) | 45 (40 bundled + 5 unbundled) |
-| Agents | 11 |
+| Plugin bundles | 11 |
+| Skills (shipped) | 47 (42 bundled + 5 unbundled) |
+| Agents | 13 |
 | Commands | 4 |
 | Plugins with hooks | 3 (`hooks-toolkit`, `steward`, `work-objects-toolkit`) |
 | Plugins with a bundled MCP server | 1 (`ludus-toolkit`) |

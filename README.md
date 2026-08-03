@@ -16,7 +16,7 @@ top level, with plugins as thin bundles that reference them.
 claude plugin install engineering-toolkit@awesome-agency
 ```
 
-**A single skill** (every skill is individually installable):
+**A single skill** (most shipped skills are individually installable):
 
 ```
 claude plugin install tdd@awesome-agency
@@ -35,7 +35,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 
 | Directory | Contents |
 |---|---|
-| `skills/` | All skills, one directory each (`<name>/SKILL.md`). `skills/in-progress/` holds unshipped drafts. |
+| `skills/` | All skills, one directory each (`<name>/SKILL.md`). `skills/in-progress/` holds unshipped drafts. Most shipped skills are individually installable. |
 | `agents/` | All agents, one directory each (`<name>/<name>.md`, plus symlinked dependencies so single-agent installs are self-contained). |
 | `commands/` | Slash-command definitions, one subdirectory per owning bundle. |
 | `hooks/` | Hook sets — `<set>/hooks.json` + `<set>/scripts/`. |
@@ -60,9 +60,11 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
 | `agent-doublecheck` | Three-layer verification pipeline for AI output. |
 | `agent-ember` | Ember, an AI-partnership persona agent. |
+| `extension-audit` | Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for extension artifacts. |
 
-`work-object-guard` is the one skill without a standalone entry — it depends on
-its bundle's scripts and hook, so install `work-objects-toolkit` instead.
+`work-object-guard` and `extension-audit` are the skills without standalone
+entries — they depend on bundle-shipped scripts or hooks, so install their
+respective bundles instead.
 Similarly, prefer installing `steward` over the standalone `maintain`
 skill — the orchestrator dispatches the five maintainer agents that only ship
 with the bundle.
