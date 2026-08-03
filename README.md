@@ -1,11 +1,11 @@
-# agency
+# awesome-agency
 
 dotKnewt's Claude Code plugin marketplace — one repo holding every skill, agent,
 command, and hook, organized awesome-copilot-style: shared component pools at the
 top level, with plugins as thin bundles that reference them.
 
 ```
-/plugin marketplace add dotknewt/agency
+/plugin marketplace add dotknewt/awesome-agency
 ```
 
 ## Install
@@ -13,19 +13,19 @@ top level, with plugins as thin bundles that reference them.
 **A bundle** (curated set of skills/agents/commands/hooks):
 
 ```
-claude plugin install engineering-toolkit@agency
+claude plugin install engineering-toolkit@awesome-agency
 ```
 
 **A single skill** (every skill is individually installable):
 
 ```
-claude plugin install tdd@agency
+claude plugin install tdd@awesome-agency
 ```
 
 **A single agent** (suffix `-agent`):
 
 ```
-claude plugin install ember-agent@agency
+claude plugin install ember-agent@awesome-agency
 ```
 
 Installing a bundle plus one of its skills standalone loads that skill twice
@@ -55,6 +55,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `github-toolkit` | Issue templates, CI scaffolding, branch-warden + issue-filer agents. |
 | `hooks-toolkit` | Safety/hygiene hooks — force-push guard, secret scanner, manifest validators. |
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
+| `python-mcp-development` | Python MCP server development with FastMCP guidance, generation, and best-practice instructions. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
 | `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
 | `agent-doublecheck` | Three-layer verification pipeline for AI output. |
@@ -80,4 +81,5 @@ with the bundle.
 Formerly this marketplace aggregated three sibling repos
 (`dotknewt/skills`, `dotknewt/agents`, `dotknewt/toolkits`); their content now
 lives here and the old repos are archived. If you still have the old
-`dotknewt-*` marketplaces added, remove them and reinstall from `agency`.
+`dotknewt-*` marketplaces added, remove them and reinstall from
+`awesome-agency`.

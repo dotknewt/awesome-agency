@@ -109,9 +109,9 @@ add `enabledPlugins` and `extraKnownMarketplaces` near the end if they are new k
 Show a compact diff summary:
 ```
 Pinned to .claude/settings.json:
-  + steward@agency
-  + github-toolkit@agency
-  (marketplace agency added to extraKnownMarketplaces)
+  + steward@awesome-agency
+  + github-toolkit@awesome-agency
+  (marketplace awesome-agency added to extraKnownMarketplaces)
 
 Removed (--prune):
   - old-plugin@claude-plugins-official

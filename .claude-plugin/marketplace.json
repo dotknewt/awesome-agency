@@ -1,5 +1,5 @@
 {
-  "name": "agency",
+  "name": "awesome-agency",
   "description": "dotKnewt's Claude Code marketplace — one repo of shared skills, agents, commands, and hooks. Install curated plugin bundles or any single skill/agent.",
   "owner": {
     "name": "dotKnewt",
@@ -49,6 +49,14 @@
       "author": {
         "name": "dotKnewt",
         "email": "dotknewt@keemail.me"
+      }
+    },
+    {
+      "name": "python-mcp-development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in Python using the official SDK with FastMCP. Includes best-practice instructions, a server generator skill, and an expert agent.",
+      "source": "./plugins/python-mcp-development",
+      "author": {
+        "name": "Awesome Copilot Community"
       }
     },
     {
@@ -331,6 +339,13 @@
       "strict": false
     },
     {
+      "name": "python-mcp-server-generator",
+      "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration",
+      "version": "1.0.0",
+      "source": "./skills/python-mcp-server-generator",
+      "strict": false
+    },
+    {
       "name": "research",
       "description": "Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading…",
       "version": "1.0.0",
@@ -481,6 +496,16 @@
       "strict": false,
       "agents": [
         "./issue-filer.md"
+      ]
+    },
+    {
+      "name": "python-mcp-expert-agent",
+      "description": "Use this agent when the user asks to create, implement, debug, test, or explain a Python Model Context Protocol (MCP) server. It provides expert guidance on the Python SDK, FastMCP, transports, type…",
+      "version": "1.0.0",
+      "source": "./agents/python-mcp-expert",
+      "strict": false,
+      "agents": [
+        "./python-mcp-expert.md"
       ]
     },
     {

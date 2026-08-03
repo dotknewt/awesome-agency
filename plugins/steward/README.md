@@ -13,11 +13,11 @@ Two halves, one plugin:
 
 ## Install
 
-    /plugin marketplace add dotknewt/agency
-    /plugin install steward@agency
+    /plugin marketplace add dotknewt/awesome-agency
+    /plugin install steward@awesome-agency
 
 Each agent and skill is also installable standalone (e.g.
-`schema-maintainer-agent@agency`, `instructions-revise@agency`).
+`schema-maintainer-agent@awesome-agency`, `instructions-revise@awesome-agency`).
 
 ## Maintenance sweeps
 

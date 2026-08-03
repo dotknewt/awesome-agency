@@ -2,7 +2,7 @@
   "name": "docker-toolkit",
   "version": "0.1.3",
   "description": "Build and validate Docker artifacts \u2014 multi-stage Dockerfiles, and packaging MCP servers as containers runnable via the Docker MCP Gateway.",
-  "repository": "https://github.com/dotknewt/agency",
+  "repository": "https://github.com/dotknewt/awesome-agency",
   "author": {
     "name": "dotKnewt",
     "email": "dotknewt@keemail.me"

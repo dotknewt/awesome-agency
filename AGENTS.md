@@ -2,9 +2,9 @@
 
 This file provides guidance to AI agents (Claude Code, Codex, Cursor, etc.) when working with code in this repository.
 
-# agency
+# awesome-agency
 
-`agency` is dotKnewt's single-repo Claude Code plugin marketplace. All distributable
+`awesome-agency` is dotKnewt's single-repo Claude Code plugin marketplace. All distributable
 content lives here in shared top-level pools; plugins are thin bundles over those
 pools. The former sibling repos (`dotknewt/skills`, `dotknewt/agents`,
 `dotknewt/toolkits`) were consolidated into this repo and archived.
@@ -63,16 +63,17 @@ to `BUNDLE_ORDER` in that script — the generator hard-fails on any
 `plugins/<name>/` directory not listed there (the list also controls marketplace
 entry order).
 
-The marketplace `"name"` (`agency`) is preserved deliberately — installs are keyed
-as `<plugin>@<marketplace>`, and existing projects reference `...@agency`.
-Renaming it would force a mass reinstall everywhere.
+The marketplace `"name"` is `awesome-agency` — installs are keyed as
+`<plugin>@<marketplace>`.
+Changing it requires reinstalling existing marketplace plugins under the new
+identifier.
 
 ## Conventions
 
 - Bundle versions live ONLY in `plugins/<name>/.claude-plugin/plugin.json`. Bump
   on any change to the bundle's members or metadata. Micro-entries use a flat
   `1.0.0` (bump `MICRO_VERSION` in the generator if a coordinated refresh is needed).
-- `repository` in every plugin.json points at `https://github.com/dotknewt/agency`.
+- `repository` in every plugin.json points at `https://github.com/dotknewt/awesome-agency`.
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
   needs pool content (instructions, skills), symlink it into `agents/<name>/` so the
@@ -80,7 +81,7 @@ Renaming it would force a mass reinstall everywhere.
 - `claude plugin install` caches by `<name>/<version>` — a source change without a
   version bump may report "already installed" without re-fetching. Verify with
   explicit `uninstall` + `install`.
-- Refresh a live install with `claude plugin marketplace update agency`.
+- Refresh a live install with `claude plugin marketplace update awesome-agency`.
 
 ## Validation
 

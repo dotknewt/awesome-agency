@@ -2,7 +2,7 @@
   "name": "github-toolkit",
   "version": "1.1.4",
   "description": "Scaffold GitHub repo metadata \u2014 issue templates and CI workflows. /github-scaffold picks the task; /create-issue-template and /scaffold-ci-workflow run the subtasks. Includes the branch-warden agent for automated branch prep and cleanup, and the issue-filer agent for lightweight issue creation.",
-  "repository": "https://github.com/dotknewt/agency",
+  "repository": "https://github.com/dotknewt/awesome-agency",
   "author": {
     "name": "dotKnewt",
     "email": "dotknewt@keemail.me"

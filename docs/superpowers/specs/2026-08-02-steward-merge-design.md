@@ -22,7 +22,7 @@ had to install both to get the full audit → apply loop.
 Merge both into a single plugin bundle **`steward`** (v1.0.0) covering
 maintenance of instructions, docs, specs, and schemas — reporters and fixers
 together. Both old bundles are removed outright (no deprecation stubs); this
-is our own marketplace and users re-install `steward@agency`.
+is our own marketplace and users re-install `steward@awesome-agency`.
 
 This supersedes the boundary statement in
 `2026-08-02-maintainer-toolkit-design.md` ("`instructions-maintainer` does not
@@ -59,5 +59,5 @@ plugin absorbing the other.
   are replaced by the renamed ones; `maintain` persists unchanged.
 - All five skills and five agents remain individually installable
   micro-entries.
-- `.claude/settings.json` enables `steward@agency` in place of the two old
+- `.claude/settings.json` enables `steward@awesome-agency` in place of the two old
   plugins.

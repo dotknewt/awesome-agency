@@ -10,4 +10,4 @@ Components (shared pools in this repo):
 - Commands: `/github-scaffold`, `/create-issue-template`, `/scaffold-ci-workflow`
 - Instructions: [`instructions/`](../../instructions)
 
-Install: `claude plugin install github-toolkit@agency`
+Install: `claude plugin install github-toolkit@awesome-agency`

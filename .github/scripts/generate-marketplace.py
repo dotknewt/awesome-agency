@@ -39,6 +39,7 @@ BUNDLE_ORDER = [
     "github-toolkit",
     "hooks-toolkit",
     "docker-toolkit",
+    "python-mcp-development",
     "ludus-toolkit",
     "work-objects-toolkit",
     "agent-doublecheck",
@@ -134,7 +135,7 @@ def build() -> dict:
     if dupes:
         raise SystemExit(f"duplicate entry names: {sorted(dupes)}")
     return {
-        "name": "agency",
+        "name": "awesome-agency",
         "description": (
             "dotKnewt's Claude Code marketplace — one repo of shared skills, agents, "
             "commands, and hooks. Install curated plugin bundles or any single skill/agent."

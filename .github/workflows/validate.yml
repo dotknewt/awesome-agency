@@ -29,8 +29,8 @@ jobs:
 
           jq empty "$manifest"
 
-          test "$(jq -r '.name' "$manifest")" = "agency" \
-            || { echo "::error::marketplace name must stay 'agency' (renaming forces mass reinstall)"; exit 1; }
+          test "$(jq -r '.name' "$manifest")" = "awesome-agency" \
+            || { echo "::error::marketplace name must stay 'awesome-agency'"; exit 1; }
 
           jq -e '.plugins and (.plugins | type == "array") and (.plugins | length > 0)' "$manifest" > /dev/null \
             || { echo "::error::marketplace.json missing non-empty 'plugins' array"; exit 1; }

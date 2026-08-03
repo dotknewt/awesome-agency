@@ -8,4 +8,4 @@ Components (shared pools in this repo):
 - Skills: [`ludus-cli`](../../skills/ludus-cli), [`ludus-environment-guide`](../../skills/ludus-environment-guide), [`ludus-range-config`](../../skills/ludus-range-config), [`ludus-troubleshoot`](../../skills/ludus-troubleshoot)
 - MCP server: [`mcp/ludus`](../../mcp/ludus)
 
-Install: `claude plugin install ludus-toolkit@agency`
+Install: `claude plugin install ludus-toolkit@awesome-agency`

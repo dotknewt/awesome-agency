@@ -29,7 +29,7 @@ These are also called from the CI workflow (`.github/workflows/validate.yml`).
 
 ### Option A: Enable the full plugin
 
-Add `hooks-toolkit@agency` to `enabledPlugins` in your `settings.json`. All hooks activate automatically.
+Add `hooks-toolkit@awesome-agency` to `enabledPlugins` in your `settings.json`. All hooks activate automatically.
 
 ### Option B: Pick individual hooks
 
