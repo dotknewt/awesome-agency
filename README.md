@@ -61,6 +61,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `agent-doublecheck` | Three-layer verification pipeline for AI output. |
 | `agent-ember` | Ember, an AI-partnership persona agent. |
 | `extension-audit` | Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for extension artifacts. |
+| `superpowers` | Vendored [obra/superpowers](https://github.com/obra/superpowers) (MIT) — brainstorm → plan → subagent-driven TDD → review, with a SessionStart skill injector. |
 
 `work-object-guard` and `extension-audit` are the skills without standalone
 entries — they depend on bundle-shipped scripts or hooks, so install their

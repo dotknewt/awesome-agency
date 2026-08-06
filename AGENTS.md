@@ -47,7 +47,10 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 - `skills/` — all skills (`<name>/SKILL.md`); `skills/in-progress/` = unshipped drafts, never listed in the marketplace
 - `agents/` — dir-per-agent (`<name>/<name>.md` + symlinked deps so solo installs are self-contained)
 - `commands/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`, `mcp/ludus/` — remaining pools
-- `plugins/<name>/` — bundle manifests + symlinks (one dir per bundle)
+- `plugins/<name>/` — bundle manifests + symlinks (one dir per bundle). Exception:
+  `plugins/superpowers/` is a **vendored** third-party bundle (obra/superpowers, MIT) —
+  real files, no pool symlinks, and its skills get no micro-entries. Update it by
+  re-syncing `skills/` + `hooks/` from upstream and aligning the version in its `plugin.json`.
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.

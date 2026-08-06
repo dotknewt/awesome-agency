@@ -103,6 +103,15 @@
       }
     },
     {
+      "name": "superpowers",
+      "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+      "source": "./plugins/superpowers",
+      "author": {
+        "name": "Jesse Vincent",
+        "email": "jesse@fsck.com"
+      }
+    },
+    {
       "name": "agentic-eval",
       "description": "Patterns and techniques for evaluating and improving AI agent outputs. Use this skill when: - The user makes an ad-hoc, in-session request to double-check, critique, or review your own output before…",
       "version": "1.0.0",

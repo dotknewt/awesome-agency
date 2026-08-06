@@ -46,6 +46,7 @@ BUNDLE_ORDER = [
     "agent-doublecheck",
     "agent-ember",
     "extension-audit",
+    "superpowers",
 ]
 
 MICRO_VERSION = "1.0.0"
