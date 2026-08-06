@@ -46,7 +46,12 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 
 - `skills/` — all skills (`<name>/SKILL.md`); `skills/in-progress/` = unshipped drafts, never listed in the marketplace
 - `agents/` — dir-per-agent (`<name>/<name>.md` + symlinked deps so solo installs are self-contained)
-- `commands/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`, `mcp/ludus/` — remaining pools
+- `commands/<bundle>/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`,
+  `instructions/<bundle>/`, `mcp/ludus/` — remaining pools. The flat `instructions/*.md`
+  files are generic (Copilot-style) guidance; **bundle-owned** instructions live in a
+  scoped `instructions/<bundle>/` subdir, mirroring `commands/<bundle>/`. Never symlink
+  the whole `instructions/` pool into a bundle or agent dir — that ships every unrelated
+  file and silently breaks when the flat pool is repurposed.
 - `plugins/<name>/` — bundle manifests + symlinks (one dir per bundle). Exception:
   `plugins/superpowers/` is a **vendored** third-party bundle (obra/superpowers, MIT) —
   real files, no pool symlinks, and its skills get no micro-entries. Update it by
@@ -82,7 +87,11 @@ identifier.
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
   needs pool content (instructions, skills), symlink it into `agents/<name>/` so the
-  micro-install stays self-contained.
+  micro-install stays self-contained. The same applies to a micro-installable skill:
+  `${CLAUDE_PLUGIN_ROOT}` resolves to the *entry's* source dir, so shared content must
+  be symlinked into **every** source that references it (e.g. `instructions/` exists
+  under `plugins/github-toolkit/`, `agents/issue-filer/`, and `skills/github-workflow/`).
+  `.github/scripts/check-plugin-root-refs.py` enforces this.
 - `claude plugin install` caches by `<name>/<version>` — a source change without a
   version bump may report "already installed" without re-fetching. Verify with
   explicit `uninstall` + `install`.
@@ -92,8 +101,10 @@ identifier.
 
 - CI: `.github/workflows/validate.yml` — generator drift check, marketplace shape
   (jq), source-path existence, broken-symlink scan (`find plugins agents -xtype l`),
-  `plugin.json` validation and SKILL.md frontmatter validation via
-  `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`.
+  `${CLAUDE_PLUGIN_ROOT}` reference resolution
+  (`.github/scripts/check-plugin-root-refs.py`, run per marketplace entry so
+  micro-installs are covered too), `plugin.json` validation and SKILL.md frontmatter
+  validation via `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`.
 - Locally: `claude plugin validate .` for a quick manifest check.
 
 ## No build or test step

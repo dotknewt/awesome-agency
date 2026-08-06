@@ -12,8 +12,8 @@ description: >
 
 ## Baseline (always loaded)
 
-`plugins/github-toolkit/instructions/branch-hygiene.md` — one branch per PR, cleanup after squash-merge, stale-branch sweep.
-`plugins/github-toolkit/instructions/commit-vs-pr.md` — when to commit directly vs. open a PR. Do not restate these; they are already in context.
+`${CLAUDE_PLUGIN_ROOT}/instructions/branch-hygiene.md` — one branch per PR, cleanup after squash-merge, stale-branch sweep.
+`${CLAUDE_PLUGIN_ROOT}/instructions/commit-vs-pr.md` — when to commit directly vs. open a PR. Do not restate these; they are already in context.
 
 ---
 
@@ -147,4 +147,4 @@ git push -u origin pr-2-branch
 
 Do **not** try `git rebase main pr-1-branch`. The squash commit that landed in `main` re-introduces every change from PR #1 as a new commit SHA, so Git sees them all as conflicts. Cherry-pick is the clean path.
 
-See `plugins/github-toolkit/instructions/branch-hygiene.md` for local and remote branch cleanup after recovery.
+See `${CLAUDE_PLUGIN_ROOT}/instructions/branch-hygiene.md` for local and remote branch cleanup after recovery.

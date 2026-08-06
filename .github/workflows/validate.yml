@@ -59,6 +59,9 @@ jobs:
           broken=$(find plugins agents -xtype l 2>/dev/null || true)
           [ -z "$broken" ] || { echo "::error::broken symlink(s):"; echo "$broken"; exit 1; }
 
+      - name: CLAUDE_PLUGIN_ROOT references resolve
+        run: python3 .github/scripts/check-plugin-root-refs.py
+
   manifests:
     runs-on: ubuntu-latest
     steps:
