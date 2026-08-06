@@ -20,7 +20,7 @@ description: |
   The agent is appropriate for immutable verification and broad/auto-triggered hook analysis.
   </commentary>
   </example>
-model: opus
+model: claude-opus-5
 color: cyan
 tools:
   - Bash

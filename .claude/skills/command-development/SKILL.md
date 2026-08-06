@@ -581,3 +581,11 @@ This skill uses progressive disclosure: the sections above cover the fundamental
 - `references/documentation-patterns.md` — self-documenting command templates, help text, and changelog conventions.
 - `references/marketplace-considerations.md` — naming, versioning, and configurability guidance for commands distributed to other users.
 - `examples/simple-commands.md` and `examples/plugin-commands.md` — complete, ready-to-copy command examples.
+
+## Cross-host caveat
+
+GitHub Copilot CLI also installs bundles from this repo and has **no slash-command concept
+at all** — skills fill that role there. Any capability shipped only as a command is
+unreachable for Copilot users, so every command needs a skill counterpart or a declared
+exception in `.github/host-compat.json`. This is an *error*, not a warning, in
+`python3 .github/scripts/check-host-compat.py`. See the `host-portability` skill.

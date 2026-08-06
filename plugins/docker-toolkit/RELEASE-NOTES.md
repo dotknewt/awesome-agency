@@ -1,5 +1,15 @@
 # Docker Toolkit Release Notes
 
+## v0.1.4 (2026-08-06)
+
+### Agents
+
+- **Pinned `dockerize-mcp-server`'s `model` to a full ID instead of the bare
+  `opus` alias.** The shared `agent-model-assignment` convention now disallows
+  bare tier aliases entirely, in favor of a full pinned ID (`claude-opus-5`)
+  so the agent's behavior stays reproducible from the file alone rather than
+  depending on whatever `opus` currently resolves to.
+
 ## v0.1.3 (2026-08-06)
 
 Initial release notes, reconstructed from git history. Earlier versions shipped

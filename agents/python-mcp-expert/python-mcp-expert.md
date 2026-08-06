@@ -20,7 +20,7 @@ description: |
   The agent specializes in type hints, validation, and MCP transport debugging.
   </commentary>
   </example>
-model: inherit
+model: claude-opus-5
 color: green
 ---
 

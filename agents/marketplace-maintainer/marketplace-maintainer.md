@@ -8,10 +8,11 @@ description: >
   anything under plugins/ or the shared skill/agent/command/hook pools, when the user
   asks to "check the release notes", "audit the marketplace", "are the plugin
   versions right", or via a maintenance orchestrator. Reports findings with proposed
-  entry text; never edits files. Runs on the caller's model, because judging whether
-  a release note actually explains *why* a change was made is reasoning work no
-  validator can do.
-model: inherit
+  entry text; never edits files. Pinned to Opus as a floor — judging whether a
+  release note actually explains *why* a change was made is reasoning work no
+  validator can do, and this pin is the minimum tier the work should ever run
+  below, not a fixed cost.
+model: claude-opus-5
 tools: Read, Grep, Glob, Bash
 ---
 

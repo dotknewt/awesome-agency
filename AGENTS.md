@@ -71,7 +71,7 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
   `marketplace.json` advertising a source that no longer resolves. CI's symlink and
   manifest scans deliberately do not walk `wip/`.
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
-- `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
+- `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development, marketplace-manifest maintenance, and host portability). Never published.
 - `docs/TODO.md` — backlog notes; `docs/STATE.md` — session bookmarks (stub unless an effort is active)
 
 ## marketplace.json is generated
@@ -101,16 +101,19 @@ identifier.
   Enforced mechanically by `hooks/steward/scripts/release-notes-audit.py`; the
   "does it actually explain why" judgment is the `marketplace-maintainer` agent's.
 - `repository` in every plugin.json points at `https://github.com/dotknewt/awesome-agency`.
-- Every agent must declare `model` explicitly — Claude Code defaults it to `inherit`
-  silently, which makes a deliberate choice indistinguishable from an oversight. The
-  decision procedure is the `agent-model-assignment` skill
-  (`skills/agent-model-assignment/SKILL.md`): rule out `haiku` on hard constraints
-  (200K context, Feb 2025 cutoff) first, then on tool-loop length, then match task
-  shape. Prefer an alias (`inherit`/`haiku`/`sonnet`/`opus`/`fable`) — Anthropic's
-  dateless IDs are pinned snapshots, not evergreen pointers — and pin only when the
-  agent needs one exact model. Record the reason in the description or a body comment.
-  `.github/scripts/check-agent-models.py` enforces that the field is present — never
-  the value (`--list` prints current assignments).
+- Every agent must declare `model` explicitly, as a full model ID — never a bare
+  tier alias or `inherit`. Omitting the field defaults it to `inherit` silently,
+  which makes a deliberate choice indistinguishable from an oversight, and a bare
+  alias has the same problem one level down: it resolves to whatever Claude Code
+  currently maps that tier to, so the agent's behavior isn't reproducible from the
+  file alone. The decision procedure is the `agent-model-assignment` skill
+  (`skills/agent-model-assignment/SKILL.md`): rule out a Haiku-class pin on hard
+  constraints (200K context, Feb 2025 cutoff) first, then on tool-loop length, then
+  match task shape — then pin today's full ID for the chosen tier. Where the pinned
+  model supports adjustable reasoning effort, state the intended level alongside it.
+  Record the reason in the description or a body comment. `.github/scripts/check-agent-models.py`
+  enforces that the field is present — never the value (`--list` prints current
+  assignments).
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
   needs pool content (instructions, skills), symlink it into `agents/<name>/` so the
@@ -124,6 +127,47 @@ identifier.
   explicit `uninstall` + `install`.
 - Refresh a live install with `claude plugin marketplace update awesome-agency`.
 
+## Host portability (Claude Code + Copilot CLI)
+
+Both are supported install targets. GitHub Copilot CLI reads this repo's
+`.claude-plugin/marketplace.json` and dereferences pool symlinks at install time exactly
+as Claude Code does — verified against a real install cache, and contrary to GitHub's own
+documentation. Treat observed behavior as authoritative over vendor docs here.
+
+`.github/host-compat.json` is the machine-readable source of truth for what each host
+honors; `.github/scripts/check-host-compat.py` derives every check from it and runs in CI
+over **each marketplace entry**, so micro-installs are covered too. Add a capability to the
+matrix, never to the script. `--list` prints the current posture; `--strict` treats warnings
+as errors. Waive a specific artifact via `known_exceptions` in the matrix rather than
+inventing new frontmatter keys — exceptions belong somewhere reviewable.
+
+Severity follows one rule: a bundle that is **broken** in a host fails; one that is merely
+**degraded** reports. What Copilot silently drops:
+
+- **`model:`** — no value pinned here routes Claude Code's own session model on Copilot; it
+  falls back to whatever the calling session is using, with only a log line. Keep the pinned
+  full ID anyway (both hosts read the same `agents/*.md`, so no per-host value is possible),
+  but **an agent must be correct at any model** — never rely on a cheap model for
+  correctness, and never advertise a model-dependent benefit in agent prose without
+  qualifying it as Claude-only. The checker flags exactly that combination. See
+  `docs/TODO.md` for the deferred fix.
+- **`disable-model-invocation`** — an explicit-invocation-only skill becomes auto-invocable.
+  State the constraint in the skill **body** too, so the model self-restricts.
+- **`color:`** — cosmetic, ignored with a warning.
+- **Slash commands** — Copilot has no `commands/` concept; skills fill that role, so every
+  shipped command needs a skill counterpart or a declared exception.
+- **Bundle-local `.mcp.json`** — read as project config, not auto-started; document manual
+  setup in the bundle README.
+- **Hook events** — Copilot accepts PascalCase names as a compatibility mode but supports a
+  smaller set. Stay within `shared_hook_events` in the matrix.
+
+`${CLAUDE_PLUGIN_ROOT}` support in Copilot is **unverified** (docs say no; the vendored
+superpowers `SessionStart` hook suggests otherwise). It warns rather than fails.
+
+A `.vendored` bundle is exempt from the *authoring* rules above (it follows upstream's
+conventions), but is still checked for host-installability facts — hook events, bundled MCP,
+and `${CLAUDE_PLUGIN_ROOT}` — because those decide whether its code runs in a user's session.
+
 ## Validation
 
 - CI: `.github/workflows/validate.yml` — generator drift check, marketplace shape
@@ -131,7 +175,9 @@ identifier.
   `${CLAUDE_PLUGIN_ROOT}` reference resolution
   (`.github/scripts/check-plugin-root-refs.py`, run per marketplace entry so
   micro-installs are covered too), agent model declarations
-  (`.github/scripts/check-agent-models.py`), `plugin.json` validation and SKILL.md frontmatter
+  (`.github/scripts/check-agent-models.py`), cross-host installability
+  (`.github/scripts/check-host-compat.py`, also per marketplace entry),
+  `plugin.json` validation and SKILL.md frontmatter
   validation via `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`,
   and release-notes coverage via `hooks/steward/scripts/release-notes-audit.py`
   (`--all` on every run; `--base <pr-base>` on PRs, to catch a changed bundle that

@@ -352,5 +352,14 @@ To implement hooks in a plugin:
 7. Test hooks with `scripts/test-hook.sh` before deployment
 8. Test in Claude Code with `claude --debug`
 9. Document hooks in plugin README
+10. Check cross-host behavior with `python3 .github/scripts/check-host-compat.py`
 
 Use prompt-based hooks for complex, context-dependent logic where the LLM's reasoning helps (see Hook Types above). Reserve command hooks for performance-critical or purely deterministic checks — and when you do, validate and lint them with the bundled `scripts/`.
+
+## Cross-host caveat
+
+GitHub Copilot CLI also installs bundles from this repo. It accepts PascalCase event names as
+a compatibility mode but supports a **smaller event set**, so stay within
+`shared_hook_events` in `.github/host-compat.json`. Its support for `${CLAUDE_PLUGIN_ROOT}`
+in hook commands is unverified — the checker warns rather than fails. See the
+`host-portability` skill.

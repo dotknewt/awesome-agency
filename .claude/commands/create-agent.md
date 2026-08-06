@@ -55,3 +55,7 @@ Scaffold a new agent under a plugin's `agents/` directory.
 
 - All agent spec generation (persona, examples, system prompt, quality checks) is handled by `agent-creator`. This command's job is orchestration only.
 - The auto-trigger on "create an agent..." phrases remains unchanged — this command adds an explicit slash-command entry point alongside it.
+- Extensions from this repo also install in GitHub Copilot CLI, which **silently ignores** `model:`
+  and `color:`. Write the agent so it is correct at any model, and never advertise a benefit that
+  depends on `model:` without qualifying it as Claude-only. Verify with
+  `python3 .github/scripts/check-host-compat.py`; see the `host-portability` skill.

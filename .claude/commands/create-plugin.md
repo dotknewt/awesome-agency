@@ -287,12 +287,21 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
    - Test hook scripts with test-hook.sh
    - Verify ${CLAUDE_PLUGIN_ROOT} usage
 
-6. **Present findings**:
+6. **Validate cross-host installability**:
+   - Run `python3 .github/scripts/check-host-compat.py`
+   - Errors mean the bundle is broken in a host; warnings mean it only degrades
+   - `.github/host-compat.json` is the source of truth — never work around a finding by
+     editing the checker; add a reviewed `known_exceptions` entry instead
+   - Copilot CLI silently ignores agent `model:` and `color:`, drops skill
+     `disable-model-invocation`, has no slash-command concept, and does not auto-start a
+     bundle-local `.mcp.json`. See the `host-portability` skill.
+
+7. **Present findings**:
    - Summary of validation results
    - Any remaining issues
    - Overall quality assessment
 
-7. **Ask user**: "Validation complete. Issues found: [count critical], [count warnings]. Would you like me to fix them now, or proceed to testing?"
+8. **Ask user**: "Validation complete. Issues found: [count critical], [count warnings]. Would you like me to fix them now, or proceed to testing?"
 
 **Output**: Plugin validated and ready for testing
 

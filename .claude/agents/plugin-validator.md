@@ -31,8 +31,7 @@ description: |
   </commentary>
   assistant: "I'll use the plugin-validator agent to check the manifest."
   </example>
-model: haiku
-color: yellow
+model: claude-haiku-4-5
 tools: ["Read", "Grep", "Glob", "Bash"]
 ---
 
@@ -132,6 +131,18 @@ You are an expert plugin validator specializing in comprehensive validation of C
     - MCP servers use HTTPS/WSS not HTTP/WS
     - Hooks don't have obvious security issues
     - No secrets in example files
+
+11. **Validate Cross-Host Installability** (this repo ships to Claude Code *and* GitHub
+    Copilot CLI):
+    - Run `python3 .github/scripts/check-host-compat.py` and report every finding.
+    - Errors mean the bundle is broken in a host; warnings mean it merely degrades.
+    - `.github/host-compat.json` is the source of truth for what each host honors — read it
+      before judging a finding, and never work around a finding by editing the script.
+    - Watch in particular for divergences Copilot applies silently: an agent whose prose
+      advertises a benefit that depends on `model:`, a skill relying on
+      `disable-model-invocation` without stating the constraint in its body, a command with
+      no skill counterpart, and hook events outside `shared_hook_events`.
+    - See the `host-portability` skill for the full rules.
 
 **Quality Standards:**
 - All validation errors include file path and specific issue

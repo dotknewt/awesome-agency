@@ -1,0 +1,196 @@
+{
+  "$comment": "Host capability matrix for awesome-agency. Single source of truth for what Claude Code and GitHub Copilot CLI each honor. Consumed by .github/scripts/check-host-compat.py and documented in .claude/skills/host-portability/. Observed behavior outranks vendor documentation: where the two disagree, record what was actually seen and say so in `evidence`.",
+  "version": 1,
+  "updated": "2026-08-06",
+  "hosts": {
+    "claude": {
+      "name": "Claude Code",
+      "reference": true,
+      "install": "claude plugin marketplace add dotknewt/awesome-agency"
+    },
+    "copilot": {
+      "name": "GitHub Copilot CLI",
+      "reference": false,
+      "install": "/plugin install <plugin>@awesome-agency",
+      "note": "Reads .claude-plugin/marketplace.json and dereferences symlinks at install time. Verified against ~/.copilot/installed-plugins/ on 2026-08-06, contradicting GitHub's docs."
+    }
+  },
+
+  "shared_hook_events": [
+    "PreToolUse",
+    "PostToolUse",
+    "SessionStart",
+    "SessionEnd",
+    "UserPromptSubmit",
+    "SubagentStop",
+    "Notification",
+    "PreCompact",
+    "Stop"
+  ],
+
+  "claude_only_hook_events": [
+    "Setup",
+    "UserPromptExpansion",
+    "PermissionDenied",
+    "PostToolBatch",
+    "MessageDisplay",
+    "TaskCreated",
+    "TaskCompleted",
+    "StopFailure",
+    "TeammateIdle",
+    "InstructionsLoaded",
+    "ConfigChange",
+    "CwdChanged",
+    "DirectoryAdded",
+    "FileChanged",
+    "WorktreeCreate",
+    "WorktreeRemove",
+    "PostCompact",
+    "Elicitation",
+    "ElicitationResult"
+  ],
+
+  "capabilities": [
+    {
+      "id": "marketplace-install",
+      "applies_to": "marketplace",
+      "description": "Installs plugins from .claude-plugin/marketplace.json in a git repo.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "supported" }
+      },
+      "evidence": "~/.copilot/config.json lists installedPlugins with \"marketplace\": \"awesome-agency\"; bundles materialized under ~/.copilot/installed-plugins/awesome-agency/."
+    },
+    {
+      "id": "symlink-deref",
+      "applies_to": "marketplace",
+      "description": "Dereferences pool symlinks into real files at install time.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "supported" }
+      },
+      "evidence": "plugins/steward/scripts is a symlink in-repo but a real directory in the Copilot install cache."
+    },
+    {
+      "id": "skills",
+      "applies_to": "skill",
+      "description": "Loads Agent Skills from SKILL.md with YAML frontmatter.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "supported" }
+      },
+      "evidence": "superpowers and steward skills are available in a Copilot CLI session."
+    },
+    {
+      "id": "agents",
+      "applies_to": "agent",
+      "description": "Loads subagents from markdown files with YAML frontmatter.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "supported" }
+      },
+      "evidence": "steward:* agents are selectable in a Copilot CLI session."
+    },
+    {
+      "id": "agent-model-alias",
+      "applies_to": "agent",
+      "description": "Honors the `model:` frontmatter field (a pinned full model ID per this repo's convention).",
+      "severity": "warn",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": {
+          "status": "ignored",
+          "note": "Falls back to the current session model without surfacing an error to the user. Cost and latency degrade; correctness does not."
+        }
+      },
+      "evidence": "~/.copilot/logs: 'model \"haiku\" is not available; will use current model instead' (also observed for opus and inherit — the same fallback applies to a pinned full ID, which Copilot ignores just as silently).",
+      "guidance": "Keep the pinned full model ID anyway. Both hosts read the same agents/*.md inside a bundle, so per-host values are impossible. Never rely on a cheap model for correctness — an agent must produce correct output at any model. See docs/TODO.md for the deferred Copilot model-selection work."
+    },
+    {
+      "id": "agent-color",
+      "applies_to": "agent",
+      "description": "Honors the cosmetic `color:` frontmatter field.",
+      "severity": "info",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "ignored", "note": "Logs 'unknown field ignored: color'. Purely cosmetic; no behavioral effect." }
+      },
+      "evidence": "~/.copilot/logs, on every session start, for each project agent declaring color."
+    },
+    {
+      "id": "skill-disable-model-invocation",
+      "applies_to": "skill",
+      "description": "Honors `disable-model-invocation: true`, restricting a skill to explicit invocation.",
+      "severity": "warn",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": {
+          "status": "ignored",
+          "note": "A skill intended as explicit-invocation-only becomes model-invocable. This is a semantic divergence, not just degradation."
+        }
+      },
+      "evidence": "Claude-Code-specific extension; absent from the Agent Skills frontmatter set Copilot reads.",
+      "guidance": "The skill body must still behave sensibly if invoked automatically. Where it must not run unprompted, say so in the first lines of the body so the model self-restricts, rather than relying on the field alone."
+    },
+    {
+      "id": "commands",
+      "applies_to": "command",
+      "description": "Loads slash commands from commands/*.md.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "unsupported", "note": "Copilot CLI has no slash-command concept; skills fill that role and are invocable as /<skill-name>." }
+      },
+      "evidence": "GitHub Copilot CLI docs describe skills as the command equivalent; no commands/ directory is read.",
+      "guidance": "Every shipped command needs a skill counterpart carrying the same capability, or an entry in known_exceptions declaring the bundle Claude-only."
+    },
+    {
+      "id": "bundled-mcp",
+      "applies_to": "plugin",
+      "description": "Runs an MCP server bundled at the plugin root via .mcp.json.",
+      "severity": "warn",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "partial", "note": "Copilot reads .mcp.json as project-level config, not as a plugin-bundled server, so an installed bundle's server is not started automatically." }
+      },
+      "evidence": "GitHub Copilot CLI MCP docs list .mcp.json among project-level config locations.",
+      "guidance": "Document manual setup for Copilot users in the bundle README."
+    },
+    {
+      "id": "hook-events",
+      "applies_to": "hook",
+      "description": "Supports the hook event names used by the bundle.",
+      "severity": "error",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "partial", "note": "Accepts PascalCase event names as a Claude compatibility mode, but supports a smaller event set. See shared_hook_events." }
+      },
+      "evidence": "GitHub Copilot CLI hooks reference documents both its native camelCase events and PascalCase compatibility.",
+      "guidance": "Restrict hooks.json to shared_hook_events unless the bundle is declared Claude-only."
+    },
+    {
+      "id": "plugin-root-var",
+      "applies_to": "plugin",
+      "description": "Expands ${CLAUDE_PLUGIN_ROOT} in hook and MCP server commands.",
+      "severity": "warn",
+      "support": {
+        "claude": { "status": "supported" },
+        "copilot": { "status": "unverified", "note": "GitHub docs state the variable is not expanded, but the vendored superpowers SessionStart hook uses it and its content does reach a Copilot session. Unresolved." }
+      },
+      "evidence": "Contradiction between GitHub docs and observed superpowers behavior; not yet isolated.",
+      "guidance": "Warn only. Failing here would break steward and superpowers immediately. Resolve via the deferred verification task in docs/TODO.md."
+    }
+  ],
+
+  "known_exceptions": [
+    {
+      "artifact": "plugins/ludus-toolkit",
+      "capability": "bundled-mcp",
+      "reason": "Ships an in-tree MCP server. Copilot users configure it manually; the bundle README documents the steps."
+    }
+  ]
+}

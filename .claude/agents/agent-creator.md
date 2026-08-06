@@ -29,8 +29,7 @@ description: |
   Plugin development with agent addition, trigger agent-creator.
   </commentary>
   </example>
-model: opus
-color: magenta
+model: claude-opus-5
 tools: ["Write", "Read"]
 ---
 

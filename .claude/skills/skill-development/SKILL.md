@@ -230,3 +230,12 @@ For the complete generic skill-creator methodology:
 
 - **Extend Claude with skills**: https://code.claude.com/docs/en/skills
 - **Agent Skills in the SDK**: https://code.claude.com/docs/en/agent-sdk/skills
+
+## Cross-host caveat
+
+Skills from this repo also install in GitHub Copilot CLI, which reads `name`, `description`,
+`allowed-tools`, `license`, `compatibility`, and `metadata` — and **silently ignores**
+Claude-only extensions. The one that changes behavior is `disable-model-invocation`: a skill
+meant to be explicit-invocation-only becomes auto-invocable in Copilot. When you set it, also
+state the constraint in the skill **body** so the model self-restricts. Check with
+`python3 .github/scripts/check-host-compat.py`; see the `host-portability` skill.

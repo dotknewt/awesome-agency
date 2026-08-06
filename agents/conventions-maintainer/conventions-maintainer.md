@@ -12,7 +12,7 @@ description: >
   proposed fixes; never edits files. For applying fixes, it recommends steward's
   conventions skill (scaffold mode). Runs on Sonnet: it sweeps a whole repo, and
   judging whether a doc lives in its conventional home is not a syntactic check.
-model: sonnet
+model: claude-sonnet-5
 tools: Read, Grep, Glob, Bash
 ---
 

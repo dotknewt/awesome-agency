@@ -6,9 +6,13 @@ makes a deliberate `inherit` indistinguishable from someone forgetting the field
 so this repo requires it on every agent (see docs/specs/agents/Agent-Specification.md
 "Model conventions"). Vendored bundles are exempt — they follow upstream's rules.
 
-This checks presence only, never the value. Which tier or pinned ID is right is a
-judgment call the spec describes but no script can make, and an allowlist of model
-names would reject models newer than the last time someone edited this file.
+Which tier or pinned ID is right is a judgment call the spec describes but no
+script can make, and an allowlist of model names would reject models newer than
+the last time someone edited this file. What this script *can* check mechanically
+is shape: skills/agent-model-assignment/SKILL.md requires a full pinned model ID,
+and rejects the bare tier aliases (`inherit`, `haiku`, `sonnet`, `opus`, `fable`)
+outright, so any of those five bare values is always wrong regardless of which
+model is actually right.
 
 Usage:
   check-agent-models.py           validate (exit 1 on any violation)
@@ -33,6 +37,7 @@ SCAN_DIRS = ("agents", ".claude/agents")
 DIR_PER_AGENT_ROOTS = ("agents",)
 
 MODEL_LINE = re.compile(r"^model:\s*(.*?)\s*$")
+BARE_ALIASES = {"inherit", "haiku", "sonnet", "opus", "fable"}
 
 
 def agent_files() -> list[str]:
@@ -95,10 +100,16 @@ def main() -> int:
         if model is None:
             errors.append(
                 f"{rel}: no `model` in frontmatter. This repo requires an explicit "
-                f"choice — `inherit` is fine, but say so."
+                f"full model ID — see skills/agent-model-assignment/SKILL.md."
             )
         elif not model:
             errors.append(f"{rel}: `model` is present but empty")
+        elif model.lower() in BARE_ALIASES:
+            errors.append(
+                f"{rel}: `model: {model}` is a bare tier alias/`inherit`, which "
+                f"skills/agent-model-assignment/SKILL.md now disallows — pin a full "
+                f"model ID instead (e.g. `claude-opus-5`)."
+            )
 
     for error in errors:
         print(f"ERROR: {error}", file=sys.stderr)

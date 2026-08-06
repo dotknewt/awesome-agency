@@ -1,5 +1,24 @@
 # Steward Release Notes
 
+## v1.4.0 (2026-08-06)
+
+### Agents
+
+- **Pinned every bundled agent's `model` to a full ID instead of a bare tier
+  alias or `inherit`.** The shared `agent-model-assignment` convention was
+  tightened to require a full pinned model ID and now treats bare aliases
+  (`haiku`/`sonnet`/`opus`/`fable`) and `inherit` as invalid — an omission or a
+  bare alias can't be told apart from an oversight, and a bare alias resolves to
+  whatever that tier currently means, so the agent's behavior isn't reproducible
+  from the file alone. This bundle's seven agents previously used `sonnet`
+  (`schema-maintainer`, `conventions-maintainer`), `haiku`
+  (`docs-user-maintainer`, `state-keeper`), or `inherit`
+  (`docs-spec-maintainer`, `instructions-maintainer`, `marketplace-maintainer`).
+  The three `inherit` agents — whose descriptions explicitly wanted "track the
+  caller's model" — moved to a `claude-opus-5` floor pin per the convention's
+  guidance for judgment work with no `inherit` equivalent, with a note that the
+  pin is a floor, not a fixed cost.
+
 ## v1.3.1 (2026-08-06)
 
 ### Fixes

@@ -127,7 +127,10 @@ If nothing was selected (user chose "None"), report that no changes were made.
 
 - Only `true`-valued user entries are considered for pinning; `false` entries mean explicitly disabled.
 - The `claude-plugins-official` marketplace is implicit in Claude Code — never write it to
-  `extraKnownMarketplaces`.
+  `extraKnownMarketplaces`. Note that it is **not** implicit in GitHub Copilot CLI: a pin such as
+  `superpowers@claude-plugins-official` fails to resolve there and retries noisily on every
+  session. Pin to a marketplace both hosts know (for content vendored here, that is
+  `@awesome-agency`).
 - This command only operates at the **plugin** level. Individual agents, skills, or commands within a
   plugin cannot be selectively enabled via settings — that is controlled by the plugin author.
 - `.claude/settings.json` is committed; `.claude/settings.local.json` is gitignored and is not

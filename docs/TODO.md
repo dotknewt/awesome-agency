@@ -20,3 +20,16 @@
 ## deferred
 - scripts/build-and-register.sh
   - automate build + catalog registration + secret set for the `dockerize-mcp-server` skill (roadmapped for v2)
+- Copilot model-selection
+  - GitHub Copilot CLI has no equivalent to Claude Code's agent `model:` frontmatter — it
+    always runs on the calling session's model and silently ignores any pinned full model
+    ID. There is currently no way to express a Claude-Code-only model-routing hint that
+    Copilot also honors. Revisit if/when Copilot adds model-selection support; see
+    `.github/host-compat.json`'s `agent-model-alias` capability and AGENTS.md's Host
+    portability section.
+- `${CLAUDE_PLUGIN_ROOT}` verification in Copilot
+  - Support for `${CLAUDE_PLUGIN_ROOT}` resolution in GitHub Copilot CLI is unverified —
+    the vendored `superpowers` `SessionStart` hook suggests it may work despite docs saying
+    otherwise. Confirm against a real Copilot install and update AGENTS.md's Host
+    portability section with a definitive answer.
+

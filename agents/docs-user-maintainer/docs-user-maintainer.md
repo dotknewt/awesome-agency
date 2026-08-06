@@ -10,7 +10,7 @@ description: >
   with proposed fixes; never edits files. Runs on Haiku: stale commands, renamed
   flags, and wrong version numbers are syntactically checkable, so routine audits
   stay cheap. Raise it to Sonnet on a repo whose docs exceed Haiku's 200K context.
-model: haiku
+model: claude-haiku-4-5
 tools: Read, Grep, Glob, Bash
 ---
 

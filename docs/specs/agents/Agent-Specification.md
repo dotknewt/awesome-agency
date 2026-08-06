@@ -50,7 +50,7 @@ Only `name` and `description` are required by the canonical spec. Everything els
 | `description` | Yes | Tells Claude when to delegate to this agent. This is the field the harness reads to decide whether to dispatch — see [The description field](#the-description-field). |
 | `tools` | No | Restricts the agent to a specific set of tools. Omit to inherit every tool available in the parent conversation. See [Tool restriction syntax](#tool-restriction-syntax). |
 | `disallowedTools` | No | Denylist form of the above: inherit everything except the tools listed. Not seen in this repo's local agents, but valid per the canonical spec. |
-| `model` | Yes (repo convention) | Which model the agent runs on: `inherit`, `sonnet`, `opus`, `haiku`, or a full model ID. Optional to Claude Code (defaults to `inherit`), but mandatory here so the choice is deliberate and reviewable. See [Model conventions](#model-conventions). |
+| `model` | Yes (repo convention) | Which model the agent runs on: this repo requires a full model ID (`inherit`/`sonnet`/`opus`/`haiku` are valid Claude Code syntax but not used here). Optional to Claude Code (defaults to `inherit`), but mandatory here so the choice is deliberate and reviewable. See [Model conventions](#model-conventions). |
 | `color` | No | Display color for the agent in the task list/transcript UI. Purely cosmetic — has no effect on behavior. See [Color](#color). |
 
 <Card>
@@ -218,27 +218,30 @@ To grant unrestricted access, omit `tools` entirely — do not write `tools: "*"
 
 ## Model conventions
 
-Every agent in this repo **must declare `model` explicitly.** Omitting the field is
-also valid Claude Code — it silently means `inherit` — but an omission is
-indistinguishable from an oversight, so this repo forbids it. `inherit` is a fine
-answer; it just has to be a stated one. `.github/scripts/check-agent-models.py`
-enforces in CI that the field is present. It deliberately does **not** validate the
-value — model names change faster than a checked-in allowlist can track, and a
-validator that rejects a model released last week is worse than no validator.
+Every agent in this repo **must declare `model` explicitly, as a full model ID.**
+Omitting the field is valid Claude Code — it silently means `inherit` — but an
+omission is indistinguishable from an oversight, so this repo forbids it.
+`.github/scripts/check-agent-models.py` enforces in CI that the field is present. It
+deliberately does **not** validate the value — model names change faster than a
+checked-in allowlist can track, and a validator that rejects a model released last
+week is worse than no validator.
 
 ### Accepted values
 
 | Value | Meaning |
 | --- | --- |
-| `inherit` | Run on the same model as the calling conversation. |
-| `haiku` / `sonnet` / `opus` / `fable` | A tier alias — whatever model Claude Code currently maps to that tier. Tracks upgrades automatically. |
-| A full model ID, e.g. `claude-fable-5`, `claude-haiku-4-5-20251001` | Pins the agent to one exact model. Note that Anthropic's dateless IDs are pinned snapshots too, not evergreen pointers — see [Why aliases beat pinned IDs](#why-aliases-beat-pinned-ids). |
+| A full model ID, e.g. `claude-fable-5`, `claude-haiku-4-5-20251001` | Pins the agent to one exact model. This is the only accepted value in this repo. |
 
-**Use an alias by default.** Pin a full model ID when you are told to, or when the
-agent genuinely needs that specific model rather than a capability tier — a persona
-whose voice *is* that model, or a behavior only one model exhibits. Nothing checks
-this; it is a judgment call, and the reason belongs in the file per
-[Recording the reason](#recording-the-reason).
+`inherit` and the bare tier aliases (`haiku`/`sonnet`/`opus`/`fable`) are valid Claude
+Code syntax but are **not** used here: this repo always pins a full model ID, even
+though Anthropic's dateless IDs (e.g. `claude-fable-5`) are pinned snapshots too, not
+evergreen pointers, and so need periodic review as models are deprecated. See the
+`agent-model-assignment` skill's opening section ("Always pin a full ID; never write a
+bare alias or `inherit`") for the rationale.
+
+**Always pin a full model ID.** Nothing checks this value; it is a judgment call
+which exact ID to choose (see [Choosing a tier](#choosing-a-tier) below), and the
+reason belongs in the file per [Recording the reason](#recording-the-reason).
 
 ### Choosing a tier
 
@@ -247,21 +250,24 @@ this; it is a judgment call, and the reason belongs in the file per
 written out here so it applies in any repo, not just this one, and so there is one
 copy to keep current instead of two. Read it before assigning a model. In outline:
 
-1. **Rule out `haiku` on hard constraints first.** 200K context (~150K words) and a
-   Feb 2025 knowledge cutoff, against 1M and 2026 for every other tier. This
-   disqualifies more agents than any reasoning criterion does.
-2. **Then on loop length.** Haiku holds single-digit tool-call chains; Sonnet the
-   teens; past ~20 autonomous steps it is Opus.
-3. **Then match task shape:** `haiku` for mechanical bounded work, `sonnet` for long
-   tool-use loops, `opus` for generating an artifact from an ambiguous brief or for
-   adversarial review, a pinned model for a persona that *is* that model, `inherit`
-   for judgment work that should scale with the caller.
+1. **Rule out a Haiku-class pin on hard constraints first.** 200K context (~150K
+   words) and a Feb 2025 knowledge cutoff, against 1M and 2026 for every other tier.
+   This disqualifies more agents than any reasoning criterion does.
+2. **Then on loop length.** Haiku-class holds single-digit tool-call chains;
+   Sonnet-class the teens; past ~20 autonomous steps it is Opus-class.
+3. **Then match task shape:** Haiku-class for mechanical bounded work, Sonnet-class
+   for long tool-use loops, Opus-class for generating an artifact from an ambiguous
+   brief or for adversarial review, a pinned model for a persona that *is* that
+   model. There is no `inherit` fallback for judgment work that should scale with
+   the caller — see the skill's "What shape is the work?" section for how to handle
+   that case with a full-ID-only convention.
 
 Two results from that skill are worth repeating because they contradict intuition:
 **Sonnet beats Opus on long CLI/tool loops** (Terminal-Bench 2.1: 80.4% vs 74.6%), so
 reaching for the top of the ladder makes agentic work slower *and* worse; and
-**`fable` silently routes security-adjacent prompts to an older Opus**, so a security
-agent pinned there gets less capability than `opus` at twice the price.
+**Fable silently routes security-adjacent prompts to an older Opus**, so a security
+agent pinned to a Fable-class model gets less capability than Opus-class at twice the
+price.
 
 ### Recording the reason
 
@@ -304,7 +310,7 @@ At minimum, before publishing a new agent file, confirm:
 * `name` is unique in its scope, lowercase-hyphenated, 3–50 characters
 * `description` is non-empty and states concrete triggering conditions (with `<example>` blocks if the agent needs to catch varied natural-language phrasing)
 * `tools` (if present) lists only tools the system prompt actually needs
-* `model` is present (required here even though Claude Code allows omitting it) — an alias by default, a pinned ID where the agent needs one
+* `model` is present (required here even though Claude Code allows omitting it) — a full model ID, never a bare alias or `inherit`
 * The body is written in second person and includes an explicit output format
 
 ## Minimal worked example
@@ -335,7 +341,7 @@ description: |
   </commentary>
   assistant: "I'll use the changelog-drafter agent to summarize what changed."
   </example>
-model: haiku
+model: claude-haiku-4-5
 color: cyan
 tools: Bash, Read
 ---

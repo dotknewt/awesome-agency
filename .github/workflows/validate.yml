@@ -65,6 +65,9 @@ jobs:
       - name: every agent declares a model
         run: python3 .github/scripts/check-agent-models.py
 
+      - name: extensions stay installable in both hosts
+        run: python3 .github/scripts/check-host-compat.py
+
   release-notes:
     runs-on: ubuntu-latest
     steps:

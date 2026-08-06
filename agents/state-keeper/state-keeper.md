@@ -6,7 +6,7 @@ description: >
   durable decisions back to the caller as AGENTS.md candidates.
   Invoke via Agent tool and pass the current timestamp in your prompt.
   Runs on Haiku so the main session does not burn tokens on bookkeeping.
-model: haiku
+model: claude-haiku-4-5
 tools:
   - Read
   - Edit

@@ -11,7 +11,7 @@ description: >
   Runs on Sonnet: it walks a whole repo and drives validator scripts over many
   steps, which outruns both Haiku's 200K context and its reliability on long
   tool-call chains.
-model: sonnet
+model: claude-sonnet-5
 tools: Read, Grep, Glob, Bash
 ---
 

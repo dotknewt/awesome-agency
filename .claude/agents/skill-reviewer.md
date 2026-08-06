@@ -30,8 +30,7 @@ description: |
   Skill description modified, review for triggering effectiveness.
   </commentary>
   </example>
-model: inherit
-color: cyan
+model: claude-opus-5
 tools: ["Read", "Grep", "Glob"]
 ---
 

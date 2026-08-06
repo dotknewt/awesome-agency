@@ -66,3 +66,10 @@ Scaffold a new standalone skill under `skills/` in the current repository.
 - Body must be written in **imperative form** (instructions for Claude, not the user).
 - Keep `SKILL.md` under **500 lines**; move depth to `references/`.
 - No `model` field — model is set at session/project level.
+
+## Host portability
+
+Skills from this repo also install in GitHub Copilot CLI. If you set
+`disable-model-invocation: true`, Copilot **drops it** and the skill becomes auto-invocable, so
+state the invocation constraint in the skill **body** as well. Verify with
+`python3 .github/scripts/check-host-compat.py`; see the `host-portability` skill.

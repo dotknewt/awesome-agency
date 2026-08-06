@@ -7,10 +7,10 @@ description: >
   longer exist or changed shape, constraints the code no longer enforces, and new
   subsystems with no spec coverage. Invoke after structural code changes, when the
   user asks to "check the specs", "audit architecture docs", or "find spec drift",
-  or via a maintenance orchestrator. Reports findings with proposed fixes; never
-  edits files. Runs on the caller's model, because judging whether a spec's stated
-  intent still holds is reasoning work, not a syntactic check.
-model: inherit
+  or via a maintenance orchestrator.   Reports findings with proposed fixes; never edits files. Pinned to Opus as a
+  floor — judging whether a spec's stated intent still holds is reasoning work, and
+  this pin is the minimum tier the work should ever run below, not a fixed cost.
+model: claude-opus-5
 tools: Read, Grep, Glob, Bash
 ---
 

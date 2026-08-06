@@ -320,5 +320,14 @@ To create an agent for a plugin:
 7. Validate with `scripts/validate-agent.sh`
 8. Test triggering with real scenarios
 9. Document the agent in the plugin README
+10. Check cross-host behavior with `python3 .github/scripts/check-host-compat.py`
 
 Focus on clear triggering conditions and comprehensive system prompts for autonomous operation.
+
+## Cross-host caveat
+
+Extensions from this repo also install in GitHub Copilot CLI, which **silently ignores**
+`model:` and `color:`. Two consequences for agent authors: the agent must be correct at any
+model — never lean on a cheap model for correctness — and its prose must not advertise a
+benefit that depends on `model:` unless it is qualified as Claude-only. See the
+`host-portability` skill.

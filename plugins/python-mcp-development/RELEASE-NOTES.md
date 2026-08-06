@@ -1,5 +1,16 @@
 # Python MCP Development Release Notes
 
+## v1.0.1 (2026-08-06)
+
+### Agents
+
+- **Pinned `python-mcp-expert`'s `model` to a full ID instead of `inherit`.**
+  The shared `agent-model-assignment` convention no longer treats `inherit` as
+  a valid value — an agent whose model silently tracked the calling session
+  couldn't be reasoned about from the file alone. Since the agent's job is
+  generating whole MCP server artifacts from an ambiguous brief, it now pins
+  `claude-opus-5`.
+
 ## v1.0.0 (2026-08-06)
 
 Initial release. Notes reconstructed from git history.
