@@ -132,15 +132,49 @@ on one specific model" row above, not this one.
 
 Some models expose an adjustable reasoning-effort or thinking-budget control
 alongside the model choice itself. Claude Code's agent frontmatter has no dedicated
-field for this — there is no schema change here — but where the pinned model (or the
-host running it) does support tuning effort, state the intended level in the same
-place you record the model choice (the `description`, or a body comment), matching it
-to the task shape from the decision procedure above: mechanical/bounded work wants the
-lowest effort that reliably produces a checkable answer, long autonomous loops want a
-middle setting, and generating an artifact from an ambiguous brief or adversarial
-review wants the highest effort available. Leaving effort unstated when the model
-supports choosing it has the same "can't tell deliberate from oversight" problem this
-skill exists to avoid for `model` itself.
+field for this. **GitHub Copilot CLI does**: its custom-agent frontmatter schema
+includes a real `reasoning-effort:` key (kebab-case, sibling to `model:`), verified
+directly against the CLI binary. Unlike `model:`, this one reaches the live session —
+the parsed value flows straight into the model-session setup
+(`this.definition.reasoningEffort` feeds `setSelectedModel(...)`) with no catalog
+lookup to fail. There is no equivalent `context`/`context-tier` frontmatter key on
+either host; a context-window tier is not settable from the agent file at all.
+
+`model:`, by contrast, is parsed successfully but is **not reliably honored at
+runtime** even when it's a full, valid ID: this repo's own `.claude/agents/*.md`
+dev-tooling files pin `model: claude-haiku-4-5` today, and Copilot CLI's logs
+(`~/.copilot/logs/*.log`) show, as recently as the same day this was verified,
+`model "claude-haiku-4-5" is not available; will use current model instead` — the
+exact silent-fallback behavior `host-compat.json`'s `agent-model-alias` capability
+already documents, now confirmed with a full pinned ID rather than only the bare
+aliases (`opus`/`haiku`/`inherit`) it was originally evidenced with. Parsing
+acceptance is not proof of effect — verify a field actually changes behavior before
+trusting it, the same way `agent-model-alias`'s evidence was gathered.
+
+Because this repo's agent files are shared verbatim between both hosts, `reasoning-
+effort:` is a legitimate, committable frontmatter field where you want Copilot CLI to
+honor a non-default effort — not a workaround. Claude Code will not recognize it;
+treat it as an extra key Claude ignores, the same tolerance it already extends to
+unknown fields. Whether or not you set it, still restate the intended level in the
+`description` or a body comment for the Claude-only reader and for anyone auditing
+intent, matching it to the task shape from the decision procedure above:
+mechanical/bounded work wants the lowest effort that reliably produces a checkable
+answer, long autonomous loops want a middle setting, and generating an artifact from
+an ambiguous brief or adversarial review wants the highest effort available. Leaving
+effort unstated when the model supports choosing it has the same "can't tell
+deliberate from oversight" problem this skill exists to avoid for `model` itself.
+
+Separately, GitHub Copilot CLI's `/agents` and `/subagents` TUI let a user override
+`model`, effort, and context tier per agent at runtime. That choice is written to the
+*user's* local `~/.copilot/settings.json` (`subagents.agents.<name>.model` /
+`.effortLevel` / `.contextTier`), which the CLI checks *before* falling back to the
+agent file's own `model`/`reasoning-effort` declaration (`TH()`'s resolution order:
+settings override, then the file's declared value, then the session default). That
+settings block is local, unversioned, and takes precedence over the committed
+frontmatter — two people running the same installed agent can end up on different
+tiers with zero diff in the repo, and neither the override nor its absence is visible
+from the file alone. Don't rely on it in place of a committed default: the frontmatter
+fields are what ships with the plugin, and are the ones this skill governs.
 
 ## Record the reason
 
