@@ -323,7 +323,7 @@
     },
     {
       "name": "maintain",
-      "description": "Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable read-only maintainer agents (user docs, spec docs, instructions, schemas, conventions) in parallel, and merge their…",
+      "description": "Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable read-only maintainer agents (user docs, spec docs, instructions, schemas, conventions, marketplace release notes) in…",
       "version": "1.0.0",
       "source": "./skills/maintain",
       "strict": false
@@ -361,6 +361,13 @@
       "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration",
       "version": "1.0.0",
       "source": "./skills/python-mcp-server-generator",
+      "strict": false
+    },
+    {
+      "name": "release-notes",
+      "description": "Write and maintain a plugin's RELEASE-NOTES.md — one entry per released version, stating what changed and why it changed. Use when the user asks to \"update the release notes\", \"add a changelog…",
+      "version": "1.0.0",
+      "source": "./skills/release-notes",
       "strict": false
     },
     {
@@ -524,6 +531,16 @@
       "strict": false,
       "agents": [
         "./issue-filer.md"
+      ]
+    },
+    {
+      "name": "marketplace-maintainer-agent",
+      "description": "Read-only maintainer that audits release discipline in a Claude Code plugin marketplace repo — whether bundles whose content changed also bumped their version and recorded a RELEASE-NOTES.md entry…",
+      "version": "1.0.0",
+      "source": "./agents/marketplace-maintainer",
+      "strict": false,
+      "agents": [
+        "./marketplace-maintainer.md"
       ]
     },
     {

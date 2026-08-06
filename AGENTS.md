@@ -57,7 +57,8 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
   real files, no pool symlinks, and its skills get no micro-entries. Update it by
   re-syncing `skills/` + `hooks/` from upstream and aligning the version in its `plugin.json`.
   Its `RELEASE-NOTES.md` is pinned to the vendored version — diff it against upstream's
-  to detect drift.
+  to detect drift. A `.vendored` marker file exempts a bundle from this repo's
+  release-notes discipline; never write local entries into a vendored bundle's notes.
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
@@ -83,6 +84,12 @@ identifier.
 - Bundle versions live ONLY in `plugins/<name>/.claude-plugin/plugin.json`. Bump
   on any change to the bundle's members or metadata. Micro-entries use a flat
   `1.0.0` (bump `MICRO_VERSION` in the generator if a coordinated refresh is needed).
+- Every non-vendored bundle keeps a `plugins/<name>/RELEASE-NOTES.md` with one
+  `## v<version> (<date>)` heading per released version, matching `plugin.json`
+  exactly. **Bump the version and add the entry in the same edit.** An entry must say
+  *why* a change was made, not just what changed — see the `release-notes` skill.
+  Enforced mechanically by `hooks/steward/scripts/release-notes-audit.py`; the
+  "does it actually explain why" judgment is the `marketplace-maintainer` agent's.
 - `repository` in every plugin.json points at `https://github.com/dotknewt/awesome-agency`.
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
@@ -104,7 +111,10 @@ identifier.
   `${CLAUDE_PLUGIN_ROOT}` reference resolution
   (`.github/scripts/check-plugin-root-refs.py`, run per marketplace entry so
   micro-installs are covered too), `plugin.json` validation and SKILL.md frontmatter
-  validation via `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`.
+  validation via `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`,
+  and release-notes coverage via `hooks/steward/scripts/release-notes-audit.py`
+  (`--all` on every run; `--base <pr-base>` on PRs, to catch a changed bundle that
+  skipped its version bump).
 - Locally: `claude plugin validate .` for a quick manifest check.
 
 ## No build or test step

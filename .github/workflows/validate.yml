@@ -62,6 +62,22 @@ jobs:
       - name: CLAUDE_PLUGIN_ROOT references resolve
         run: python3 .github/scripts/check-plugin-root-refs.py
 
+  release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: every bundle has notes for its current version
+        run: python3 hooks/steward/scripts/release-notes-audit.py --all
+
+      - name: changed bundles bumped their version
+        if: github.event_name == 'pull_request'
+        run: |
+          python3 hooks/steward/scripts/release-notes-audit.py \
+            --base "${{ github.event.pull_request.base.sha }}"
+
   manifests:
     runs-on: ubuntu-latest
     steps:

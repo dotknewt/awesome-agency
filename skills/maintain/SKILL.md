@@ -3,7 +3,7 @@ name: maintain
 description: >
   Orchestrate a repo maintenance sweep: detect what changed, deploy the applicable
   read-only maintainer agents (user docs, spec docs, instructions, schemas,
-  conventions) in
+  conventions, marketplace release notes) in
   parallel, and merge their drift reports into one prioritized list of proposed
   fixes. Use when the user asks to "run maintenance", "check for drift", "audit the
   repo", "are the docs/instructions/schemas up to date", or after landing a batch of
@@ -37,7 +37,7 @@ back to a full sweep.
 ## Phase 2 — Route
 
 Decide which maintainers apply. Dispatch a maintainer when ANY of its triggers hit
-(for `full`, dispatch all five):
+(for `full`, dispatch every maintainer whose artifacts exist in this repo):
 
 | Maintainer | Dispatch when |
 |---|---|
@@ -46,6 +46,7 @@ Decide which maintainers apply. Dispatch a maintainer when ANY of its triggers h
 | docs-spec-maintainer | Changed files include spec/architecture docs, OR changed code alters structure a spec describes (modules, formats, interfaces) |
 | instructions-maintainer | Changed files include AGENTS.md/CLAUDE.md, OR changes touch project structure, tooling, scripts, or conventions instructions typically state |
 | conventions-maintainer | Changed files include planning/user docs (docs/TODO.md, docs/STATE.md, docs/user/), the root README, pyproject.toml, or Python CLI code (`[project.scripts]` entry points, Typer/click apps) |
+| marketplace-maintainer | *(plugin marketplace repos only)* Changed files include anything under `plugins/`, or any pool artifact a bundle ships through a symlink (skills, agents, commands, hooks, instructions) |
 
 When in doubt for a maintainer, dispatch it — a clean report is cheap; missed drift
 is not. Tell the user which maintainers you are dispatching and why, one line each.
@@ -78,7 +79,10 @@ instruction-file fixes, offer the bundled `instructions-audit` / `instructions-r
 skills as the applying mechanism instead of raw edits. For conventions gaps (missing
 `docs/TODO.md` or `docs/STATE.md`, misplaced user docs, CLI-standards drift), offer
 the bundled `conventions` skill's scaffold mode as the applying mechanism (it routes
-STATE.md creation through `state-keeper`).
+STATE.md creation through `state-keeper`). For missing or uninformative release-notes
+entries, offer the bundled `release-notes` skill — it carries the document format and
+the "say why, not just what" discipline, and requires bumping `plugin.json` in the
+same edit.
 
 ## Boundaries
 
