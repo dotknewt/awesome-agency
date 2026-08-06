@@ -8,8 +8,10 @@ description: >
   Invoke after changes touch manifests or configs, when the user asks to "check
   schemas", "validate manifests", "check configs", or "find config drift", or via a
   maintenance orchestrator. Reports findings with proposed fixes; never edits files.
-  Runs on Haiku so routine audits stay cheap.
-model: haiku
+  Runs on Sonnet: it walks a whole repo and drives validator scripts over many
+  steps, which outruns both Haiku's 200K context and its reliability on long
+  tool-call chains.
+model: sonnet
 tools: Read, Grep, Glob, Bash
 ---
 

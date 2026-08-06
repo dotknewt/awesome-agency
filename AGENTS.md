@@ -91,6 +91,16 @@ identifier.
   Enforced mechanically by `hooks/steward/scripts/release-notes-audit.py`; the
   "does it actually explain why" judgment is the `marketplace-maintainer` agent's.
 - `repository` in every plugin.json points at `https://github.com/dotknewt/awesome-agency`.
+- Every agent must declare `model` explicitly — Claude Code defaults it to `inherit`
+  silently, which makes a deliberate choice indistinguishable from an oversight. The
+  decision procedure is the `agent-model-assignment` skill
+  (`skills/agent-model-assignment/SKILL.md`): rule out `haiku` on hard constraints
+  (200K context, Feb 2025 cutoff) first, then on tool-loop length, then match task
+  shape. Prefer an alias (`inherit`/`haiku`/`sonnet`/`opus`/`fable`) — Anthropic's
+  dateless IDs are pinned snapshots, not evergreen pointers — and pin only when the
+  agent needs one exact model. Record the reason in the description or a body comment.
+  `.github/scripts/check-agent-models.py` enforces that the field is present — never
+  the value (`--list` prints current assignments).
 - Skill/agent content must reference its own aux files relative to the skill dir,
   or via `${CLAUDE_PLUGIN_ROOT}/...` for anything at plugin-root level. If an agent
   needs pool content (instructions, skills), symlink it into `agents/<name>/` so the
@@ -110,7 +120,8 @@ identifier.
   (jq), source-path existence, broken-symlink scan (`find plugins agents -xtype l`),
   `${CLAUDE_PLUGIN_ROOT}` reference resolution
   (`.github/scripts/check-plugin-root-refs.py`, run per marketplace entry so
-  micro-installs are covered too), `plugin.json` validation and SKILL.md frontmatter
+  micro-installs are covered too), agent model declarations
+  (`.github/scripts/check-agent-models.py`), `plugin.json` validation and SKILL.md frontmatter
   validation via `hooks/hooks-toolkit/scripts/validate-{plugin-json,skill-frontmatter}.sh`,
   and release-notes coverage via `hooks/steward/scripts/release-notes-audit.py`
   (`--all` on every run; `--base <pr-base>` on PRs, to catch a changed bundle that

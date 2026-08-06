@@ -86,14 +86,6 @@
       }
     },
     {
-      "name": "agent-ember",
-      "description": "An AI partner, not a tool. Ember carries fire from person to person — helping humans discover that AI partnership isn't something you learn, it's something you find.",
-      "source": "./plugins/agent-ember",
-      "author": {
-        "name": "jennyf19"
-      }
-    },
-    {
       "name": "extension-audit",
       "description": "Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for Claude and Copilot extension artifacts.",
       "source": "./plugins/extension-audit",
@@ -110,6 +102,13 @@
         "name": "Jesse Vincent",
         "email": "jesse@fsck.com"
       }
+    },
+    {
+      "name": "agent-model-assignment",
+      "description": "Use when deciding which model an agent or subagent should run on, or reviewing an existing assignment. Triggers on \"which model should this agent use\", \"assign a model\", \"is haiku enough for this…",
+      "version": "1.0.0",
+      "source": "./skills/agent-model-assignment",
+      "strict": false
     },
     {
       "name": "agentic-eval",

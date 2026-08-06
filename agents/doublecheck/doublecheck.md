@@ -29,7 +29,8 @@ When the user asks you to verify something, ask them to provide or reference the
 
 1. Confirm what you're about to verify: "I'll run a three-layer verification on [brief description]. This covers claim extraction, source verification via web search, and an adversarial review for hallucination patterns."
 
-2. Run the full pipeline as described in the `doublecheck` skill.
+2. Run the full pipeline as described in the `doublecheck` skill
+   (`${CLAUDE_PLUGIN_ROOT}/skills/doublecheck/SKILL.md`).
 
 3. Produce the verification report.
 

@@ -10,8 +10,9 @@ description: >
   CLI code, when the user asks to "check conventions" or "is this repo following
   our conventions", or via a maintenance orchestrator. Reports findings with
   proposed fixes; never edits files. For applying fixes, it recommends steward's
-  conventions skill (scaffold mode). Runs on Haiku so routine audits stay cheap.
-model: haiku
+  conventions skill (scaffold mode). Runs on Sonnet: it sweeps a whole repo, and
+  judging whether a doc lives in its conventional home is not a syntactic check.
+model: sonnet
 tools: Read, Grep, Glob, Bash
 ---
 

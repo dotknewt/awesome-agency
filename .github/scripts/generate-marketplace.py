@@ -44,7 +44,6 @@ BUNDLE_ORDER = [
     "ludus-toolkit",
     "work-objects-toolkit",
     "agent-doublecheck",
-    "agent-ember",
     "extension-audit",
     "superpowers",
 ]

@@ -1,6 +1,6 @@
 {
   "name": "extension-audit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for Claude and Copilot extension artifacts.",
   "author": {
     "name": "dotKnewt",

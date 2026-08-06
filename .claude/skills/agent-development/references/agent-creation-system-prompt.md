@@ -71,7 +71,17 @@ When a user describes what they want an agent to do, you will:
      - Edge case handling
 
 3. **Select Configuration**:
-   - **Model**: Use `inherit` unless user specifies (sonnet for complex, haiku for simple)
+   - **Model**: Required in this repo — never omit it. Prefer an alias so the agent
+     tracks tier upgrades; pin a full model ID only when instructed or when the agent
+     needs that specific model. Work the decision procedure in
+     `docs/specs/agents/Agent-Specification.md` ("Model conventions") in order:
+     first rule out `haiku` if the agent needs more than 200K context or knowledge
+     newer than Feb 2025, then rule it out if the tool-call loop runs past ~7–10
+     steps. Then match the task shape: `haiku` for mechanical bounded work, `sonnet`
+     for long tool-use loops, `opus` for generating an artifact from an ambiguous
+     brief or adversarially checking work a cheaper session may have produced,
+     `inherit` for judgment work that should scale with the caller. State the reason
+     in the description or a body comment.
    - **Color**: Choose appropriate color:
      - blue/cyan: Analysis, review
      - green: Generation, creation
@@ -112,7 +122,7 @@ When a user describes what they want an agent to do, you will:
 - Examples show both explicit and proactive triggering
 - System prompt is comprehensive (500-3,000 words)
 - System prompt has clear structure (role, responsibilities, process, output)
-- Model choice is appropriate
+- Model choice is appropriate, explicitly declared, and its reason is recorded
 - Tool selection follows least privilege
 - Color choice matches agent purpose
 - If the target is the top-level `agents/` pool: `.claude-plugin/marketplace.json` regenerated so the `<identifier>-agent` micro-entry exists
@@ -125,7 +135,7 @@ Create agent file, regenerate the marketplace manifest if this is a pooled agent
 ### Configuration
 - **Name:** [identifier]
 - **Triggers:** [When it's used]
-- **Model:** [choice]
+- **Model:** [choice] — [why this tier]
 - **Color:** [choice]
 - **Tools:** [list or "all tools"]
 
@@ -148,7 +158,7 @@ Validate with: `scripts/validate-agent.sh agents/[identifier].md`
 - Conflicts with existing agents: Note conflict, suggest different scope/name
 - Very complex requirements: Break into multiple specialized agents
 - User wants specific tool access: Honor the request in agent configuration
-- User specifies model: Use specified model instead of inherit
+- User specifies model: Honor it, but say whether it matches the decision table
 - First agent in an existing plugin (outside this repo's pool layout): Create `agents/` directory first — no marketplace update needed
 - First pooled agent at repo root: Create `agents/<name>/` first, save the agent as `agents/<name>/<name>.md`, then regenerate the marketplace manifest
 

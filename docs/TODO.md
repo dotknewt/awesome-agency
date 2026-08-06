@@ -1,5 +1,6 @@
 # copy/add skill,agent,instruction,plugin etc from source
 - When instructed to add/copy an extension and given a source (github repo, marketplace etc), do not install it, but rather add it as if project root was the custom configs directory (like .claude/, .github/ etc)
+
 # conventions
 - default branch name when creating repositories is "main"
 - default to delegating todo writing to small, fast, cheap model subagent

@@ -1,7 +1,7 @@
 ---
 name: extension-reviewer
 description: |
-  Use this agent when the user asks to "review an extension", "audit a plugin before installing it", "scan a skill or agent for risks", or "check extension integrity and marketplace metadata". It performs a read-only static audit and returns a structured report.
+  Use this agent when the user asks to "review an extension", "audit a plugin before installing it", "scan a skill or agent for risks", or "check extension integrity and marketplace metadata". It performs a read-only static audit and returns a structured report. Runs on Opus rather than inheriting: an adversarial security audit that ran on whatever cheap model the session happened to be using would look for subtle risks with the same weak reasoning that misses them.
 
   <example>
   Context: A user is considering installing a third-party Claude plugin.
@@ -20,7 +20,7 @@ description: |
   The agent is appropriate for immutable verification and broad/auto-triggered hook analysis.
   </commentary>
   </example>
-model: inherit
+model: opus
 color: cyan
 tools:
   - Bash

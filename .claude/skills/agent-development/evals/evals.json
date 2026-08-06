@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Create an agent called `db-migration-checker` that reviews database migration files before they're applied — checking for missing rollback steps, destructive operations without safeguards, and non-idempotent SQL. It should trigger both when the user asks for a migration review and proactively after the assistant writes a new migration file.",
-      "expected_output": "A new file at agents/db-migration-checker.md with YAML frontmatter containing name and description (the only required fields). description is a multi-line block scalar (`description: |`) that opens with 'Use this agent when...' and contains 2-4 <example> blocks, each with Context, user, an optional assistant line, and a <commentary> explaining the trigger — covering both an explicit review request and proactive triggering after a new migration file is written. model, color, and tools are either omitted or given sensible values (e.g. model: inherit); none are treated as mandatory. The body is a second-person system prompt with core responsibilities, a step-by-step review process, quality standards, and an output format section.",
+      "expected_output": "A new file at agents/db-migration-checker.md with YAML frontmatter containing name and description (the only required fields). description is a multi-line block scalar (`description: |`) that opens with 'Use this agent when...' and contains 2-4 <example> blocks, each with Context, user, an optional assistant line, and a <commentary> explaining the trigger — covering both an explicit review request and proactive triggering after a new migration file is written. model is present with a value justified by the repo's decision table (a migration reviewer is judgment work, so inherit is the expected answer); color and tools are either omitted or given sensible values. The body is a second-person system prompt with core responsibilities, a step-by-step review process, quality standards, and an output format section.",
       "assertions": [
         "agents/db-migration-checker.md exists and starts with YAML frontmatter delimited by ---",
         "frontmatter contains 'name: db-migration-checker' and a description field",
         "description contains at least 2 <example>...</example> blocks, each containing a <commentary> block",
         "at least one <example> covers an explicit request and at least one covers proactive triggering (e.g. after the assistant writes a new migration)",
-        "the file does not treat model or color as required — they may be present as optional fields or omitted, but nothing should imply they are mandatory",
+        "the file declares model explicitly (this repo requires it even though Claude Code does not) and does not treat color as required",
         "the system prompt body is written in second person and includes a responsibilities/process section and an output format section"
       ]
     },
@@ -28,11 +28,11 @@
     {
       "id": 3,
       "prompt": "I have an old agent file at agents/log-summarizer.md that just says `description: Use this agent to summarize log files when asked.` with no examples, and a leftover `model: gpt-4` field from a different tool. Can you bring it in line with how agents are supposed to look here?",
-      "expected_output": "An updated agents/log-summarizer.md where description is rewritten as a multi-line block scalar with an opening 'Use this agent when...' sentence plus 2-4 <example>/<commentary> blocks covering realistic explicit and proactive triggering scenarios for log summarization. The invalid `model: gpt-4` value is either corrected to a valid option (inherit/sonnet/opus/haiku) or removed entirely (model is optional and defaults to inherit) — the response explains why gpt-4 wasn't a valid value rather than silently leaving it. The rest of the file (name, tools, system prompt body) is preserved unless it was also broken.",
+      "expected_output": "An updated agents/log-summarizer.md where description is rewritten as a multi-line block scalar with an opening 'Use this agent when...' sentence plus 2-4 <example>/<commentary> blocks covering realistic explicit and proactive triggering scenarios for log summarization. The invalid `model: gpt-4` value is corrected to a Claude model — an alias (inherit/sonnet/opus/haiku) by default — rather than removed, since this repo requires an explicit model, and the response explains why gpt-4 wasn't valid rather than silently leaving it. The rest of the file (name, tools, system prompt body) is preserved unless it was also broken.",
       "assertions": [
         "the rewritten description: field uses a YAML block scalar and contains at least 2 <example> blocks, each with a <commentary>",
-        "the invalid model: gpt-4 value is either corrected to one of inherit/sonnet/opus/haiku or removed, and the response explains why gpt-4 was invalid",
-        "the response does not claim model or color must be present — it treats them as optional",
+        "the invalid model: gpt-4 value is corrected to a Claude model, preferring an alias (not removed), and the response explains why gpt-4 was invalid",
+        "the response keeps a model field present per this repo's convention, and does not claim color must be present",
         "existing valid content (name, system prompt body) is preserved rather than being needlessly rewritten"
       ]
     }

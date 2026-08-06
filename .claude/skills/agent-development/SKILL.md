@@ -16,7 +16,7 @@ Agents are autonomous subprocesses that handle complex, multi-step tasks indepen
 - Markdown file format with YAML frontmatter
 - Triggering via a `description:` field containing `<example>`/`<commentary>` blocks — this is the convention every real agent in this repo uses (see `.claude/agents/agent-creator.md`, `plugin-validator.md`, `skill-reviewer.md`)
 - System prompt (the markdown body) defines agent behavior
-- Only `name` and `description` are required; `model`, `color`, and `tools` are optional
+- Only `name` and `description` are required by Claude Code; `color` and `tools` are optional. **This repo also requires `model`** on every agent — see [Model conventions](../../../docs/specs/agents/Agent-Specification.md#model-conventions), enforced by `.github/scripts/check-agent-models.py`
 
 ## Agent File Structure
 
@@ -64,7 +64,7 @@ You are [agent role description]...
 [What to return]
 ```
 
-`model`, `color`, and `tools` are all optional and can be omitted entirely — see [Frontmatter Fields](#frontmatter-fields).
+`color` and `tools` are optional and can be omitted entirely — see [Frontmatter Fields](#frontmatter-fields). `model` is optional to Claude Code but **required by this repo's convention**: pick a tier from the decision table in [Model conventions](../../../docs/specs/agents/Agent-Specification.md#model-conventions) rather than defaulting to `inherit` by reflex.
 
 ## Frontmatter Fields
 

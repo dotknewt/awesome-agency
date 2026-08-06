@@ -1,5 +1,32 @@
 # Steward Release Notes
 
+## v1.3.0 (2026-08-06)
+
+### Deliberate Model Assignment
+
+- **`docs-spec-maintainer`, `instructions-maintainer`, and `marketplace-maintainer`
+  now state `model: inherit` outright.** All three already ran on the caller's model,
+  but only because the field was absent and Claude Code defaults it silently — which
+  made a deliberate choice indistinguishable from an oversight, and invited a future
+  contributor to "optimize" them onto Haiku alongside their cheaper siblings. That
+  would be wrong: unlike `docs-user-maintainer`, which checks syntactically verifiable
+  things like stale commands and version numbers, these three have to judge whether a
+  documented *intent* still holds, and `marketplace-maintainer` specifically exists to
+  answer a question no validator can. Each description now says so, so the reasoning
+  survives the next person to read it.
+
+- **`schema-maintainer` and `conventions-maintainer` moved from Haiku to Sonnet.**
+  Both were put on Haiku to keep routine audits cheap, but both sweep an entire
+  repository — which runs into two limits the original choice did not account for:
+  Haiku caps at 200K tokens of context, and its reliability on long tool-call chains
+  degrades past roughly 7–10 steps, exactly the shape of "walk the repo and run every
+  validator". The failure mode is silent: a context overflow reads as a thin audit,
+  not an error, so these agents could have been quietly under-reporting on any
+  large repo. `docs-user-maintainer` stays on Haiku — stale commands and wrong
+  version numbers really are syntactically checkable — but its description now warns
+  that a docs-heavy repo can exceed the same cap.
+
+
 ## v1.2.0 (2026-08-06)
 
 ### Marketplace Release Discipline

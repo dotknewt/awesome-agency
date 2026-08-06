@@ -42,7 +42,7 @@ The file must contain YAML frontmatter followed by Markdown content, the same tw
 
 ### Frontmatter
 
-Only `name` and `description` are required. Everything else is optional.
+Only `name` and `description` are required by the canonical spec. Everything else is optional to Claude Code — but this repo additionally **requires `model`** on every agent it ships, enforced in CI. See [Model conventions](#model-conventions).
 
 | Field | Required | Constraints |
 | --- | --- | --- |
@@ -50,7 +50,7 @@ Only `name` and `description` are required. Everything else is optional.
 | `description` | Yes | Tells Claude when to delegate to this agent. This is the field the harness reads to decide whether to dispatch — see [The description field](#the-description-field). |
 | `tools` | No | Restricts the agent to a specific set of tools. Omit to inherit every tool available in the parent conversation. See [Tool restriction syntax](#tool-restriction-syntax). |
 | `disallowedTools` | No | Denylist form of the above: inherit everything except the tools listed. Not seen in this repo's local agents, but valid per the canonical spec. |
-| `model` | No | Which model the agent runs on: `inherit`, `sonnet`, `opus`, `haiku`, or a full model ID. Defaults to `inherit`. See [Model conventions](#model-conventions). |
+| `model` | Yes (repo convention) | Which model the agent runs on: `inherit`, `sonnet`, `opus`, `haiku`, or a full model ID. Optional to Claude Code (defaults to `inherit`), but mandatory here so the choice is deliberate and reviewable. See [Model conventions](#model-conventions). |
 | `color` | No | Display color for the agent in the task list/transcript UI. Purely cosmetic — has no effect on behavior. See [Color](#color). |
 
 <Card>
@@ -116,7 +116,7 @@ The optional `tools` field restricts the agent to a specific allowlist. See [Too
 
 #### `model` field
 
-The optional `model` field selects which model the agent runs on. See [Model conventions](#model-conventions).
+The `model` field selects which model the agent runs on. Claude Code treats it as optional; this repo requires it on every agent. See [Model conventions](#model-conventions).
 
 #### `color` field
 
@@ -218,27 +218,66 @@ To grant unrestricted access, omit `tools` entirely — do not write `tools: "*"
 
 ## Model conventions
 
-The `model` field accepts:
+Every agent in this repo **must declare `model` explicitly.** Omitting the field is
+also valid Claude Code — it silently means `inherit` — but an omission is
+indistinguishable from an oversight, so this repo forbids it. `inherit` is a fine
+answer; it just has to be a stated one. `.github/scripts/check-agent-models.py`
+enforces in CI that the field is present. It deliberately does **not** validate the
+value — model names change faster than a checked-in allowlist can track, and a
+validator that rejects a model released last week is worse than no validator.
+
+### Accepted values
 
 | Value | Meaning |
 | --- | --- |
-| `inherit` | Use the same model as the parent conversation. This is the default if the field is omitted. |
-| `sonnet` / `opus` / `haiku` | A model alias — the current model in that tier. |
-| A full model ID, e.g. `claude-haiku-4-5-20251001`, `claude-opus-4-6` | Pins the agent to an exact model/snapshot regardless of what the alias currently resolves to. |
+| `inherit` | Run on the same model as the calling conversation. |
+| `haiku` / `sonnet` / `opus` / `fable` | A tier alias — whatever model Claude Code currently maps to that tier. Tracks upgrades automatically. |
+| A full model ID, e.g. `claude-fable-5`, `claude-haiku-4-5-20251001` | Pins the agent to one exact model. Note that Anthropic's dateless IDs are pinned snapshots too, not evergreen pointers — see [Why aliases beat pinned IDs](#why-aliases-beat-pinned-ids). |
 
-**Use alias style (`sonnet` / `opus` / `haiku` / `inherit`), not a full model ID.** A pinned full ID silently goes stale as new snapshots ship, while an alias always resolves to the current model in that tier. Only pin a full ID if an agent has a specific, documented reason to freeze on an exact snapshot rather than track the tier — this repo currently has no such case.
+**Use an alias by default.** Pin a full model ID when you are told to, or when the
+agent genuinely needs that specific model rather than a capability tier — a persona
+whose voice *is* that model, or a behavior only one model exhibits. Nothing checks
+this; it is a judgment call, and the reason belongs in the file per
+[Recording the reason](#recording-the-reason).
 
-Observed usage in this repo:
+### Choosing a tier
 
-* `.claude/agents/agent-creator.md` → `model: opus` (needs strong reasoning to design good agent configurations)
-* `.claude/agents/plugin-validator.md` → `model: haiku` (mechanical validation checklist, cheap model is enough)
-* `.claude/agents/skill-reviewer.md` → `model: inherit`
-* `agents/branch-warden/branch-warden.md`, `agents/issue-filer/issue-filer.md`, `agents/schema-maintainer/schema-maintainer.md`, `agents/state-keeper/state-keeper.md`, `agents/docs-user-maintainer/docs-user-maintainer.md` → `model: haiku` (mechanical, high-volume, or bookkeeping work — git plumbing, issue filing, STATE.md upkeep, syntactic drift checks)
-* `agents/doublecheck/doublecheck.md` → `model: opus` (adversarial verifier; if it inherited a cheap-tier session's model it would audit AI output with the same weak reasoning that may have produced the error)
-* `agents/dockerize-mcp-server/dockerize-mcp-server.md` → `model: opus` (explores an unfamiliar repo and generates a working Dockerfile/catalog entry from an ambiguous brief — the same shape as `agent-creator`)
-* `agents/docs-spec-maintainer/docs-spec-maintainer.md`, `agents/instructions-maintainer/instructions-maintainer.md` → `model: inherit` (drift detection here requires judging whether documented *intent* still holds, not just syntax — left on the caller's tier deliberately, unlike their sibling `docs-user-maintainer`)
+**The decision procedure lives in the `agent-model-assignment` skill**
+(`skills/agent-model-assignment/SKILL.md`) — it is shipped as a skill rather than
+written out here so it applies in any repo, not just this one, and so there is one
+copy to keep current instead of two. Read it before assigning a model. In outline:
 
-**Convention:** default to `inherit` unless the agent's job clearly calls for a specific tier. Route mechanical, high-volume, or low-judgment work (git plumbing, issue filing, bookkeeping, syntactic drift checks) to `haiku`; route work that requires generating a whole new artifact from an ambiguous brief (designing another agent's system prompt, writing a Dockerfile for an unfamiliar repo) or that must out-reason a possibly-cheaper calling session (adversarial verification) to `opus`; leave everything in between on `inherit` so it tracks whatever model tier the calling session is already using.
+1. **Rule out `haiku` on hard constraints first.** 200K context (~150K words) and a
+   Feb 2025 knowledge cutoff, against 1M and 2026 for every other tier. This
+   disqualifies more agents than any reasoning criterion does.
+2. **Then on loop length.** Haiku holds single-digit tool-call chains; Sonnet the
+   teens; past ~20 autonomous steps it is Opus.
+3. **Then match task shape:** `haiku` for mechanical bounded work, `sonnet` for long
+   tool-use loops, `opus` for generating an artifact from an ambiguous brief or for
+   adversarial review, a pinned model for a persona that *is* that model, `inherit`
+   for judgment work that should scale with the caller.
+
+Two results from that skill are worth repeating because they contradict intuition:
+**Sonnet beats Opus on long CLI/tool loops** (Terminal-Bench 2.1: 80.4% vs 74.6%), so
+reaching for the top of the ladder makes agentic work slower *and* worse; and
+**`fable` silently routes security-adjacent prompts to an older Opus**, so a security
+agent pinned there gets less capability than `opus` at twice the price.
+
+### Recording the reason
+
+The tier is a design decision, so state it where a reviewer will see it rather than
+in a list here. Put it in the agent's `description` when callers benefit from knowing
+(`branch-warden`: "Runs on a cheap model so the main session does not burn tokens on
+git plumbing"; `state-keeper` and `docs-user-maintainer` do the same), or in a
+`<!-- ... -->` HTML comment in the body when it is purely internal. Do **not** put an
+HTML comment above the frontmatter — the `---` block must start at line 1 or the file
+will not parse as an agent.
+
+This section deliberately does **not** enumerate what each agent in the repo currently
+uses. That list existed here before and rotted — it drifted from the actual files
+within a few changes, and a stale example list is worse than none, because it reads
+as normative. The files are the source of truth; `check-agent-models.py --list` prints
+the current assignments on demand.
 
 ## Invocation
 
@@ -265,7 +304,7 @@ At minimum, before publishing a new agent file, confirm:
 * `name` is unique in its scope, lowercase-hyphenated, 3–50 characters
 * `description` is non-empty and states concrete triggering conditions (with `<example>` blocks if the agent needs to catch varied natural-language phrasing)
 * `tools` (if present) lists only tools the system prompt actually needs
-* `model` is a valid alias, full model ID, or `inherit`
+* `model` is present (required here even though Claude Code allows omitting it) — an alias by default, a pinned ID where the agent needs one
 * The body is written in second person and includes an explicit output format
 
 ## Minimal worked example

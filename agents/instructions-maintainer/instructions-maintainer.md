@@ -9,6 +9,9 @@ description: >
   AGENTS.md", "audit instructions", or "find stale instructions", or via a
   maintenance orchestrator. Reports findings with proposed fixes; never edits files.
   For applying fixes, it recommends steward's instructions-audit/-revise skills.
+  Runs on the caller's model, because deciding whether a documented convention still
+  reflects reality is reasoning work, not a syntactic check.
+model: inherit
 tools: Read, Grep, Glob, Bash
 ---
 

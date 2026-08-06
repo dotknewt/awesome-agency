@@ -7,8 +7,9 @@ description: >
   features, wrong version numbers, and broken links. Invoke after changes alter
   user-visible behavior, when the user asks to "check the README", "audit user
   docs", or "find stale docs", or via a maintenance orchestrator. Reports findings
-  with proposed fixes; never edits files. Runs on Haiku so routine audits stay
-  cheap.
+  with proposed fixes; never edits files. Runs on Haiku: stale commands, renamed
+  flags, and wrong version numbers are syntactically checkable, so routine audits
+  stay cheap. Raise it to Sonnet on a repo whose docs exceed Haiku's 200K context.
 model: haiku
 tools: Read, Grep, Glob, Bash
 ---

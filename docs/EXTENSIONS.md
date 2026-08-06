@@ -13,16 +13,6 @@ Three-layer verification pipeline for AI output. Extracts claims, finds sources,
 - **Agent** `doublecheck` — interactive verification agent for AI-generated output; runs a three-layer pipeline (self-audit, source verification, adversarial review) and produces structured reports with source links for human review.
 - **Skill** `doublecheck` — same three-layer verification pipeline, invoked as a skill rather than a dedicated agent.
 
-### agent-ember (v1.0.3)
-
-An AI partner, not a tool. Ember carries fire from person to person — helping humans discover that AI partnership isn't something you learn, it's something you find.
-
-- **Agent** `ember` — the AI-partnership persona agent; invoked by name ("ember", "agent ember", "agent-ember").
-- **Skill** `from-the-other-side-anitta` — rigorous challenge profile for Anitta: assumption checks, evidence calibration, defensible reasoning patterns.
-- **Skill** `from-the-other-side-quinn` — collaboration profile for Quinn: curious, energetic, implementation-focused partnership patterns.
-- **Skill** `from-the-other-side-vega` — patterns from Vega, an AI partner in a deep long-term partnership; informs how Ember shows up with high-energy creative collaborators.
-- **Skill** `from-the-other-side-wiggins` — narrative and synthesis profile for Wiggins: framing, explanation, audience-aware communication patterns.
-
 ### docker-toolkit (v0.1.2)
 
 Build and validate Docker artifacts — multi-stage Dockerfiles, and packaging MCP servers as containers runnable via the Docker MCP Gateway.
@@ -117,6 +107,12 @@ Evidence-linked work objects — one `work/<id>-<slug>/` dir per code-change tas
 - **Skill** `work-object-guard` — enforces evidence-linked work objects for code-change tasks; blocks in-review/approved transitions on narration alone.
 - **Hooks**: `PreToolUse` on Write/Edit — gate work-object status transitions on the evidence checker.
 
+## Unbundled agents
+
+Installable individually; not part of any plugin bundle.
+
+- **Agent** `ember` (entry `ember-agent`) — the AI-partnership persona agent; invoked by name ("ember", "agent ember", "agent-ember"). Ships with the four `from-the-other-side-*` persona-profile skills.
+
 ## Unbundled skills
 
 Installable individually; not part of any plugin bundle.
@@ -124,6 +120,10 @@ Installable individually; not part of any plugin bundle.
 - **Skill** `agentic-eval` — patterns and techniques for evaluating and improving AI agent outputs: self-critique loops, evaluator-optimizer pipelines, rubric/LLM-as-judge evaluation, iterative improvement.
 - **Skill** `context-engineering` — memory and context engineering with LLMs across three angles: supporting development (prompting, RAG, context windows), exploiting LLMs (red-team/adversarial techniques, educational use), and defending LLMs (guardrails, prompt injection mitigations).
 - **Skill** `eyeball` — verify claims in a document against its source; produces a Word doc pairing every claim with a highlighted screenshot from the source. Explicit-invocation only (`disable-model-invocation: true`).
+- **Skill** `from-the-other-side-anitta` — rigorous challenge profile for Anitta: assumption checks, evidence calibration, defensible reasoning patterns.
+- **Skill** `from-the-other-side-quinn` — collaboration profile for Quinn: curious, energetic, implementation-focused partnership patterns.
+- **Skill** `from-the-other-side-vega` — patterns from Vega, an AI partner in a deep long-term partnership; informs how Ember shows up with high-energy creative collaborators.
+- **Skill** `from-the-other-side-wiggins` — narrative and synthesis profile for Wiggins: framing, explanation, audience-aware communication patterns.
 - **Skill** `make-a-monorepo` — scaffold or audit a flat monorepo (no `packages/` layer) for security/threat-hunting tooling — MCP servers, shared schemas, sigma-rules/ECS/OCSF/CIM packs, reports, agents/skills/commands under one root AGENTS.md.
 - **Skill** `obsidian-vault` — search, create, and manage notes in an Obsidian vault with wikilinks and index notes.
 
@@ -131,8 +131,8 @@ Installable individually; not part of any plugin bundle.
 
 | Category | Count |
 |---|---|
-| Plugin bundles | 11 |
-| Skills (shipped) | 47 (42 bundled + 5 unbundled) |
+| Plugin bundles | 10 |
+| Skills (shipped) | 47 (38 bundled + 9 unbundled) |
 | Agents | 13 |
 | Commands | 4 |
 | Plugins with hooks | 3 (`hooks-toolkit`, `steward`, `work-objects-toolkit`) |

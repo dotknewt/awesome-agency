@@ -1,6 +1,6 @@
 {
   "name": "agent-doublecheck",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
   "author": {
     "name": "Awesome Copilot Community"

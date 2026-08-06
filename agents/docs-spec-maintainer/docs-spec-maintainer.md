@@ -8,7 +8,9 @@ description: >
   subsystems with no spec coverage. Invoke after structural code changes, when the
   user asks to "check the specs", "audit architecture docs", or "find spec drift",
   or via a maintenance orchestrator. Reports findings with proposed fixes; never
-  edits files.
+  edits files. Runs on the caller's model, because judging whether a spec's stated
+  intent still holds is reasoning work, not a syntactic check.
+model: inherit
 tools: Read, Grep, Glob, Bash
 ---
 
