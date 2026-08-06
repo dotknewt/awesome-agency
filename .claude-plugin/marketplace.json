@@ -16,33 +16,6 @@
       }
     },
     {
-      "name": "engineering-toolkit",
-      "description": "Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD implementation, and code review, routed by ask-matt.",
-      "source": "./plugins/engineering-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
-      "name": "github-toolkit",
-      "description": "Scaffold GitHub repo metadata — issue templates and CI workflows. /github-scaffold picks the task; /create-issue-template and /scaffold-ci-workflow run the subtasks. Includes the branch-warden agent for automated branch prep and cleanup, and the issue-filer agent for lightweight issue creation.",
-      "source": "./plugins/github-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
-      "name": "hooks-toolkit",
-      "description": "Composable safety and hygiene hooks for Claude Code — force-push guard, secret scanner, plugin/skill manifest validators, branch nudges, and dirty-tree stop check.",
-      "source": "./plugins/hooks-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
       "name": "docker-toolkit",
       "description": "Build and validate Docker artifacts — multi-stage Dockerfiles, and packaging MCP servers as containers runnable via the Docker MCP Gateway.",
       "source": "./plugins/docker-toolkit",
@@ -63,32 +36,6 @@
       "name": "ludus-toolkit",
       "description": "Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, environment guidance, and troubleshooting, plus a bundled MCP server for driving the Ludus API from Claude.",
       "source": "./plugins/ludus-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
-      "name": "work-objects-toolkit",
-      "description": "Evidence-linked work objects — one work/<id>-<slug>/ dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.",
-      "source": "./plugins/work-objects-toolkit",
-      "author": {
-        "name": "dotKnewt",
-        "email": "dotknewt@keemail.me"
-      }
-    },
-    {
-      "name": "agent-doublecheck",
-      "description": "Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.",
-      "source": "./plugins/agent-doublecheck",
-      "author": {
-        "name": "Awesome Copilot Community"
-      }
-    },
-    {
-      "name": "extension-audit",
-      "description": "Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for Claude and Copilot extension artifacts.",
-      "source": "./plugins/extension-audit",
       "author": {
         "name": "dotKnewt",
         "email": "dotknewt@keemail.me"

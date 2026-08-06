@@ -1,5 +1,15 @@
 # Steward Release Notes
 
+## v1.3.1 (2026-08-06)
+
+### Fixes
+
+- **`instructions-audit` no longer points readers at a path that does not exist.**
+  Its guidance on scoping detail to a subdirectory used `mcp/ludus/` as the worked
+  example, but that pool was folded into `plugins/ludus-toolkit/mcp/ludus/`. An
+  example that cannot be checked against the repo teaches the wrong habit, so the
+  paths now match reality.
+
 ## v1.3.0 (2026-08-06)
 
 ### Deliberate Model Assignment

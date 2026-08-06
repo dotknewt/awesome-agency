@@ -25,7 +25,12 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 
 # Real agent sources. plugins/*/agents/ are symlinks into agents/, so scanning them
 # would double-report the same file.
+#
+# `agents/` is dir-per-agent: the agent is `<name>/<name>.md` and any other .md in
+# that dir is supporting documentation (README, release notes), not an agent.
+# `.claude/agents/` is flat, so every .md there is an agent.
 SCAN_DIRS = ("agents", ".claude/agents")
+DIR_PER_AGENT_ROOTS = ("agents",)
 
 MODEL_LINE = re.compile(r"^model:\s*(.*?)\s*$")
 
@@ -36,14 +41,18 @@ def agent_files() -> list[str]:
         root = os.path.join(REPO_ROOT, rel)
         if not os.path.isdir(root):
             continue
+        dir_per_agent = rel in DIR_PER_AGENT_ROOTS
         for dirpath, dirnames, filenames in os.walk(root):
             # A bundle vendored from upstream keeps upstream's conventions.
             if ".vendored" in filenames:
                 dirnames[:] = []
                 continue
             for name in sorted(filenames):
-                if name.endswith(".md"):
-                    found.append(os.path.join(dirpath, name))
+                if not name.endswith(".md"):
+                    continue
+                if dir_per_agent and name != f"{os.path.basename(dirpath)}.md":
+                    continue
+                found.append(os.path.join(dirpath, name))
     return sorted(found)
 
 

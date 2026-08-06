@@ -1,5 +1,17 @@
 # Ludus Toolkit Release Notes
 
+## v0.1.1 (2026-08-06)
+
+### Packaging
+
+- **The MCP server now lives inside the bundle instead of the shared `mcp/`
+  pool.** The pool held exactly one server, so the indirection bought nothing
+  and made the bundle's `.mcp.json` a symlink that broke the moment the pool
+  moved. `mcp/ludus/` is now real files under `plugins/ludus-toolkit/mcp/ludus/`.
+  No behaviour changes — `${CLAUDE_PLUGIN_ROOT}/mcp/ludus/ludus-catalog.yaml`
+  resolves exactly as before — but installed marketplaces fetch different files,
+  so this needs a version of its own.
+
 ## v0.1.0 (2026-08-06)
 
 Initial release notes, reconstructed from git history. Earlier versions shipped

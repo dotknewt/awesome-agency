@@ -13,7 +13,7 @@ top level, with plugins as thin bundles that reference them.
 **A bundle** (curated set of skills/agents/commands/hooks):
 
 ```
-claude plugin install engineering-toolkit@awesome-agency
+claude plugin install steward@awesome-agency
 ```
 
 **A single skill** (most shipped skills are individually installable):
@@ -40,8 +40,8 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `commands/` | Slash-command definitions, one subdirectory per owning bundle. |
 | `hooks/` | Hook sets — `<set>/hooks.json` + `<set>/scripts/`. |
 | `instructions/` | Reference instruction docs used by agents/commands. |
-| `mcp/` | Bundled MCP servers (`mcp/ludus/`). |
 | `plugins/` | Bundle definitions: `.claude-plugin/plugin.json`, README, and symlinks into the pools above. Claude Code dereferences the symlinks at install time. |
+| `wip/plugins/` | Parked bundles, withdrawn from the marketplace while they are reworked. Same layout as `plugins/`, but nothing here is installable. |
 | `docs/specs/` | Agent/skill/work-object specifications used by the dev tooling. |
 | `docs/superpowers/specs/` | Dated feature design docs from the planning workflow. |
 | `.claude/` | Repo-local development tooling (not distributed). |
@@ -50,21 +50,21 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 
 | Plugin | What it does |
 |---|---|
-| `engineering-toolkit` | Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD, code review. |
 | `steward` | Repo stewardship — `/maintain` drift-audit orchestrator with read-only maintainer agents for docs, instructions, schemas, and conventions, plus skills that audit/revise/restructure AGENTS.md, scaffold conventions, and keep docs/STATE.md current. |
-| `github-toolkit` | Issue templates, CI scaffolding, branch-warden + issue-filer agents. |
-| `hooks-toolkit` | Safety/hygiene hooks — force-push guard, secret scanner, manifest validators. |
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
 | `python-mcp-development` | Python MCP server development with FastMCP guidance, generation, and best-practice instructions. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
-| `work-objects-toolkit` | Evidence-linked work objects with gated status transitions. |
-| `agent-doublecheck` | Three-layer verification pipeline for AI output. |
-| `extension-audit` | Static, report-only security, capability, integrity, marketplace, and semantic-quality audits for extension artifacts. |
 | `superpowers` | Vendored [obra/superpowers](https://github.com/obra/superpowers) (MIT) — brainstorm → plan → subagent-driven TDD → review, with a SessionStart skill injector. |
 
+`engineering-toolkit`, `github-toolkit`, `hooks-toolkit`,
+`work-objects-toolkit`, and `extension-audit` are parked under `wip/plugins/`
+and are no longer installable; `agent-doublecheck` was retired in favour of the
+standalone `doublecheck-agent` entry. The skills those bundles carried are still
+individually installable from the pools.
+
 `work-object-guard` and `extension-audit` are the skills without standalone
-entries — they depend on bundle-shipped scripts or hooks, so install their
-respective bundles instead.
+entries — they depend on scripts or hooks shipped by parked bundles, so they
+stay unshipped until those bundles return.
 Similarly, prefer installing `steward` over the standalone `maintain`
 skill — the orchestrator dispatches the five maintainer agents that only ship
 with the bundle.

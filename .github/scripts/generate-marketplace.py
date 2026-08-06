@@ -24,7 +24,8 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / ".claude-plugin" / "marketplace.json"
 
 # Skills that only work inside their bundle (they depend on plugin-level
-# scripts or hooks) and therefore get no standalone micro-entry.
+# scripts or hooks) and therefore get no standalone micro-entry. Both owning
+# bundles are currently parked under wip/plugins/, so these stay unshipped.
 BUNDLE_BOUND_SKILLS = {
     "work-object-guard",  # needs ${CLAUDE_PLUGIN_ROOT}/scripts + PreToolUse hook
     "extension-audit",  # ships a bundled CLI under scripts/
@@ -36,15 +37,9 @@ SKILL_ENTRY_RENAMES = {}
 
 BUNDLE_ORDER = [
     "steward",
-    "engineering-toolkit",
-    "github-toolkit",
-    "hooks-toolkit",
     "docker-toolkit",
     "python-mcp-development",
     "ludus-toolkit",
-    "work-objects-toolkit",
-    "agent-doublecheck",
-    "extension-audit",
     "superpowers",
 ]
 

@@ -4,9 +4,11 @@ A catalog of every extension shipped from this repo's marketplace: plugin bundle
 
 Repo-local dev tooling under `.claude/` (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`) is excluded — it supports developing this repo and is never published to the marketplace. Drafts under `skills/in-progress/` are also excluded — they aren't shipped yet.
 
+> **Status (2026-08-06):** this catalog is a point-in-time snapshot and has drifted. `agent-doublecheck`, `engineering-toolkit`, `extension-audit`, `github-toolkit`, `hooks-toolkit`, and `work-objects-toolkit` are **no longer installable** — the last five are parked under `wip/plugins/`, and `agent-doublecheck` was retired in favour of the standalone `doublecheck-agent` entry. The skills they carried remain individually installable. `python-mcp-development` and `superpowers` ship but are missing below. `.claude-plugin/marketplace.json` is the authoritative list.
+
 ## Plugins
 
-### agent-doublecheck (v1.0.1)
+### agent-doublecheck (v1.0.1) — withdrawn
 
 Three-layer verification pipeline for AI output. Extracts claims, finds sources, and flags hallucination risks so humans can verify before acting.
 
@@ -21,7 +23,7 @@ Build and validate Docker artifacts — multi-stage Dockerfiles, and packaging M
 - **Skill** `dockerize-mcp-server` — package an existing MCP server repo as a Docker image runnable through the Docker MCP Gateway, and validate the resulting artifacts.
 - **Skill** `multi-stage-dockerfile` — create optimized multi-stage Dockerfiles for any language or framework.
 
-### engineering-toolkit (v0.1.0)
+### engineering-toolkit (v0.1.0) — withdrawn
 
 Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD implementation, and code review, routed by ask-matt.
 
@@ -47,7 +49,7 @@ Idea-to-ship engineering flow — grilling, PRD/issue breakdown, TDD implementat
 - **Skill** `triage` — move issues and external PRs through a triage state machine — categorise, verify, grill if needed, write agent-ready briefs.
 - **Skill** `writing-great-skills` — reference for writing and editing skills well.
 
-### github-toolkit (v1.1.3)
+### github-toolkit (v1.1.3) — withdrawn
 
 Scaffold GitHub repo metadata — issue templates and CI workflows. `/github-scaffold` picks the task; `/create-issue-template` and `/scaffold-ci-workflow` run the subtasks. Includes the `branch-warden` agent for automated branch prep and cleanup, and the `issue-filer` agent for lightweight issue creation.
 
@@ -59,7 +61,7 @@ Scaffold GitHub repo metadata — issue templates and CI workflows. `/github-sca
 - **Command** `/create-issue-template` — scaffold one or more GitHub issue forms (YAML schema) in `.github/ISSUE_TEMPLATE/`.
 - **Command** `/scaffold-ci-workflow` — scaffold a GitHub Actions CI workflow file with canonical defaults.
 
-### hooks-toolkit (v1.0.1)
+### hooks-toolkit (v1.0.1) — withdrawn
 
 Composable safety and hygiene hooks for Claude Code — force-push guard, secret scanner, plugin/skill manifest validators, branch nudges, and dirty-tree stop check.
 
@@ -93,14 +95,14 @@ Unified repo stewardship — drift-audit orchestration plus the skills that appl
 - **Skill** `conventions` — cross-project conventions: docs layout (docs/TODO.md, docs/STATE.md, docs/user/) and uv + Typer standards for Python CLIs.
 - **Hooks**: `Stop` — nudge the user to capture session learnings in AGENTS.md when the session touched many files.
 
-### extension-audit (v0.1.0)
+### extension-audit (v0.1.0) — withdrawn
 
 Static, report-only review of Claude Code and Copilot extension artifacts before installation or publication.
 
 - **Agent** `extension-reviewer` — inventories capabilities, checks security heuristics and hook scope, verifies integrity, validates marketplace metadata, and scores semantic quality without executing target code.
 - **Skill** `extension-audit` — runs the bundled standard-library CLI for combined or focused inventory, security, quality, integrity, and marketplace checks.
 
-### work-objects-toolkit (v0.1.0)
+### work-objects-toolkit (v0.1.0) — withdrawn
 
 Evidence-linked work objects — one `work/<id>-<slug>/` dir per code-change task holding spec, captured diff, captured test output, run manifest, and review; in-review/approved transitions are gated by a checker script and enforced by a PreToolUse hook.
 

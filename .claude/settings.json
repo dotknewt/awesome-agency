@@ -15,8 +15,7 @@
   "model": "sonnet",
   "enabledPlugins": {
     "steward@awesome-agency": true,
-    "superpowers@claude-plugins-official": true,
-    "engineering-toolkit@awesome-agency": true
+    "superpowers@claude-plugins-official": true
   },
   "effortLevel": "high",
   "advisorModel": "claude-opus-4-7"

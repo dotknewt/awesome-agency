@@ -14,13 +14,13 @@ Before adding content to root AGENTS.md, ask: **does this apply repo-wide, or on
 |---|---|
 | Repo layout, plugin format, global build commands | Root `AGENTS.md` |
 | Commands/gotchas for one package or server | `<that-dir>/AGENTS.md` |
-| Detail that only matters inside `mcp/ludus/` | `mcp/ludus/AGENTS.md` |
+| Detail that only matters inside `plugins/ludus-toolkit/mcp/ludus/` | `plugins/ludus-toolkit/mcp/ludus/AGENTS.md` |
 
 When a subdirectory has its own AGENTS.md, add a reference in root so agents know where to look:
 
 ```markdown
 ## Subdirectory context
-- MCP servers: @mcp/ludus/AGENTS.md
+- MCP servers: @plugins/ludus-toolkit/mcp/ludus/AGENTS.md
 - Skills: @skills/AGENTS.md
 ```
 

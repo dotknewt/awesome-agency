@@ -1,1 +1,0 @@
-../../../agents/extension-reviewer/extension-reviewer.md

@@ -1,6 +1,6 @@
 {
   "name": "ludus-toolkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ludus cyber-range toolkit \u2014 skills for the Ludus CLI, range configuration, environment guidance, and troubleshooting, plus a bundled MCP server for driving the Ludus API from Claude.",
   "author": {
     "name": "dotKnewt",

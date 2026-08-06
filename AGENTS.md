@@ -47,11 +47,15 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
 - `skills/` — all skills (`<name>/SKILL.md`); `skills/in-progress/` = unshipped drafts, never listed in the marketplace
 - `agents/` — dir-per-agent (`<name>/<name>.md` + symlinked deps so solo installs are self-contained)
 - `commands/<bundle>/`, `hooks/<set>/{hooks.json,scripts/}`, `instructions/`,
-  `instructions/<bundle>/`, `mcp/ludus/` — remaining pools. The flat `instructions/*.md`
+  `instructions/<bundle>/` — remaining pools. The flat `instructions/*.md`
   files are generic (Copilot-style) guidance; **bundle-owned** instructions live in a
   scoped `instructions/<bundle>/` subdir, mirroring `commands/<bundle>/`. Never symlink
   the whole `instructions/` pool into a bundle or agent dir — that ships every unrelated
-  file and silently breaks when the flat pool is repurposed.
+  file and silently breaks when the flat pool is repurposed. Pool content whose only
+  consumer is a parked bundle stays put — the pools generate no marketplace entries,
+  so an unused pool dir costs nothing and keeps the parked bundle revivable.
+  There is no `mcp/` pool: `ludus-toolkit` vendors its MCP server in-tree at
+  `plugins/ludus-toolkit/mcp/ludus/`.
 - `plugins/<name>/` — bundle manifests + symlinks (one dir per bundle). Exception:
   `plugins/superpowers/` is a **vendored** third-party bundle (obra/superpowers, MIT) —
   real files, no pool symlinks, and its skills get no micro-entries. Update it by
@@ -60,6 +64,12 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
   to detect drift. A `.vendored` marker file exempts a bundle from this repo's
   release-notes discipline; never write local entries into a vendored bundle's notes.
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
+- `wip/plugins/<name>/` — bundles withdrawn from the marketplace while they are
+  reworked. Same layout as `plugins/`, one extra `../` in every pool symlink. A bundle
+  is withdrawn by moving its dir here **and** deleting its name from `BUNDLE_ORDER`;
+  the generator skips listed-but-missing bundles silently, so a move alone leaves
+  `marketplace.json` advertising a source that no longer resolves. CI's symlink and
+  manifest scans deliberately do not walk `wip/`.
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
 - `docs/TODO.md` — backlog notes; `docs/STATE.md` — session bookmarks (stub unless an effort is active)
@@ -107,7 +117,7 @@ identifier.
   micro-install stays self-contained. The same applies to a micro-installable skill:
   `${CLAUDE_PLUGIN_ROOT}` resolves to the *entry's* source dir, so shared content must
   be symlinked into **every** source that references it (e.g. `instructions/` exists
-  under `plugins/github-toolkit/`, `agents/issue-filer/`, and `skills/github-workflow/`).
+  under `wip/plugins/github-toolkit/`, `agents/issue-filer/`, and `skills/github-workflow/`).
   `.github/scripts/check-plugin-root-refs.py` enforces this.
 - `claude plugin install` caches by `<name>/<version>` — a source change without a
   version bump may report "already installed" without re-fetching. Verify with
