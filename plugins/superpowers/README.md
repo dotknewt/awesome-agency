@@ -36,12 +36,23 @@ claude plugin install superpowers@awesome-agency
 ## Contents
 
 Only shipping content is vendored: `skills/`, `hooks/` (SessionStart injector +
-cross-platform `run-hook.cmd` wrapper), `.claude-plugin/plugin.json`, and
-`LICENSE`. Upstream tests, docs, release notes, and non-Claude platform
-manifests (Codex/Cursor/Kimi/OpenCode/Pi/Gemini) are intentionally omitted.
+cross-platform `run-hook.cmd` wrapper), `.claude-plugin/plugin.json`, `LICENSE`,
+and `RELEASE-NOTES.md` (kept as the upstream-drift reference — see below).
+Upstream tests, docs, and non-Claude platform manifests
+(Codex/Cursor/Kimi/OpenCode/Pi/Gemini) are intentionally omitted.
 
 ## Updating from upstream
 
-Sync `skills/` and `hooks/` from an upstream checkout, keep the version in
-`.claude-plugin/plugin.json` aligned with the upstream release, then re-run
+`RELEASE-NOTES.md` here is pinned to the vendored version (currently v6.2.0).
+To check for upstream changes, diff it against
+[upstream RELEASE-NOTES.md](https://github.com/obra/superpowers/blob/main/RELEASE-NOTES.md):
+
+```
+curl -sfL https://raw.githubusercontent.com/obra/superpowers/main/RELEASE-NOTES.md \
+  | diff plugins/superpowers/RELEASE-NOTES.md - | head -40
+```
+
+To sync: copy `skills/` and `hooks/` from the upstream tag, refresh
+`RELEASE-NOTES.md` from that same tag, set the version in
+`.claude-plugin/plugin.json` to match, then re-run
 `.github/scripts/generate-marketplace.py`.

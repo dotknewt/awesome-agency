@@ -51,6 +51,8 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
   `plugins/superpowers/` is a **vendored** third-party bundle (obra/superpowers, MIT) —
   real files, no pool symlinks, and its skills get no micro-entries. Update it by
   re-syncing `skills/` + `hooks/` from upstream and aligning the version in its `plugin.json`.
+  Its `RELEASE-NOTES.md` is pinned to the vendored version — diff it against upstream's
+  to detect drift.
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
 - `docs/specs/` — agent/skill/work-object specifications consumed by `.claude/` tooling; `docs/superpowers/specs/` — dated feature design docs from the planning workflow
 - `.claude/` — repo-local dev tooling (agents: `agent-creator`, `plugin-validator`, `skill-reviewer`; commands: `create-agent`, `create-plugin`, `create-skill`, `pin-plugins`; skills for agent/command/hook/mcp/plugin development). Never published.
