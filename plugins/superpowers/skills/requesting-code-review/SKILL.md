@@ -38,8 +38,17 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 - `{PLAN_OR_REQUIREMENTS}` - What it should do
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
+- `{REVIEW_FILE}` - Where the reviewer writes its full review — name it
+  yourself (workspace or `/tmp`) so you know where the detail lives
 
 **3. Act on feedback:**
+
+The reviewer returns a short contract — verdict, severity counts,
+one-liners for Critical/Important, and the review-file path. Act from the
+one-liners; open the review file only when a fix genuinely needs the full
+detail. When you dispatch a fixer, pass it the review-file path, not
+pasted findings.
+
 - Fix Critical issues immediately
 - Fix Important issues before proceeding
 - Note Minor issues for later
@@ -60,13 +69,12 @@ HEAD_SHA=$(git rev-parse HEAD)
   PLAN_OR_REQUIREMENTS: Task 2 from docs/superpowers/plans/deployment-plan.md
   BASE_SHA: a7981ec
   HEAD_SHA: 3df7661
+  REVIEW_FILE: /tmp/review-task2.md
 
 [Subagent returns]:
-  Strengths: Clean architecture, real tests
-  Issues:
-    Important: Missing progress indicators
-    Minor: Magic number (100) for reporting interval
-  Assessment: Ready to proceed
+  Verdict: With fixes. 0 Critical, 1 Important, 1 Minor.
+  - indexer.ts:130 — missing progress indicators for long operations
+  Full review: /tmp/review-task2.md
 
 You: [Fix progress indicators]
 [Continue to Task 3]
@@ -76,7 +84,7 @@ You: [Fix progress indicators]
 
 | Excuse | Reality |
 |--------|---------|
-| "I'll just review the diff myself instead of dispatching a reviewer" | You're the coordinator — reviewing the diff inline burns the context window you need to keep driving the work. Dispatch a reviewer subagent: the diff and the evaluation live in its context, and only the findings come back to you. |
+| "I'll just review the diff myself instead of dispatching a reviewer" | You're the coordinator — reviewing the diff inline burns the context window you need to keep driving the work. Dispatch a reviewer subagent: the diff, the evaluation, and the full report live in its context and its review file — only the short contract comes back to you. |
 | "The reviewer needs my whole session history to understand the change" | Hand it precisely crafted context, never your session's history. That keeps the reviewer on the work product, not your thought process. |
 
 ## Red Flags

@@ -77,7 +77,14 @@ Subagent (general-purpose):
     If you find issues with the plan itself rather than the implementation,
     say so.
 
-    ## Output Format
+    ## Output
+
+    Write your full review to [REVIEW_FILE] — if no path was provided,
+    create one with `mktemp /tmp/code-review-XXXXXX.md` and use that. If
+    you cannot write a file, say so and include the full review in your
+    final message instead — a long message beats a lost review.
+
+    Structure the review file as:
 
     ### Strengths
     [What's well done? Be specific.]
@@ -108,6 +115,15 @@ Subagent (general-purpose):
 
     **Reasoning:** [1-2 sentence technical assessment]
 
+    ## Final Message — Report Contract
+
+    Report back with ONLY (under 15 lines — the detail lives in the
+    review file):
+    - **Verdict:** Yes | No | With fixes
+    - Finding counts by severity (e.g. "1 Critical, 2 Important, 3 Minor")
+    - One line per Critical/Important finding: `file:line — gist`
+    - The review file path
+
     ## Critical Rules
 
     **DO:**
@@ -130,10 +146,16 @@ Subagent (general-purpose):
 - `[PLAN_OR_REQUIREMENTS]` — what it should do (plan file path, task text, or requirements)
 - `[BASE_SHA]` — starting commit
 - `[HEAD_SHA]` — ending commit
+- `[REVIEW_FILE]` — where the reviewer writes its full review (the
+  dispatching controller names it; in SDD it lives in the plan's
+  workspace, e.g. `…/final-review.md`)
 
-**Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Assessment
+**Reviewer returns:** the short contract only — merge verdict, finding
+counts by severity, one-liners for Critical/Important findings, and the
+review file path. The full review (Strengths, all Issues, Recommendations,
+Assessment) lives in `[REVIEW_FILE]`.
 
-## Example Output
+## Example Review File
 
 ```
 ### Strengths
@@ -169,4 +191,14 @@ Subagent (general-purpose):
 **Ready to merge: With fixes**
 
 **Reasoning:** Core implementation is solid with good architecture and tests. Important issues (help text, date validation) are easily fixed and don't affect core functionality.
+```
+
+## Example Final Message (Contract)
+
+```
+Verdict: With fixes
+0 Critical, 2 Important, 1 Minor
+- index-conversations:1-31 — missing --help; users won't discover --concurrency
+- search.ts:25-27 — invalid dates silently return no results; validate ISO format
+Full review: /tmp/code-review-Ab3dQx.md
 ```

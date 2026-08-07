@@ -122,7 +122,8 @@ a ledger file, not only in todos.
 - Each plan owns a workspace: at skill start, run this skill's
   `scripts/sdd-workspace PLAN_FILE` — it prints the plan's git-ignored
   directory (`<repo-root>/.superpowers/sdd/<plan-basename>/`), home to
-  every artifact for THIS plan: ledger, briefs, reports, review packages.
+  every artifact for THIS plan: ledger, briefs, reports, review packages,
+  and review files.
   Another plan's directory is never yours to read or write.
 - Check for this plan's ledger at `<workspace>/progress.md`. If its first
   line names your plan file, tasks with a `Task <N>: complete` line are DONE
@@ -270,9 +271,17 @@ needed.
   call. Use the BASE you recorded before dispatching the implementer —
   never `HEAD~1`, which silently truncates multi-commit tasks. Never
   dispatch a task reviewer without a diff file.
-- **Reviewer inputs:** the task reviewer gets three paths — the same brief
-  file, the report file, and the review package — plus the global
-  constraints that bind the task.
+- **Reviewer inputs:** the task reviewer gets four paths — the same brief
+  file, the report file, the review package, and a review-file path to
+  write its full review to — plus the global constraints that bind the
+  task.
+- **Review file:** name it after the brief (brief `…/task-N-brief.md` →
+  review `…/task-N-review.md`) and put it in the dispatch. The reviewer
+  writes the full review there and returns only the contract: verdicts,
+  finding counts, one-liners for Critical/Important/⚠️ items, and the
+  path. The full review never enters your context — you adjudicate and
+  route fix rounds from the one-liners, and open the review file only
+  when a ruling genuinely needs the full detail.
 - The global-constraints block you hand the reviewer is its attention
   lens. Copy the binding requirements verbatim from the plan's Global
   Constraints section or the spec: exact values, exact formats, and the
@@ -319,15 +328,18 @@ Before the loop starts, two routes leave it immediately:
 Everything else enters the loop. A fix round is one fix dispatch plus one
 scoped re-review. Five rounds maximum per task:
 
-**Rounds 1-3 — resume the original implementer.** Send it the open findings
-verbatim. Its context is intact: it knows the task, the code, and its own
-choices. If your harness cannot send another message to a live subagent,
-dispatch a fresh implementer carrying the brief path, the report-file path,
-and the findings — the report file is the persistent memory either way.
+**Rounds 1-3 — resume the original implementer.** Send it the review-file
+path plus the open findings' one-liners from the reviewer's contract —
+the review file is the findings' single source of detail; never paste the
+full review into the dispatch. Its context is intact: it knows the task,
+the code, and its own choices. If your harness cannot send another
+message to a live subagent, dispatch a fresh implementer carrying the
+brief path, the report-file path, and the review-file path — the files
+are the persistent memory either way.
 
 **Rounds 4-5 — dispatch a fresh implementer on a more capable model** (per
-Model Selection), with the brief path, the report-file path, the open
-findings, and this framing: "A prior implementer attempted this task
+Model Selection), with the brief path, the report-file path, the
+review-file path, and this framing: "A prior implementer attempted this task
 [N] times; you own it now. Read the report file for what was tried." A loop
 that survives three resumes usually means the implementer cannot see its
 own problem — fresh eyes and a capability bump in one move.
@@ -342,8 +354,10 @@ whole suite.
 
 **The re-review is scoped.** Run `scripts/review-package PLAN_FILE FIX_BASE HEAD`
 where FIX_BASE is the head the previous review saw, and dispatch
-[re-review-prompt.md](re-review-prompt.md) with the findings list, the
-brief, the report file, and the printed diff path. The re-reviewer verdicts
+[re-review-prompt.md](re-review-prompt.md) with the previous review's file
+path, the open findings' one-liners, the brief, the report file, the
+printed diff path, and a fresh review-file path (previous review file
++ `-r<R>`). The re-reviewer verdicts
 each finding ADDRESSED or NOT ADDRESSED and flags new breakage in the fix
 diff only. New Critical/Important breakage in the fix diff joins the open
 findings list. Out-of-scope observations go to the ledger as deferred
@@ -394,7 +408,9 @@ The final whole-branch review gets a package too: run
 `scripts/review-package PLAN_FILE MERGE_BASE HEAD` (MERGE_BASE = the commit the
 branch started from, e.g. `git merge-base main HEAD`) and include the
 printed path in the final review dispatch, so the final reviewer reads
-one file instead of re-deriving the branch diff with git commands. Dispatch
+one file instead of re-deriving the branch diff with git commands. Give it
+a review-file path in the workspace too (`…/final-review.md`) — it writes
+the full review there and returns the short contract. Dispatch
 on the most capable available model (see Model Selection), using
 superpowers:requesting-code-review's
 [code-reviewer.md](../requesting-code-review/code-reviewer.md). Point it at
@@ -402,7 +418,8 @@ the ledger's deferred-minor and parked lines so it can triage which must be
 fixed before merge.
 
 If the final whole-branch review returns findings, dispatch ONE fix subagent
-with the complete findings list — not one fixer per finding.
+carrying the review-file path and the findings' one-liners — not one
+fixer per finding, and never the pasted full review.
 Per-finding fixers each rebuild context and re-run suites; a real
 session's final-review fix wave cost more than all its tasks combined.
 Then run exactly one scoped re-review of the fix wave
@@ -459,9 +476,10 @@ Implementer: [Later]
   - Self-review: Found I missed --force flag, added it
   - Committed
 
-[Run review-package PLAN_FILE BASE HEAD; dispatch task reviewer with the printed path]
-Task reviewer: Spec ✅ - all requirements met, nothing extra.
-  Strengths: Good test coverage, clean. Issues: None. Task quality: Approved.
+[Run review-package PLAN_FILE BASE HEAD; dispatch task reviewer with the
+ printed path + review-file path task-1-review.md]
+Task reviewer: Spec ✅. Quality: Approved. 0 Critical, 0 Important, 0 Minor.
+  Full review: .superpowers/sdd/feature-plan/task-1-review.md
 
 [Ledger: Task 1: complete (commits a1b2c3d..d4e5f6a, review clean)]
 
@@ -474,19 +492,22 @@ Implementer: [No questions]
   - 8/8 tests passing
   - Committed
 
-[Run review-package PLAN_FILE BASE HEAD; dispatch task reviewer with the printed path]
-Task reviewer: Spec ❌:
-  - Missing: Progress reporting (spec says "report every 100 items")
-  Issues (Important): Magic number (100)
+[Run review-package PLAN_FILE BASE HEAD; dispatch task reviewer with the
+ printed path + review-file path task-2-review.md]
+Task reviewer: Spec ❌. Quality: Needs fixes. 0 Critical, 2 Important.
+  - src/recovery.js — missing progress reporting (spec: "report every 100 items")
+  - src/recovery.js:38 — magic number (100)
+  Full review: .superpowers/sdd/feature-plan/task-2-review.md
 
-[Fix round 1: resume the implementer with both findings]
+[Fix round 1: resume the implementer with the two one-liners + review-file path]
 Implementer: Added progress reporting, extracted PROGRESS_INTERVAL constant.
   Re-ran test/recovery.test.js — 10/10 passing. Fix report appended.
 
-[Run review-package PLAN_FILE FIX_BASE HEAD; dispatch scoped re-review]
-Re-reviewer: Missing progress reporting — ADDRESSED (src/recovery.js:41).
-  Magic number — ADDRESSED (src/recovery.js:7). New breakage: none.
-  Verdict: all findings addressed.
+[Run review-package PLAN_FILE FIX_BASE HEAD; dispatch scoped re-review with
+ findings file task-2-review.md + review-file path task-2-review-r1.md]
+Re-reviewer: All findings addressed. Missing progress reporting — ADDRESSED.
+  Magic number — ADDRESSED. New breakage: none. 0 out-of-scope.
+  Full re-review: .superpowers/sdd/feature-plan/task-2-review-r1.md
 
 [Ledger: Task 2: fix round 1/5 (2 addressed, 0 open; commits d4e5f6a..b7c8d9e)]
 [Ledger: Task 2: complete (commits d4e5f6a..b7c8d9e, review clean)]
@@ -494,8 +515,10 @@ Re-reviewer: Missing progress reporting — ADDRESSED (src/recovery.js:41).
 ...
 
 [After all tasks]
-[Run review-package PLAN_FILE MERGE_BASE HEAD; dispatch final code-reviewer, most capable model]
-Final reviewer: All requirements met. Deferred minors triaged: none block merge.
+[Run review-package PLAN_FILE MERGE_BASE HEAD; dispatch final code-reviewer,
+ most capable model, review-file path final-review.md]
+Final reviewer: Approved. 0 Critical, 0 Important. Deferred minors triaged:
+  none block merge. Full review: .superpowers/sdd/feature-plan/final-review.md
 
 [Delete this plan's workspace — the record now lives in git]
 

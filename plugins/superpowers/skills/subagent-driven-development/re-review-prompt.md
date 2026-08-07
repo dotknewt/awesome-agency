@@ -23,7 +23,10 @@ Subagent (general-purpose):
 
     ## The Findings Under Verification
 
-    [FINDINGS]
+    Read the previous review: [FINDINGS_FILE]
+
+    The findings under verification are its Critical/Important findings
+    and spec gaps — specifically: [FINDING_IDS]
 
     ## The Fix
 
@@ -62,11 +65,14 @@ Subagent (general-purpose):
     specific doubt that no existing run answers — and then a focused test,
     never a package-wide suite.
 
-    ## Output Format
+    ## Review File Format
 
-    Your final message is the report itself: begin directly with the first
-    finding's verdict. Every line is a verdict, a finding with file:line,
-    or a check you ran — no preamble, no process narration.
+    Write your full re-review to [REVIEW_FILE] — every line there is a
+    verdict, a finding with file:line, or a check you ran; no preamble,
+    no process narration. If you cannot write the file, say so and
+    include the full re-review in your final message instead.
+
+    Structure [REVIEW_FILE] as:
 
     ### Finding Verdicts
 
@@ -89,18 +95,36 @@ Subagent (general-purpose):
 
     **Fix round:** [All findings addressed, no new Critical/Important
     breakage | Findings remain open] — list the open ones.
+
+    ## Final Message — Report Contract
+
+    Report back with ONLY (under 15 lines — the detail lives in the
+    review file):
+    - **Round verdict:** all addressed | findings remain open
+    - Per-finding one-liners: `<finding gist> — ADDRESSED | NOT ADDRESSED`
+    - New Critical/Important breakage one-liners (`file:line — gist`),
+      or "new breakage: none"
+    - Out-of-scope observation count (detail stays in the file)
+    - The review file path
 ```
 
 **Placeholders:**
 - `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection; scoped
   re-reviews of small fix diffs take a cheap-to-mid tier
 - `[BRIEF_FILE]` — the task brief file (same file the implementer worked from)
-- `[FINDINGS]` — the Critical/Important findings and spec gaps from the
-  previous review, copied verbatim, one per bullet
+- `[FINDINGS_FILE]` — the previous review's file (the task reviewer's
+  `…-review.md`, or the prior round's re-review file)
+- `[FINDING_IDS]` — the one-liners of the findings under re-check, copied
+  from the previous review's contract (gists only — the detail is in
+  `[FINDINGS_FILE]`)
 - `[REPORT_FILE]` — the implementer's report file (fix reports appended)
 - `[FIX_BASE_SHA]` — the head the previous review saw
 - `[HEAD_SHA]` — current commit
 - `[DIFF_FILE]` — the path `scripts/review-package PLAN_FILE FIX_BASE HEAD` printed
+- `[REVIEW_FILE]` — where the re-reviewer writes its full re-review
+  (previous review file's name + `-r<R>`, e.g. `…/task-N-review-r2.md`)
 
-**Re-reviewer returns:** per-finding verdicts (ADDRESSED / NOT ADDRESSED),
-new breakage in the fix diff, out-of-scope observations, and a round verdict.
+**Re-reviewer returns:** the short contract only — round verdict,
+per-finding ADDRESSED/NOT ADDRESSED one-liners, new-breakage one-liners,
+out-of-scope count, and the review file path. The detail lives in
+`[REVIEW_FILE]`.

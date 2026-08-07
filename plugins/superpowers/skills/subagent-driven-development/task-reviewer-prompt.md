@@ -115,10 +115,13 @@ Subagent (general-purpose):
     "yes." A tight report that cites lines gives the controller everything
     it needs.
 
-    Your final message is the report itself: begin directly with the
-    spec-compliance verdict. Every line is a verdict, a finding with
-    file:line, or a check you ran — no preamble, no process narration,
-    no closing summary.
+    Write your full review to [REVIEW_FILE] — every line there is a
+    verdict, a finding with file:line, or a check you ran; no preamble,
+    no process narration, no closing summary. Your final message back is
+    ONLY the short contract (see Final Message below) — the detail lives
+    in the review file. If you cannot write the file, say so and include
+    the full review in your final message instead — a long message beats
+    a lost review.
 
     ## Calibration
 
@@ -136,7 +139,9 @@ Subagent (general-purpose):
     Acknowledge what was done well before listing issues — accurate praise
     helps the implementer trust the rest of the feedback.
 
-    ## Output Format
+    ## Review File Format
+
+    Structure [REVIEW_FILE] as:
 
     ### Spec Compliance
 
@@ -163,6 +168,21 @@ Subagent (general-purpose):
     **Task quality:** [Approved | Needs fixes]
 
     **Reasoning:** [1-2 sentence technical assessment]
+
+    ## Final Message — Report Contract
+
+    Report back with ONLY (under 15 lines — the detail lives in the
+    review file):
+    - **Spec:** ✅ | ❌ | verdict plus ⚠️ count if any
+    - **Quality:** Approved | Needs fixes
+    - Finding counts by severity (e.g. "0 Critical, 2 Important, 1 Minor")
+    - One line per Critical/Important finding and per ⚠️ item:
+      `file:line — gist`
+    - The review file path
+
+    The one-liners are what the controller adjudicates and routes fix
+    rounds from — make each one specific enough to act on without
+    opening the file.
 ```
 
 **Placeholders:**
@@ -180,6 +200,11 @@ Subagent (general-purpose):
 - `[DIFF_FILE]` — REQUIRED: the path the controller wrote the review
   package to (`scripts/review-package PLAN_FILE BASE HEAD` prints the unique
   path it wrote; the package never enters the controller's context)
+- `[REVIEW_FILE]` — REQUIRED: the file the reviewer writes its full review
+  to. Name it after the brief in the plan's workspace (brief
+  `…/task-N-brief.md` → review `…/task-N-review.md`; a fix-round re-review
+  appends `-r<R>`).
 
-**Reviewer returns:** Spec Compliance verdict (✅/❌/⚠️), Strengths, Issues
-(Critical/Important/Minor), Task quality verdict
+**Reviewer returns:** the short contract only — spec + quality verdicts,
+finding counts by severity, one-liners for Critical/Important/⚠️ items,
+and the review file path. The full review lives in `[REVIEW_FILE]`.

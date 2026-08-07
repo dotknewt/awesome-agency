@@ -33,7 +33,11 @@ Subagent (general-purpose):
     Approve unless there are serious gaps — missing requirements from the spec,
     contradictory steps, placeholder content, or tasks so vague they can't be acted on.
 
-    ## Output Format
+    ## Output
+
+    Write your full review to [REVIEW_FILE] — if no path was provided,
+    create one with `mktemp /tmp/plan-review-XXXXXX.md` and use that.
+    Structure it as:
 
     ## Plan Review
 
@@ -44,6 +48,16 @@ Subagent (general-purpose):
 
     **Recommendations (advisory, do not block approval):**
     - [suggestions for improvement]
+
+    ## Final Message — Report Contract
+
+    Report back with ONLY (the detail lives in the review file):
+    - **Status:** Approved | Issues Found
+    - One line per issue: `[Task X, Step Y] — gist`
+    - Recommendation count
+    - The review file path
 ```
 
-**Reviewer returns:** Status, Issues (if any), Recommendations
+**Reviewer returns:** the short contract only — Status, issue one-liners,
+recommendation count, and the review file path. The full review lives in
+`[REVIEW_FILE]`.

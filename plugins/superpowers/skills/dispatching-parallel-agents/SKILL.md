@@ -61,7 +61,8 @@ Each agent gets:
 - **Specific scope:** One test file or subsystem
 - **Clear goal:** Make these tests pass
 - **Constraints:** Don't change other code
-- **Expected output:** Summary of what you found and fixed
+- **Expected output:** a per-agent report file to write the detail to,
+  plus a short summary contract to return
 
 ### 3. Dispatch in Parallel
 
@@ -79,7 +80,8 @@ Multiple dispatch calls in one response = parallel execution. One per response =
 ### 4. Review and Integrate
 
 When agents return:
-- Read each summary
+- Read each summary contract (root cause + fix one-liners; the detail is
+  in each agent's report file — open one only when integration needs it)
 - Verify fixes don't conflict
 - Run full test suite
 - Integrate all changes
@@ -89,7 +91,10 @@ When agents return:
 Good agent prompts are:
 1. **Focused** - One clear problem domain
 2. **Self-contained** - All context needed to understand the problem
-3. **Specific about output** - What should the agent return?
+3. **Specific about output** - a report file for the detail, a short
+   contract for the return message. Give each agent a unique report-file
+   path (e.g. `/tmp/fix-<scope>-report.md`) — everything an agent prints
+   back stays resident in your context for the rest of the session.
 
 ```markdown
 Fix the 3 failing tests in src/agents/agent-tool-abort.test.ts:
@@ -109,7 +114,10 @@ These are timing/race condition issues. Your task:
 
 Do NOT just increase timeouts - find the real issue.
 
-Return: Summary of what you found and what you fixed.
+Write your full report (root cause analysis, what you changed, test
+evidence) to /tmp/fix-tool-abort-report.md. Return ONLY: root cause in
+one line, fix summary in one line per change, final test status, and the
+report file path.
 ```
 
 ## Common Mistakes
@@ -124,7 +132,7 @@ Return: Summary of what you found and what you fixed.
 **✅ Constraints:** "Do NOT change production code" or "Fix tests only"
 
 **❌ Vague output:** "Fix it" - you don't know what changed
-**✅ Specific:** "Return summary of root cause and changes"
+**✅ Specific:** "Write the full report to this file; return root cause + fix one-liners + test status + the path"
 
 ## When NOT to Use
 
@@ -161,7 +169,7 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 ## Verification
 
 After agents return:
-1. **Review each summary** - Understand what changed
+1. **Review each summary contract** - Understand what changed; the report files hold the detail
 2. **Check for conflicts** - Did agents edit same code?
 3. **Run full suite** - Verify all fixes work together
 4. **Spot check** - Agents can make systematic errors
