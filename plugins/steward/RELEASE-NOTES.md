@@ -1,5 +1,24 @@
 # Steward Release Notes
 
+## v1.5.0 (2026-08-07)
+
+### Skills
+
+- **`instructions-audit` gained a scoped mode** (`recent`, `last <N> commits`,
+  `since <ref>`) that folds only what a commit range surfaced into the
+  instruction files. The full audit — rubric scoring, both sub-skills, whole-repo
+  discovery — is the right tool for periodic maintenance but heavyweight for the
+  common "I just landed a few commits, capture what they changed" case, which
+  previously forced a choice between paying for a full audit or hand-editing
+  AGENTS.md. Scoped runs skip the rubric and the `instructions-revise` /
+  `instructions-restructure` sub-skills, derive proposed diffs from the range's
+  diffs and commit messages alone, and cite the surfacing commit in each *why*.
+  The argument grammar deliberately mirrors the `maintain` skill's
+  (`since <ref>`) so the bundle stays consistent. Shipped as a skill argument
+  rather than the backlog's literal "additional command" because Copilot CLI has
+  no commands concept — skills are the cross-host invocable
+  (`/instructions-audit recent`).
+
 ## v1.4.0 (2026-08-06)
 
 ### Agents

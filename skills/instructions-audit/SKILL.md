@@ -1,6 +1,6 @@
 ---
 name: instructions-audit
-description: Audit and improve AGENTS.md project instructions (and legacy CLAUDE.md). Use when the user asks to check, audit, update, improve, fix, restructure, or clean up AGENTS.md / CLAUDE.md, or mentions "agent memory", "project memory", "project instructions", "instruction file", "instruction maintenance", "instruction structure", or filenames like AGENTS.md, agents.md, CLAUDE.md. Scans the repo, evaluates quality against a rubric, prints a report, and proposes targeted edits. When the repo still uses CLAUDE.md only, also proposes migrating to AGENTS.md.
+description: Audit and improve AGENTS.md project instructions (and legacy CLAUDE.md). Use when the user asks to check, audit, update, improve, fix, restructure, or clean up AGENTS.md / CLAUDE.md, or mentions "agent memory", "project memory", "project instructions", "instruction file", "instruction maintenance", "instruction structure", or filenames like AGENTS.md, agents.md, CLAUDE.md. Scans the repo, evaluates quality against a rubric, prints a report, and proposes targeted edits. When the repo still uses CLAUDE.md only, also proposes migrating to AGENTS.md. Arguments: none (full audit), "recent" (scope to the last 5 commits), "last <N> commits", or "since <ref>" — scoped runs skip rubric scoring and propose only updates surfaced by that commit range (e.g. "audit recent changes", "update AGENTS.md for the last 3 commits").
 tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
@@ -13,6 +13,56 @@ Audit, evaluate, and improve project instruction files (`AGENTS.md` by default; 
 `AGENTS.md` (the agents.md convention) is portable across agent CLIs — Claude Code, Codex, Cursor, and others. `CLAUDE.md` is Claude Code's legacy filename; this skill keeps it working through migration.
 
 **This skill writes to instruction files.** It always prints a quality report and proposes diffs before editing, and waits for user approval.
+
+## Modes
+
+Parse the argument first:
+
+- *(none)* → **full audit** — the workflow below, all phases.
+- `recent` → **scoped mode**, last 5 commits.
+- `last <N> commits` → **scoped mode**, last N commits.
+- `since <ref>` → **scoped mode**, `<ref>..HEAD`.
+
+## Scoped mode
+
+Fold only what a specific commit range surfaced into the instruction files —
+no rubric, no full-repo assessment. Use full audit for periodic maintenance;
+use scoped mode right after landing a batch of commits.
+
+1. **Resolve the range.** `BASE=HEAD~5` for `recent`, `HEAD~N`, or the given
+   `<ref>`. If the repo has fewer commits than requested, clamp BASE to the
+   root commit (`git rev-list --max-parents=0 HEAD`). Collect:
+
+   ```bash
+   git log --oneline $BASE..HEAD
+   git diff --name-status $BASE..HEAD
+   ```
+
+   If the range is empty, say so and offer the full audit — never silently
+   fall back to one.
+
+2. **Discover instruction files** exactly as in Phase 1 below. Still *flag* a
+   legacy-`CLAUDE.md`-only setup (that's currency of the setup, not of
+   content), but only propose migration — never bundle it into the scoped
+   edits.
+
+3. **Derive candidate updates from the range only.** Read the diffs and
+   commit messages for:
+   - changed or renamed commands, scripts, and tooling the instructions mention
+   - moved/renamed/deleted paths the instructions reference
+   - new conventions, workflows, or structure the changes introduce
+   - gotchas evident from fix commits
+
+4. **Print a Scoped Audit report** — the range audited, per-file proposed
+   diffs (Phase 4 diff format) each with a one-line *why* citing the commit
+   that surfaced it, and an explicit note that nothing outside the range was
+   checked.
+
+5. **Skip the sub-skills.** `instructions-revise` and
+   `instructions-restructure` are full-audit concerns; scoped mode proposes
+   its own diffs directly.
+
+6. **Apply only after approval**, as in Phase 5.
 
 ## Workflow
 

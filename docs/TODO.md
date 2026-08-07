@@ -6,7 +6,6 @@
 - default to delegating todo writing to small, fast, cheap model subagent
 
 # steward
-- additional command that performs instructions-audit only adding changes that surfaced in the last 5 commits
 - Extend the steward plugin to also maintain tests
 
 # contract ownership
