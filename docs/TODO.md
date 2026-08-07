@@ -1,6 +1,3 @@
-# Tighten superpower instructions so that the subagents don't return their full report into orchestrators context.
-- The skill's own guidance is that subagents hand artifacts over as files and return a short contract.
-- Tighten instructions so its enforced for implementers *AND* reviewers.
 # copy/add skill,agent,instruction,plugin etc from source
 - When instructed to add/copy an extension and given a source (github repo, marketplace etc), do not install it, but rather add it as if project root was the custom configs directory (like .claude/, .github/ etc)
 
