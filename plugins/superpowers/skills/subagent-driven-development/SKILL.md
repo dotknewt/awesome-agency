@@ -464,7 +464,7 @@ the same `MERGE_BASE`..`HEAD` range and `final-review.md` path, to a
 *different* model than the one that did the final review — a fast, cheap,
 low-reasoning-effort model is fine here. The goal is a different model's
 blind spots, not more scrutiny from the same tier. This is judgment-call,
-never mandatory — skip it for routine plans.
+never mandatory — skip it for routine branches.
 
 If it finds anything, fold it into the same fix-and-scoped-re-review pattern
 used for the primary final review, then append its outcome to the ledger
