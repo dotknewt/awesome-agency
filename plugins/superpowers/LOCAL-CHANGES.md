@@ -6,6 +6,28 @@ When re-syncing from upstream, preserve or re-apply the changes below.
 `RELEASE-NOTES.md` stays pinned to upstream — local changes are recorded here,
 never there.
 
+## v6.2.3 (2026-08-08) — optional cross-model second opinion
+
+The three "otherwise passed" gates — code review's merge verdict, the plan
+reviewer's approval, and subagent-driven-development's whole-branch final
+review — previously had no mechanism for a second, differently-modeled pass:
+a reviewer's blind spots are often shared by a re-review from the same model
+at the same or higher capability. For high-stakes cases (architecture-changing
+diffs, security-sensitive code, expensive-to-reverse plan decisions, a
+multi-phase initiative closing out) it's now suggested — never mandatory — to
+dispatch one additional pass on a different, cheap/fast, low-reasoning-effort
+model as a second pair of eyes before finishing, using the same
+review-file/contract conventions already in place.
+
+Diverged/added files:
+
+- `skills/requesting-code-review/SKILL.md` — new "Optional: Second Opinion
+  Before Final Acceptance" section after the act-on-feedback guidance.
+- `skills/writing-plans/SKILL.md` — new "Optional: Second Opinion Before
+  Final Acceptance" section after Self-Review, before Execution Handoff.
+- `skills/subagent-driven-development/SKILL.md` — new "Optional: Second
+  Opinion Before Final Acceptance" subsection in Final Review, before Finish.
+
 ## v6.2.2 (2026-08-08) — multi-phase resume protocol
 
 An initiative split into a sequence of phase plans had no resume record above the
