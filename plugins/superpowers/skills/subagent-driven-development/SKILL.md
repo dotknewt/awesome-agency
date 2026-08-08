@@ -453,6 +453,24 @@ which a resume scan cannot see:
 - `Final review: clean`
 - `Final review: <K> parked`
 
+### Optional: Second Opinion Before Final Acceptance
+
+Once the final whole-branch review is clean (fixes merged and re-reviewed if
+there were any), a high-stakes branch — an architecture-changing initiative,
+security-sensitive code, a multi-phase effort about to close out — can
+warrant one more pass before Finish: dispatch
+[code-reviewer.md](../requesting-code-review/code-reviewer.md) once more over
+the same `MERGE_BASE`..`HEAD` range and `final-review.md` path, to a
+*different* model than the one that did the final review — a fast, cheap,
+low-reasoning-effort model is fine here. The goal is a different model's
+blind spots, not more scrutiny from the same tier. This is judgment-call,
+never mandatory — skip it for routine branches.
+
+If it finds anything, fold it into the same fix-and-scoped-re-review pattern
+used for the primary final review, then append its outcome to the ledger
+alongside the first `Final review:` line. Don't loop a third time chasing
+consensus.
+
 ## Finish
 
 When the final whole-branch review is clean and its fixes are merged: if

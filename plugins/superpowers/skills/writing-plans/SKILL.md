@@ -147,6 +147,21 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
+## Optional: Second Opinion Before Final Acceptance
+
+For a high-stakes plan — the plan reviewer approved it, but the plan spans
+many subsystems, makes an architecture call that's expensive to reverse, or
+covers security-sensitive ground — consider one more pass before saving it as
+final: dispatch [plan-document-reviewer-prompt.md](plan-document-reviewer-prompt.md)
+again, same plan and spec paths, to a *different* model than whichever
+reviewed it (or self-reviewed it) first — a fast, cheap, low-reasoning-effort
+model is fine here. A second opinion from a different model is more likely to
+catch a gap the first reviewer's blind spots share than a third pass from the
+same one. This is judgment-call, never mandatory — skip it for routine plans.
+
+Treat its verdict like the first reviewer's: fix flagged issues, note
+recommendations, don't loop a third time chasing consensus.
+
 ## Execution Handoff
 
 After saving the plan, offer execution choice:

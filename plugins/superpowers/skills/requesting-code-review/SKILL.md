@@ -54,6 +54,23 @@ pasted findings.
 - Note Minor issues for later
 - Push back if reviewer is wrong (with reasoning)
 
+## Optional: Second Opinion Before Final Acceptance
+
+For a high-stakes review — final pre-merge, an architecture-changing diff,
+security-sensitive code — consider one more pass once the first reviewer's
+verdict is otherwise clean or "with fixes" already applied: dispatch the same
+[code-reviewer.md](code-reviewer.md) template, same `REVIEW_FILE`-per-review
+convention, to a *different* model than the one that did the primary review —
+a fast, cheap, low-reasoning-effort model is fine here (e.g. a low-effort
+pass on a lightweight model). The point isn't more scrutiny from a stronger
+model, it's a different one: a second architecture is less likely to share
+the first reviewer's blind spots. This is judgment-call, never mandatory —
+skip it for routine changes.
+
+Treat its contract like any other reviewer's: fix Critical/Important
+findings, note Minor ones, push back with reasoning if it's wrong. Don't loop
+a third time chasing consensus — one second opinion, then proceed.
+
 ## Example
 
 ```
