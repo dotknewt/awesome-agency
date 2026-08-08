@@ -42,6 +42,11 @@ digraph when_to_use {
 - Review after each task (spec compliance + code quality), broad review at the end
 - Faster iteration (no human-in-loop between tasks)
 
+**vs. Resuming Multi-Phase Plans:** an initiative split into a sequence of phase plans
+(`<initiative>-phase-N-of-M.md`) still executes each phase with this skill — use
+superpowers:resuming-multi-phase-plans to determine which phase to resume and to clear
+context between phases.
+
 ## The Process
 
 ```dot
@@ -73,7 +78,10 @@ digraph process {
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" [shape=box];
     "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals" [shape=box];
-    "Final review clean: delete this plan's workspace" [shape=box];
+    "Append final-review line to ledger" [shape=box];
+    "Phase of a multi-phase initiative with phases remaining?" [shape=diamond];
+    "Keep workspace: resuming-multi-phase-plans owns eventual cleanup" [shape=box];
+    "Delete this plan's workspace" [shape=box];
     "Use superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
     "Setup: worktree, ledger check, read plan, pre-flight review" -> "Dispatch implementer subagent (./implementer-prompt.md)";
@@ -102,8 +110,12 @@ digraph process {
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" [label="no"];
     "Dispatch final code reviewer (../requesting-code-review/code-reviewer.md)" -> "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals";
-    "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals" -> "Final review clean: delete this plan's workspace";
-    "Final review clean: delete this plan's workspace" -> "Use superpowers:finishing-a-development-branch";
+    "Final findings? ONE fix dispatch, one scoped re-review, adjudicate residuals" -> "Append final-review line to ledger";
+    "Append final-review line to ledger" -> "Phase of a multi-phase initiative with phases remaining?";
+    "Phase of a multi-phase initiative with phases remaining?" -> "Keep workspace: resuming-multi-phase-plans owns eventual cleanup" [label="yes"];
+    "Phase of a multi-phase initiative with phases remaining?" -> "Delete this plan's workspace" [label="no"];
+    "Keep workspace: resuming-multi-phase-plans owns eventual cleanup" -> "Use superpowers:finishing-a-development-branch";
+    "Delete this plan's workspace" -> "Use superpowers:finishing-a-development-branch";
 }
 ```
 
@@ -133,7 +145,11 @@ a ledger file, not only in todos.
   ledger at the old flat path `.superpowers/sdd/progress.md` — is another
   plan's progress: leave it in place and start your own, fresh.
 - Create the ledger with its identity as the first line:
-  `# SDD ledger — plan: <plan file path>`.
+  `# SDD ledger — plan: <plan file path>`. If this plan is one phase of a
+  multi-phase initiative (`<initiative>-phase-N-of-M.md`), suffix it instead:
+  `# SDD ledger — plan: <plan file path> (phase N of M: <initiative-slug>)` —
+  see superpowers:resuming-multi-phase-plans, which reads this suffix across
+  every phase's ledger to resume the initiative as a whole.
 - The ledger is your recovery map: the commits it names exist in git even
   when your context no longer remembers creating them. After compaction,
   trust the ledger and `git log` over your own recollection.
@@ -430,12 +446,29 @@ rulings, or stop on load-bearing ones. There is no second fix wave —
 residual load-bearing findings surface to your human partner when
 finishing-a-development-branch presents the options.
 
+Once the outcome is settled, append it to the ledger — the final review's
+verdict previously lived only in the reviewer's transient contract message,
+which a resume scan cannot see:
+
+- `Final review: clean`
+- `Final review: <K> parked`
+
 ## Finish
 
-When the final whole-branch review is clean and its fixes are merged,
-delete this plan's workspace (`rm -rf <workspace>`) — the git history is
-the record now. Sibling directories belong to other plans; leave them
-alone.
+When the final whole-branch review is clean and its fixes are merged: if
+this plan is not one phase of a multi-phase initiative, delete this plan's
+workspace (`rm -rf <workspace>`) — the git history is the record now.
+Sibling directories belong to other plans; leave them alone.
+
+If this plan IS one phase of a multi-phase initiative (see
+superpowers:resuming-multi-phase-plans), a clean final review no longer
+means delete: leave the workspace in place even though nothing further will
+write to it. Its ledger — with the phase-suffixed identity line and the
+final-review line you just appended — is the resume record the next phase's
+controller (or a fresh session recovering from a disruption) reads to know
+this phase is done without re-deriving it from git alone.
+superpowers:resuming-multi-phase-plans deletes every phase's workspace once
+the whole initiative's ledgers report the same.
 
 Use superpowers:finishing-a-development-branch.
 
@@ -451,6 +484,7 @@ Use superpowers:finishing-a-development-branch.
 | "The fix was small, skip the re-review" | Unreviewed fixes are how regressions land. Every round ends with a scoped re-review. |
 | "Reviews slow the loop down" | The loop without reviews is just unverified churn. Reviews are the loop's brakes and steering. |
 | "Ledger bookkeeping is overhead" | The ledger is what survives compaction. Controllers without one have re-dispatched entire completed task sequences. |
+| "Final review is clean, I'll delete the workspace as usual" | Only true for a standalone plan. A phase of a multi-phase initiative keeps its workspace — see superpowers:resuming-multi-phase-plans, which owns the eventual cleanup. |
 
 ## Example Workflow
 
@@ -520,7 +554,9 @@ Re-reviewer: All findings addressed. Missing progress reporting — ADDRESSED.
 Final reviewer: Approved. 0 Critical, 0 Important. Deferred minors triaged:
   none block merge. Full review: .superpowers/sdd/feature-plan/final-review.md
 
-[Delete this plan's workspace — the record now lives in git]
+[Ledger: Final review: clean]
+[Standalone plan (no phase suffix) — delete this plan's workspace, the
+ record now lives in git]
 
 Done! Using superpowers:finishing-a-development-branch.
 ```

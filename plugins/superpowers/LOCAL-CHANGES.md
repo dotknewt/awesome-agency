@@ -6,6 +6,26 @@ When re-syncing from upstream, preserve or re-apply the changes below.
 `RELEASE-NOTES.md` stays pinned to upstream — local changes are recorded here,
 never there.
 
+## v6.2.2 (2026-08-08) — multi-phase resume protocol
+
+An initiative split into a sequence of phase plans had no resume record above the
+single plan level: `subagent-driven-development` deleted a plan's workspace on a clean
+final review, so a session disrupted between phases (compaction, a crash, a closed
+terminal) had nothing but git commits to reconstruct which phase the initiative was on.
+Design: `docs/superpowers/specs/2026-08-08-multi-phase-resume-protocol-design.md`.
+
+Diverged/added files:
+
+- `skills/subagent-driven-development/SKILL.md` — phase-suffixed ledger identity line
+  (`... (phase N of M: <initiative-slug>)`); Final Review appends a
+  `Final review: clean`/`<K> parked` ledger line; Finish's workspace deletion is
+  conditional on not being a phase with phases remaining; process diagram and example
+  transcript updated; new rationalization row and cross-reference to the new skill.
+- `skills/resuming-multi-phase-plans/SKILL.md` — new skill: resume protocol that reads
+  phase ledgers across an initiative to determine what to resume, context-clearing
+  guidance between phases, and initiative-level workspace cleanup once every phase's
+  ledger reports its final review.
+
 ## v6.2.1 (2026-08-07) — subagent report contracts
 
 Every dispatched subagent now writes its full output to a file and returns a
