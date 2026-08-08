@@ -69,10 +69,14 @@ off"; both fade, the ledgers don't.
    done — do not re-dispatch it, and do not re-verify it beyond `git log` if you want
    reassurance; the commits the ledger names already exist. Everything after it has not
    started.
-5. If NO phase's workspace or ledger exists at all but the initiative's later phase
-   plans reference decisions from earlier ones, treat every phase as complete and
-   cleaned up (see Finish below) and resume at phase 1 of whatever work remains — a
-   clean initiative directory is the expected end state, not a lost record.
+5. If NO phase's workspace or ledger exists at all, that is ambiguous by itself — it
+   matches both "every phase finished and was cleaned up" (the expected end state) and
+   "nothing has started yet." Disambiguate with `git log --oneline --grep=<initiative-slug>`
+   (ledger completion lines reference commit ranges by hash, but phase-scoped commit
+   messages or a merged phase branch are what to look for): commits referencing the
+   initiative's phases mean they ran and were cleaned up — resume at whichever phase
+   plan has no matching commits yet. No matching commits at all means nothing has
+   started — resume at phase 1.
 
 ## Clearing Context Between Phases
 
