@@ -10,8 +10,10 @@ that the fix itself broke nothing.
 ```
 Subagent (general-purpose):
   description: "Re-review Task N fix round R"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
-         model silently inherits the session's most expensive one]
+  model: [MODEL — choose per SKILL.md Model Selection; set to a value you
+         know your dispatch tool accepts, or omit it if it doesn't — an
+         omitted model inherits the session's model, which may be more
+         expensive but is never a dispatch-time failure]
   prompt: |
     You are re-reviewing one task's fix round. A previous review produced
     findings; an implementer has attempted to fix them. Your job is to
@@ -109,8 +111,9 @@ Subagent (general-purpose):
 ```
 
 **Placeholders:**
-- `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection; scoped
-  re-reviews of small fix diffs take a cheap-to-mid tier
+- `[MODEL]` — reviewer model per SKILL.md Model Selection; scoped
+  re-reviews of small fix diffs take a cheap-to-mid tier. Omit if your
+  dispatch tool doesn't accept a value you know is valid.
 - `[BRIEF_FILE]` — the task brief file (same file the implementer worked from)
 - `[FINDINGS_FILE]` — the previous review's file (the task reviewer's
   `…-review.md`, or the prior round's re-review file)

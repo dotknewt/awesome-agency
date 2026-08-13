@@ -164,6 +164,12 @@ Severity follows one rule: a bundle that is **broken** in a host fails; one that
 `${CLAUDE_PLUGIN_ROOT}` support in Copilot is **unverified** (docs say no; the vendored
 superpowers `SessionStart` hook suggests otherwise). It warns rather than fails.
 
+Copilot Chat in VS Code is a **separate surface from Copilot CLI** and is not covered by
+the matrix above — its `runSubagent` tool was observed hard-erroring ("model not found")
+on an unrecognized `model:` value, unlike Copilot CLI's silent session-model fallback.
+Do not assume the "degraded, not broken" characterization above extends to it. See
+`docs/TODO.md`'s Copilot model-selection entry.
+
 A `.vendored` bundle is exempt from the *authoring* rules above (it follows upstream's
 conventions), but is still checked for host-installability facts — hook events, bundled MCP,
 and `${CLAUDE_PLUGIN_ROOT}` — because those decide whether its code runs in a user's session.
