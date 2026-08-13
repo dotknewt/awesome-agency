@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Audit RELEASE-NOTES.md coverage for the plugin bundles in a marketplace repo.
+"""Audit release-notes coverage for the plugin bundles in a marketplace repo.
+
+Checks RELEASE-NOTES.md for a normal bundle, or LOCAL-CHANGES.md for a bundle
+carrying a `.vendored` marker (see below).
 
 Mechanical checks only — this reports whether a bundle whose content changed also
 bumped its version and recorded a matching entry. Whether that entry actually
