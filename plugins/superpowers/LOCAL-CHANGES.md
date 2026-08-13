@@ -6,7 +6,7 @@ When re-syncing from upstream, preserve or re-apply the changes below.
 `RELEASE-NOTES.md` stays pinned to upstream — local changes are recorded here,
 never there.
 
-## v6.2.3 (2026-08-13) — Copilot model-selection safe degradation
+## v6.2.4 (2026-08-13) — Copilot model-selection safe degradation
 
 `subagent-driven-development`'s Model Selection section told the dispatching agent to
 "always specify the model explicitly" using an abstract tier, which is safe on Claude

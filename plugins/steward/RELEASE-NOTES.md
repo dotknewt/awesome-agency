@@ -1,5 +1,22 @@
 # Steward Release Notes
 
+## v1.5.1 (2026-08-13)
+
+### Scripts
+
+- **`release-notes-audit.py` now enforces version bumps on `.vendored` bundles.**
+  The script previously excluded every vendored bundle from its checks entirely, on
+  the assumption that upstream's own `RELEASE-NOTES.md` discipline made a local
+  version-bump check moot. Git history showed otherwise: every prior local change to
+  the vendored `superpowers` bundle *did* bump `plugin.json` by convention (so cached
+  `claude plugin install`s would re-fetch), but a recent local patch missed the bump
+  because nothing enforced it. The script now audits vendored bundles too — same
+  `NO_VERSION`/`MISSING_NOTES`/`NO_BUMP`/`NO_ENTRY` checks, just reading
+  `LOCAL-CHANGES.md` instead of `RELEASE-NOTES.md` for the entry (upstream's notes
+  file stays pinned and untouched). `AGENTS.md`'s wording was corrected to match:
+  the `.vendored` exemption only ever covered *which* notes file to write, not
+  whether a version bump is required.
+
 ## v1.5.0 (2026-08-07)
 
 ### Skills
