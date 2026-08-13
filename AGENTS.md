@@ -61,8 +61,10 @@ content references its own files via `${CLAUDE_PLUGIN_ROOT}/...`.
   real files, no pool symlinks, and its skills get no micro-entries. Update it by
   re-syncing `skills/` + `hooks/` from upstream and aligning the version in its `plugin.json`.
   Its `RELEASE-NOTES.md` is pinned to the vendored version — diff it against upstream's
-  to detect drift. A `.vendored` marker file exempts a bundle from this repo's
-  release-notes discipline; never write local entries into a vendored bundle's notes.
+  to detect drift; never write local entries into it. A `.vendored` marker file
+  redirects local-change entries to `LOCAL-CHANGES.md` instead — it does **not**
+  exempt the bundle from bumping `plugin.json`'s version on every local content
+  change (a source change without a bump can leave a cached install unrefreshed).
 - `.claude-plugin/marketplace.json` — **generated**; never hand-edit (see below)
 - `wip/plugins/<name>/` — bundles withdrawn from the marketplace while they are
   reworked. Same layout as `plugins/`, one extra `../` in every pool symlink. A bundle
@@ -98,8 +100,11 @@ identifier.
   `## v<version> (<date>)` heading per released version, matching `plugin.json`
   exactly. **Bump the version and add the entry in the same edit.** An entry must say
   *why* a change was made, not just what changed — see the `release-notes` skill.
-  Enforced mechanically by `hooks/steward/scripts/release-notes-audit.py`; the
-  "does it actually explain why" judgment is the `marketplace-maintainer` agent's.
+  A `.vendored` bundle follows the same bump-and-entry-in-the-same-edit rule, just
+  against `LOCAL-CHANGES.md` instead of `RELEASE-NOTES.md` (which stays pinned to
+  upstream). Enforced mechanically by `hooks/steward/scripts/release-notes-audit.py`
+  for both notes files; the "does it actually explain why" judgment is the
+  `marketplace-maintainer` agent's.
 - `repository` in every plugin.json points at `https://github.com/dotknewt/awesome-agency`.
 - Every agent must declare `model` explicitly, as a full model ID — never a bare
   tier alias or `inherit`. Omitting the field defaults it to `inherit` silently,
@@ -173,6 +178,8 @@ Do not assume the "degraded, not broken" characterization above extends to it. S
 A `.vendored` bundle is exempt from the *authoring* rules above (it follows upstream's
 conventions), but is still checked for host-installability facts — hook events, bundled MCP,
 and `${CLAUDE_PLUGIN_ROOT}` — because those decide whether its code runs in a user's session.
+This is a distinct exemption from the release-notes/version-bump one in Conventions above:
+a `.vendored` bundle still must bump `plugin.json` and record the entry in `LOCAL-CHANGES.md`.
 
 ## Validation
 

@@ -8,7 +8,10 @@ explains *why* the change was made is a judgment call left to the caller
 
 Bundle ownership is derived from the tree, not a hand-maintained list: a bundle
 owns every path reachable from `plugins/<name>/`, following symlinks back into the
-repo's shared pools. A bundle containing a `.vendored` marker file is exempt.
+repo's shared pools. A bundle containing a `.vendored` marker file still must bump
+its version on every content change (so cached installs re-fetch); it just records
+the matching entry in `LOCAL-CHANGES.md` instead of `RELEASE-NOTES.md`, which stays
+pinned to upstream.
 
 Usage:
     release-notes-audit.py [--repo PATH] [--base REF] [--all] [--json]
@@ -27,6 +30,7 @@ import sys
 
 VENDORED_MARKER = ".vendored"
 NOTES_FILENAME = "RELEASE-NOTES.md"
+LOCAL_CHANGES_FILENAME = "LOCAL-CHANGES.md"
 MANIFEST_RELPATH = os.path.join(".claude-plugin", "plugin.json")
 
 
@@ -133,7 +137,7 @@ def audit(repo: str, base: str | None, check_all: bool) -> list[dict]:
     findings: list[dict] = []
 
     if check_all:
-        targets = {name: None for name, info in bundles.items() if not info["vendored"]}
+        targets = {name: None for name in bundles}
     else:
         resolved = resolve_base(repo, base)
         if resolved is None:
@@ -147,11 +151,10 @@ def audit(repo: str, base: str | None, check_all: bool) -> list[dict]:
         targets = {}
         for path in changed:
             # Editing the notes themselves must not demand a further bump.
-            if os.path.basename(path) == NOTES_FILENAME:
+            if os.path.basename(path) in (NOTES_FILENAME, LOCAL_CHANGES_FILENAME):
                 continue
             for name in owning_bundles(path, bundles):
-                if not bundles[name]["vendored"]:
-                    targets.setdefault(name, resolved)
+                targets.setdefault(name, resolved)
 
     for name in sorted(targets):
         findings.extend(audit_bundle(repo, name, bundles[name], targets[name]))
@@ -173,7 +176,8 @@ def changed_paths(repo: str, base: str) -> set[str]:
 def audit_bundle(repo: str, name: str, info: dict, base: str | None) -> list[dict]:
     findings = []
     version = info["version"]
-    notes_path = os.path.join(repo, "plugins", name, NOTES_FILENAME)
+    notes_filename = LOCAL_CHANGES_FILENAME if info["vendored"] else NOTES_FILENAME
+    notes_path = os.path.join(repo, "plugins", name, notes_filename)
 
     if not version:
         findings.append({
@@ -187,7 +191,7 @@ def audit_bundle(repo: str, name: str, info: dict, base: str | None) -> list[dic
         findings.append({
             "bundle": name,
             "code": "MISSING_NOTES",
-            "message": f"plugins/{name}/{NOTES_FILENAME} does not exist",
+            "message": f"plugins/{name}/{notes_filename} does not exist",
         })
         return findings
 
@@ -207,7 +211,7 @@ def audit_bundle(repo: str, name: str, info: dict, base: str | None) -> list[dic
         findings.append({
             "bundle": name,
             "code": "NO_ENTRY",
-            "message": f"plugins/{name}/{NOTES_FILENAME} has no '## v{version}' entry",
+            "message": f"plugins/{name}/{notes_filename} has no '## v{version}' entry",
         })
 
     return findings
