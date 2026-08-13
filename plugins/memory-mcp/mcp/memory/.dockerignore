@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tgz
+package/
+.git/
+.gitignore
+CLAUDE.md
+README.md
+AGENTS.md
+__tests__/

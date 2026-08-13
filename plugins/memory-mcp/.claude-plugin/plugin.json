@@ -1,0 +1,18 @@
+{
+  "name": "memory-mcp",
+  "version": "0.1.0",
+  "description": "Persistent knowledge-graph memory for Claude — packages the official MCP reference Knowledge Graph Memory Server as a Docker image, run through the Docker MCP Gateway, so entities, relations, and observations persist across sessions.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/awesome-agency",
+  "license": "Apache-2.0",
+  "keywords": [
+    "memory",
+    "knowledge-graph",
+    "mcp",
+    "context",
+    "docker"
+  ]
+}

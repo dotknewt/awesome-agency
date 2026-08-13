@@ -40,6 +40,7 @@ BUNDLE_ORDER = [
     "docker-toolkit",
     "python-mcp-development",
     "ludus-toolkit",
+    "memory-mcp",
     "superpowers",
 ]
 

@@ -42,6 +42,15 @@
       }
     },
     {
+      "name": "memory-mcp",
+      "description": "Persistent knowledge-graph memory for Claude — packages the official MCP reference Knowledge Graph Memory Server as a Docker image, run through the Docker MCP Gateway, so entities, relations, and observations persist across sessions.",
+      "source": "./plugins/memory-mcp",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "superpowers",
       "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
       "source": "./plugins/superpowers",

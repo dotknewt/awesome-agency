@@ -191,6 +191,11 @@
       "artifact": "plugins/ludus-toolkit",
       "capability": "bundled-mcp",
       "reason": "Ships an in-tree MCP server. Copilot users configure it manually; the bundle README documents the steps."
+    },
+    {
+      "artifact": "plugins/memory-mcp",
+      "capability": "bundled-mcp",
+      "reason": "Ships an in-tree MCP server. Copilot users configure it manually; the bundle README documents the steps."
     }
   ]
 }

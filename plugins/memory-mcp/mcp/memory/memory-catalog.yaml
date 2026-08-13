@@ -1,0 +1,54 @@
+# Local Docker MCP catalog for the Knowledge Graph Memory Server (memory-mcp).
+#
+# This is a "file catalog" attached to a profile and consumed by the gateway:
+#   docker mcp gateway run --profile <profile-id>
+#
+# Before using it:
+#   1. Build the image:  docker build -t memory-mcp:local .
+#   2. Create a profile and attach this catalog. No secrets or profile config
+#      needed — this server is fully local and makes no network calls:
+#        docker mcp profile create --name memory
+#        docker mcp profile server add memory --server file://memory-catalog.yaml
+#   3. Run the gateway:
+#        docker mcp gateway run --profile memory
+#
+# Persistence: the knowledge graph is a JSONL file at MEMORY_FILE_PATH (set
+# below to /data/memory.jsonl), which lives on the named Docker volume
+# memory-mcp-data, so it survives container restarts and image rebuilds.
+registry:
+  memory-mcp:
+    description: Store and query a persistent knowledge graph (entities, relations, observations) across conversations, via the official MCP reference Knowledge Graph Memory Server.
+    title: Knowledge Graph Memory
+    type: server
+    image: memory-mcp:local
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/main/src/memory
+    upstream: https://github.com/modelcontextprotocol/servers/tree/main/src/memory
+    icon: https://modelcontextprotocol.io/favicon.ico
+    tools:
+      - name: create_entities
+      - name: create_relations
+      - name: add_observations
+      - name: delete_entities
+      - name: delete_observations
+      - name: delete_relations
+      - name: read_graph
+      - name: search_nodes
+      - name: open_nodes
+    # The server also exposes one MCP Resource, memory://knowledge-graph
+    # (mime application/json), and emits notifications/resources/updated on
+    # mutation. The catalog schema has no `resources:` field — this still
+    # works at runtime through the gateway; it's just not listed here.
+    env:
+      - name: MEMORY_FILE_PATH
+        value: /data/memory.jsonl
+    volumes:
+      - memory-mcp-data:/data
+    metadata:
+      category: productivity
+      tags:
+        - memory
+        - knowledge-graph
+        - context
+      license: Apache-2.0 / MIT (see mcp/memory/LICENSE)
+      owner: modelcontextprotocol
