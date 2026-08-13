@@ -40,13 +40,14 @@
     superpowers — it should ideally be contributed upstream, and/or Copilot Chat
     should get its own `host-compat.json` entry once its behavior is verified more
     broadly than this one observation.
-  - The same Model Selection section now also carries a hand-maintained snapshot of
-    Copilot CLI's `--model` short-id catalog (anthropic/openai ids, dated
-    2026-08-13), so a dispatching agent can try a real value instead of only
-    omitting one. This is a static list, not a live query — it needs periodic
-    refresh as models are added/retired, applies only to Copilot CLI's short-id
-    format (not Copilot Chat's `"Model Name (Vendor)"` format), and still falls
-    back to the omit-and-retry behavior above if a listed id is rejected.
+  - The same Model Selection section points at
+    `plugins/superpowers/skills/subagent-driven-development/references/copilot-model-ids.md`,
+    a hand-maintained snapshot of Copilot CLI's `--model` short-id catalog
+    (anthropic/openai ids, dated 2026-08-13), so a dispatching agent can try a real
+    value instead of only omitting one. This is a static list, not a live query — it
+    needs periodic refresh as models are added/retired, applies only to Copilot CLI's
+    short-id format (not Copilot Chat's `"Model Name (Vendor)"` format), and still
+    falls back to the omit-and-retry behavior above if a listed id is rejected.
 - `${CLAUDE_PLUGIN_ROOT}` verification in Copilot
   - Support for `${CLAUDE_PLUGIN_ROOT}` resolution in GitHub Copilot CLI is unverified —
     the vendored `superpowers` `SessionStart` hook suggests it may work despite docs saying
