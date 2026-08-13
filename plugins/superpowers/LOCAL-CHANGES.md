@@ -6,6 +6,36 @@ When re-syncing from upstream, preserve or re-apply the changes below.
 `RELEASE-NOTES.md` stays pinned to upstream — local changes are recorded here,
 never there.
 
+## v6.2.3 (2026-08-13) — Copilot model-selection safe degradation
+
+`subagent-driven-development`'s Model Selection section told the dispatching agent to
+"always specify the model explicitly" using an abstract tier, which is safe on Claude
+Code's Task tool (alias or pinned full ID) but not on every dispatch tool: GitHub
+Copilot's `runSubagent` (Copilot Chat in VS Code) needs an exact `"Model Name
+(Vendor)"` string with no alias support and no in-skill way to enumerate installed
+models, so following the guidance literally there produced a hard "model not found"
+dispatch failure instead of a graceful fallback. Model Selection now distinguishes
+choosing a tier (host-independent, unchanged) from expressing that tier as a
+dispatch-tool value (host-dependent): specify a model only when the value is known to
+be valid for the active dispatch tool, otherwise omit the `model:` line entirely
+(never leave it present with an empty value) and accept the session default; retry a
+dispatch without `model` if it was rejected specifically for its model value, before
+treating the task as blocked.
+
+Diverged/added files:
+
+- `skills/subagent-driven-development/SKILL.md` — Model Selection section reworded
+  per above; points to the new reference file below for Copilot CLI ids.
+- `skills/subagent-driven-development/references/copilot-model-ids.md` — new file: a
+  dated, hand-maintained snapshot of Copilot CLI's `--model` short-id catalog
+  (anthropic/openai ids), scoped explicitly to Copilot CLI's short-id format (not
+  Copilot Chat's `"Model Name (Vendor)"` format) and treated as best-effort, not a
+  live query.
+- `skills/subagent-driven-development/implementer-prompt.md`,
+  `re-review-prompt.md`, `task-reviewer-prompt.md` — `[MODEL — REQUIRED...]`
+  placeholder reworded to state that omitting the model means deleting the entire
+  `model:` line, not leaving it with an empty value.
+
 ## v6.2.3 (2026-08-08) — optional cross-model second opinion
 
 The three "otherwise passed" gates — code review's merge verdict, the plan

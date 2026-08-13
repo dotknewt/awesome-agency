@@ -11,8 +11,9 @@ more, nothing less) and is well-built (clean, tested, maintainable)
 Subagent (general-purpose):
   description: "Review Task N (spec + quality)"
   model: [MODEL — choose per SKILL.md Model Selection; set to a value you
-         know your dispatch tool accepts, or omit it if it doesn't — an
-         omitted model inherits the session's model, which may be more
+         know your dispatch tool accepts, or delete this entire `model:`
+         line if it doesn't (do not leave `model:` with an empty value) —
+         an omitted model inherits the session's model, which may be more
          expensive but is never a dispatch-time failure]
   prompt: |
     You are reviewing one task's implementation: first whether it matches its
