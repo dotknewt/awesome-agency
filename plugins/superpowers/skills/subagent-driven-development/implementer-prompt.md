@@ -5,8 +5,11 @@ Use this template when dispatching an implementer subagent.
 ```
 Subagent (general-purpose):
   description: "Implement Task N: [task name]"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
-         model silently inherits the session's most expensive one]
+  model: [MODEL — choose per SKILL.md Model Selection; set to a value you
+         know your dispatch tool accepts, or delete this entire `model:`
+         line if it doesn't (do not leave `model:` with an empty value) —
+         an omitted model inherits the session's model, which may be more
+         expensive but is never a dispatch-time failure]
   prompt: |
     You are implementing Task N: [task name]
 

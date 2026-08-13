@@ -191,9 +191,32 @@ small fix diffs take a cheap-to-mid tier.
 **Fix-loop escalation (rounds 4-5)**: use a model at least one tier above
 the implementer that got stuck.
 
-**Always specify the model explicitly when dispatching a subagent.** An
-omitted model inherits your session's model — often the most capable and
-most expensive — which silently defeats this section.
+**Specify the model explicitly when your dispatch tool accepts a value you
+know is valid.** On Claude Code's Task tool that's a tier alias
+(`haiku`/`sonnet`/`opus`) or a pinned full model ID — an omitted model
+inherits your session's model, often the most capable and most expensive,
+which silently defeats this section. On dispatch tools that require an
+exact model identifier with no alias support and no in-skill way to
+enumerate installed models (for example GitHub Copilot's `runSubagent`,
+which needs a literal `"Model Name (Vendor)"` string) — do not guess a
+value. Omit the model parameter and accept the session default, or if the
+tool exposes its own model list at dispatch time (a slash command, a
+picker, a config file), resolve the value from that before dispatch. A
+wrong guess ranges from silently overridden (cost/latency only) to a hard
+dispatch failure depending on the host — never assume it's harmless.
+
+**Known Copilot CLI model ids:** see `references/copilot-model-ids.md` for
+a maintained snapshot of Copilot CLI's `--model` short-id catalog. Prefer
+a value from that list over guessing when dispatching through Copilot
+CLI, but still treat it as best-effort — model catalogs change, and a
+stale id fails exactly like a guessed one. It does not apply to Copilot
+Chat in VS Code's `runSubagent`, which needs a separate
+`"Model Name (Vendor)"` display string that the reference file does not
+provide.
+
+If a subagent dispatch fails specifically because the model value was
+rejected — whether guessed or drawn from the list above — retry the same
+dispatch with `model` omitted before treating the task as blocked.
 
 **Turn count beats token price.** Wall-clock and context cost scale with how
 many turns a subagent takes, and the cheapest models routinely take 2-3× the
