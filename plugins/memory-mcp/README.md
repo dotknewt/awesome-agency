@@ -15,6 +15,7 @@ Components:
 #   2. Create a profile and attach this catalog. No secrets or profile config
 #      needed — this server is fully local and makes no network calls:
 #        docker mcp profile create --name memory
+# 	     cp memory-catalog.yaml $HOME/.docker/mcp/catalogs/memory-catalog.yaml
 #        docker mcp profile server add memory --server file://memory-catalog.yaml
 #   3. Run the gateway:
 #        docker mcp gateway run --profile memory
