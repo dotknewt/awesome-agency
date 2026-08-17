@@ -49,9 +49,6 @@ Each skill can also fire on its own if you ask for just that behavior directly.
 "restructure AGENTS.md — this section only applies under packages/api"
 ```
 
-A Stop hook nudges you to run `instructions-revise` when a session has touched
-many files (tunable via `INSTRUCTIONS_NUDGE_THRESHOLD` / `INSTRUCTIONS_NUDGE_DELTA`).
-
 ## Conventions & state
 
 - `conventions` (skill) — dotKnewt's cross-project conventions: planning docs in

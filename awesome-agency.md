@@ -1,6 +1,7 @@
 ---
 schema: 0.1
-cssclasses: [note-project]
+cssclasses:
+  - note-project
 type: project
 owner: dotKnewt
 author: claude-haiku-4-5-20251001
@@ -12,7 +13,7 @@ tags:
   - primary/development
   - secondary/artificial-intelligence
   - project/awesome-agency
-  - state/draft
+  - state/active
 related: []
 sources: []
 supersedes: []

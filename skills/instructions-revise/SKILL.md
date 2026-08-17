@@ -65,14 +65,3 @@ For each addition:
 ## Step 5: Apply with approval
 
 Ask before editing. Only apply changes the user approves.
-
-## Step 6: Clear the nudge sentinel
-
-After applying changes, run:
-
-```bash
-project_hash=$(printf '%s' "${CLAUDE_PROJECT_DIR:-.}" | md5sum | cut -c1-8)
-rm -f "/tmp/instructions-revise-nudge/$project_hash"
-```
-
-This resets the stop-hook nudge counter so the hook can fire again if the session continues touching more files.

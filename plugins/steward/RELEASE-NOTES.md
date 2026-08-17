@@ -1,5 +1,18 @@
 # Steward Release Notes
 
+## v1.5.2 (2026-08-17)
+
+### Hooks
+
+- **Removed the Stop-hook instructions-revise nudge.** The hook (and its
+  `instructions-revise-nudge.sh` script) auto-suggested running
+  `instructions-revise` whenever a session touched enough files, but the nag
+  fired regardless of whether the session's changes were actually worth
+  capturing, making it noise more often than signal. `instructions-revise`
+  is still available on request; `hooks/steward/` now carries only
+  `release-notes-audit.py`, and `plugins/steward/hooks/` (and its
+  `hooks.json` symlink) is gone since the bundle ships no hooks anymore.
+
 ## v1.5.1 (2026-08-13)
 
 ### Scripts
