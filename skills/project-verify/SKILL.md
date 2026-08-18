@@ -9,7 +9,7 @@ description: Defines precise, measurable evaluation criteria and identifies any 
 
 "Define the criteria for a great result" is easy to say and easy to get wrong — "make the report look good" and "the report must have 3 sections, each ending with a recommendation" both sound like criteria, but only one can actually be checked. This skill's job is to force every evaluation criterion for the idea to be as concrete as the second example, and to make explicit whether anything outside the spec itself — a live system, a deployed service, a comparison to existing examples — could be consulted to verify success.
 
-Read `references/checkpoint-protocol.md` before starting — the itemized claim test, load-bearing test, checkpoint timing, critic mechanism, and logging format are identical to project-spec's and are not repeated here.
+Read `references/checkpoint-protocol.md` before starting — the itemized claim test, the attribution rule, the load-bearing test, checkpoint timing, the critic mechanism, and the logging format are identical to project-spec's and are not repeated here.
 
 ## Standalone invocation and dependency check
 
@@ -27,6 +27,8 @@ Ask the user what "great" looks like for this specific idea, and push every answ
 
 - Bad (fails the test): "make sure the feature works well"
 - Good (passes the test): "the report must have 3 sections, each ending with a recommendation"
+
+Criteria are especially easy to launder: you propose a threshold, the user picks it off a menu, and it lands in `verify.md` as "the number the user gave." Tag every criterion with its source per the protocol's attribution rule, and when a number came from you, say so at the checkpoint — an approved guess and a stated requirement fail very differently later.
 
 If the user has past examples of similar work they consider good, ask for them and use their structure as the format to match — cite specifically what about the example makes it a good match ("this one's criteria are measurable because X"), don't just gesture at "match this."
 

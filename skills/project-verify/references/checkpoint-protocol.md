@@ -17,7 +17,28 @@ Show the **full list** at the checkpoint, not just the failures. This is the act
 Bad example (fails the test): "make the report look good"
 Good example (passes the test): "the report must have 3 sections, each ending with a recommendation"
 
-## 2. The load-bearing test
+## 2. Attribution: every claim carries its source
+
+You write most of the words in this interview — the questions, the option labels, the drafted claims, the summaries of what you heard. That creates a specific failure this rule exists to block: a claim **you** authored is offered to the human as an option, they pick it, and from then on you cite it back to them as something *they* reported. Nothing new was ever learned; your own guess acquired a human's name on it.
+
+So every line item in the itemized list carries a source tag alongside its ✓/✗ verdict:
+
+- `@user` — the human stated it in their own words, unprompted by a label you wrote
+- `@approved` — you drafted or proposed it; the human picked or confirmed your wording
+- `@inferred` — you derived it from something else and nobody has confirmed it yet
+- `@observed — <path, command, or output>` — you checked something concrete; cite what
+
+Rules that follow from the tags:
+
+1. **Choosing an option you wrote is approval of your wording, not testimony.** It tells you the phrasing is acceptable; it does not establish that any fact asserted inside the label is true, and it never upgrades `@approved` to `@user`.
+2. **Never say "you said", "as you reported", "per your description", "you told me"** — or write the same attribution into a spec file or log — for anything not tagged `@user`. For `@approved` say "you approved my phrasing of X"; for `@inferred` say "I inferred X from Y — is that right?"; for `@observed` name the file or command.
+3. **Don't smuggle unverified facts into option labels.** If you need a fact confirmed, ask about the fact directly ("is X actually happening?") instead of embedding it in a label attached to a choice about something else. When a label has to carry an unconfirmed premise, phrase it as a condition — "if X is happening, then …" — so picking it doesn't silently ratify X.
+4. **Inference is fine; laundering it isn't.** An `@inferred` claim can stay in the draft, but it stays tagged, and it cannot be used as the grounding for a downstream claim until it's been confirmed as its own line item at a checkpoint.
+5. **In the written files** (`spec.md`, `verify.md`, `environment.md`) state claims flatly as spec claims — "the form drops to 3 fields" — rather than dressing them as reported testimony ("the user reports the form is too long") unless the claim really is `@user`. The `.decisions.log` is where provenance is recorded per claim; the spec itself should not invent an attribution the log can't back.
+
+If, mid-draft, you catch yourself about to write a claim whose only source is a menu you wrote earlier, that is a `✗ gap` and a checkpoint — not a claim.
+
+## 3. The load-bearing test
 
 Some decisions deserve a mandatory checkpoint even when every claim in them passed the measurability test cleanly — because the decision quietly constrains everything downstream. Tag a decision `⚠ load-bearing` if the answer to any of these three questions is yes:
 
@@ -27,23 +48,24 @@ Some decisions deserve a mandatory checkpoint even when every claim in them pass
 
 A `⚠ load-bearing` tag forces a checkpoint regardless of the ✓/✗ verdict.
 
-## 3. When to stop for a checkpoint
+## 4. When to stop for a checkpoint
 
 Checkpoints are adaptive, not fixed to section boundaries. Keep drafting continuously; stop and open a checkpoint the moment the itemized claim list for what you've just drafted contains either:
 - any `✗ gap`, or
-- any `⚠ load-bearing` tag
+- any `⚠ load-bearing` tag, or
+- any `@inferred` claim that a later claim depends on (section 2, rule 4)
 
-If a section's claims are all `✓` and none are load-bearing, no checkpoint is needed — move on to the next section without interrupting.
+If a section's claims are all `✓`, none are load-bearing, and no unconfirmed inference is holding anything up, no checkpoint is needed — move on to the next section without interrupting.
 
-## 4. Sign-off order at every checkpoint
+## 5. Sign-off order at every checkpoint
 
-1. **Agent self-check** — state explicitly why you believe the draft meets criteria (or exactly what gap/load-bearing item you're bringing to the human).
-2. **Critic pass (conditional)** — run this step only if the current draft has 3+ sections, 300+ words, OR contains a `⚠ load-bearing` tag. Invoke the `codex-plugin-cc` plugin, asking it to adversarially review the draft for gaps, inconsistencies, or unstated assumptions. If `codex-plugin-cc` is not installed or fails to invoke, stop and ask the human explicitly: install it, fall back to an independent adversarial subagent (a fresh agent, no memory of the drafting conversation, told to try to refute the draft), or skip the critic pass for this checkpoint. Never silently substitute or silently skip.
-3. **Human approval** — render a structured question (AskUserQuestion or equivalent) with the itemized list and, if run, the critic's findings. Never treat silence, a topic change, or free-text ambiguity as approval — require an explicit choice.
+1. **Agent self-check** — state explicitly why you believe the draft meets criteria (or exactly what gap/load-bearing item you're bringing to the human), and read the source tags back: name every `@inferred` claim as yours, and every `@approved` claim as your wording they signed rather than something they reported. A claim whose only source is an option label you wrote earlier gets said out loud as exactly that.
+2. **Critic pass (conditional)** — run this step only if the current draft has 3+ sections, 300+ words, OR contains a `⚠ load-bearing` tag. Invoke the `codex-plugin-cc` plugin, asking it to adversarially review the draft for gaps, inconsistencies, unstated assumptions, and misattributed claims (anything presented as the human's that traces back to your own option labels). If `codex-plugin-cc` is not installed or fails to invoke, stop and ask the human explicitly: install it, fall back to an independent adversarial subagent (a fresh agent, no memory of the drafting conversation, told to try to refute the draft), or skip the critic pass for this checkpoint. Never silently substitute or silently skip.
+3. **Human approval** — render a structured question (AskUserQuestion or equivalent) with the itemized list, its source tags, and, if run, the critic's findings. Never treat silence, a topic change, or free-text ambiguity as approval — require an explicit choice.
 
 Below the critic threshold, skip straight from self-check to human approval.
 
-## 5. Logging every checkpoint
+## 6. Logging every checkpoint
 
 Every checkpoint — regardless of whether it needed a critic pass — gets one structured entry appended to this layer's `.decisions.log` file:
 
@@ -54,6 +76,8 @@ Every checkpoint — regardless of whether it needed a critic pass — gets one 
   claims:
     - text: "<claim text>"
       verdict: "✓" | "✗"
+      source: "@user" | "@approved" | "@inferred" | "@observed"
+      source_detail: "<the human's own words, the option label you wrote, or the path/command checked>"
       load_bearing: true | false
       justification: "<why>"
   agent_self_check: "<summary>"
@@ -61,7 +85,10 @@ Every checkpoint — regardless of whether it needed a critic pass — gets one 
     invoked: true | false
     tool: "codex-plugin-cc" | "subagent-fallback" | null
     verdict: "<summary or null>"
-  human_response: "<the exact recorded answer>"
+  human_response:
+    verbatim: "<the exact recorded answer, or the exact label chosen>"
+    form: free-text | chose-option
+    options_authored_by: agent | human
 ```
 
-Nothing here is optional formatting — the log is the audit trail that lets anyone verify later that judgment was actually applied, not hand-waved.
+Nothing here is optional formatting — the log is the audit trail that lets anyone verify later that judgment was actually applied, not hand-waved, and that every claim in the spec is traceable to whoever actually made it. `source` plus `human_response.form` is what makes a later reader able to tell an answer the human gave from a menu item they clicked.

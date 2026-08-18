@@ -9,7 +9,7 @@ description: Interviews the user to draft the Goal, Scope, Non-goals, and Constr
 
 Most scope drift starts in the very first sentence of an idea — "make it fast," "support users," "handle errors gracefully." Each of those sounds like a requirement but isn't one, because nothing about it can be checked. This skill's job is to turn a rough idea into a Goal/Scope/Non-goals/Constraints draft where every claim has been tested for measurability before it's allowed to stand.
 
-Read `references/checkpoint-protocol.md` before starting — it defines the itemized claim test, the load-bearing test, checkpoint timing, the critic mechanism, and the logging format. Everything below assumes you've read it.
+Read `references/checkpoint-protocol.md` before starting — it defines the itemized claim test, the attribution rule (which claims are the user's and which are yours), the load-bearing test, checkpoint timing, the critic mechanism, and the logging format. Everything below assumes you've read it.
 
 ## Standalone invocation
 
@@ -17,14 +17,14 @@ If you were invoked directly (not via project-manager) and `specs/SLUG/` doesn't
 
 ## Interview flow
 
-Draft continuously through these four sections, in order, applying the checkpoint protocol as you go — checkpoints are adaptive (see protocol section 3), not fixed to section boundaries:
+Draft continuously through these four sections, in order, applying the checkpoint protocol as you go — checkpoints are adaptive (see protocol section 4), not fixed to section boundaries:
 
 1. **Goal** — what outcome does this idea produce, for whom, and why now? A goal claim must name an observable end-state, not an intention ("reduce signup abandonment by making the form shorter" vs. "improve signup").
 2. **Scope** — what's explicitly included in this piece of work. Each scope item should be phrased so someone could later check "is this in or out" without asking you.
 3. **Non-goals** — what's explicitly excluded, especially things a reasonable person might assume are included. Silence here is exactly the kind of gap this skill exists to prevent — if you can't think of any non-goals, that itself is worth flagging to the human rather than skipping the section.
 4. **Constraints** — technical, timeline, resource, or policy boundaries the solution must respect. Treat "assumptions" the same way: an unstated assumption is a constraint nobody wrote down.
 
-For each section, before presenting it at a checkpoint, run every claim through the itemized test and the load-bearing test from the protocol.
+For each section, before presenting it at a checkpoint, run every claim through the itemized test, the attribution rule, and the load-bearing test from the protocol. Most of an early Goal draft is your wording, not the user's — a claim the user only ever saw as an option label you wrote is `@approved` at best, never something they told you.
 
 ## Writing spec.md
 

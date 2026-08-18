@@ -9,7 +9,7 @@ description: Scans AGENTS.md, the knowledge base, the skill set, and guardrails/
 
 A correct spec can still fail in practice if the surrounding environment doesn't support it — missing conventions in AGENTS.md, a knowledge base an agent can't navigate, no skill for a repeated task, or a risky action nothing prevents an agent from taking unsupervised. This layer's job is to surface exactly those gaps, in priority order, with a concrete fix for each — and to make sure any action risky enough to need a hook actually gets one drafted, not just mentioned in passing.
 
-Read `references/checkpoint-protocol.md` before starting — the itemized claim test, load-bearing test, checkpoint timing, critic mechanism, and logging format are identical to the other two layers and are not repeated here. Apply them to the gap findings themselves (each reported gap is a claim — it must be specific enough to be verified, not "the docs could be better").
+Read `references/checkpoint-protocol.md` before starting — the itemized claim test, the attribution rule, the load-bearing test, checkpoint timing, the critic mechanism, and the logging format are identical to the other two layers and are not repeated here. Apply them to the gap findings themselves (each reported gap is a claim — it must be specific enough to be verified, not "the docs could be better").
 
 ## Standalone invocation and dependency check
 
@@ -36,6 +36,9 @@ Rank every gap found by how much damage it could cause if left unaddressed (a mi
 - **File**: exact path
 - **Problem**: what's wrong or missing, stated as a specific, checkable claim (subject to the itemized claim test)
 - **Fix**: the exact change — not "improve this," but the actual replacement text, added section, or new file
+- **Source**: `@observed` with the path or command you actually checked, `@inferred` if you're reasoning from what the spec implies rather than from something you read, or the steward maintainer that reported it
+
+Gaps are yours, not the user's. A gap the user accepted as risk, or picked from a batch you wrote, stays `@observed`/`@inferred` — accepting a risk is not the same as reporting a problem, and it must never be re-stated later as "the gap you flagged."
 
 After the human responds to a batch (see Step 4), re-scan and report the next 5 highest-severity remaining gaps. Loop until none remain. Never silently cap at one batch of 5 and imply that's everything — if more exist, say so and keep going.
 
