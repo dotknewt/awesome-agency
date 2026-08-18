@@ -52,13 +52,14 @@ If a layer skill reports that its own critic or dependency (codex-plugin-cc, ste
 Once all three files exist and each shows `status: complete` in its own frontmatter, report back to the user:
 
 - The location of all three files and their decision logs
-- A one-line summary of what's now known: the goal, how success will be checked, and what environment gaps (if any) were flagged or explicitly accepted as risk
+- A one-line summary of what's now known: the goal, how success will be checked, and what environment gaps (if any) were flagged or explicitly accepted as risk. Summarize what the files say, not who said it — never re-attribute a layer's drafted claim to the user because they approved it at a checkpoint
 - That the idea is now ready for planning/implementation — this skill's job ends here; it does not write code or a build plan itself
 
-If any layer's status is not `complete` (e.g. the user paused partway through, or explicitly accepted an open risk rather than resolving it), say so plainly rather than reporting the process as finished.
+If any layer's status is not `complete` (e.g. the user paused partway through, or a layer is still waiting on a checkpoint), say so plainly rather than reporting the process as finished. Accepted risks are not that case — they leave a layer `complete`; report them in the summary as risks the user accepted, not as unfinished work.
 
 ## What this skill must never do
 
 - Never draft Goal/Scope/Criteria/Environment content itself — that's each layer's job, not the orchestrator's.
 - Never treat silence, a topic change, or an ambiguous reply as approval at any gate.
-- Never start layer N+1 while layer N's file is missing or its status isn't `complete` (or explicitly accepted-with-risk, for project-environment specifically).
+- Never recycle your own words back as the user's. Options, slugs, and framings you wrote are yours even after the user picks one — an approved option label is approval of your wording, never the user's report of a fact. Say "you approved my phrasing of X," not "you said X"; if a fact only ever appeared in something you authored, it's unverified until asked about directly. The layer skills carry the detailed version of this rule and tag every claim with its source; you don't need those tags to follow it here — you only need to never turn an approval into a report.
+- Never start layer N+1 while layer N's file is missing or its status isn't `complete`. A layer that ends with risks the user explicitly accepted still reaches `complete` — an accepted risk is a recorded decision, not an unfinished layer — so there's no half-done state to wave a layer through on.
