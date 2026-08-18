@@ -64,7 +64,7 @@ If a section's claims are all `✓`, none are load-bearing, and no unconfirmed i
 1. **Agent self-check** — state explicitly why you believe the draft meets criteria (or exactly what gap/load-bearing item you're bringing to the human), and read the source tags back: name every `@inferred` claim as yours, and every `@approved` claim as your wording they signed rather than something they reported. A claim whose only source is an option label you wrote earlier gets said out loud as exactly that.
 2. **Critic pass (conditional)** — run this step when the checkpoint carries a `⚠ load-bearing` tag, or when it is the layer's final checkpoint (the one that would set `status: complete`). Ordinary mid-draft gap checkpoints don't get one: a threshold that fires nearly every time teaches everyone to skim the critic, which costs more than it catches.
 
-   **Hand the critic its inputs, not just the prose.** Give it the drafted section, the tagged itemized list, and the `.decisions.log` entries behind any claim you want traced. A critic that receives only the draft can check measurability and internal consistency — nothing more. It cannot tell `@user` from `@approved`, because that difference does not exist in the text, and the sanctioned subagent fallback below has no memory of the conversation to recover it from. If the critic can't be given the tagged list, say so at the checkpoint and scope its remit to measurability rather than reporting an attribution review that never happened.
+   **Hand the critic its inputs, not just the prose.** Give it the drafted section and the itemized list with `source_detail` filled in for every claim — the human's exact wording, the exact option label you wrote, what an inference was derived from, or the path checked — plus the `.decisions.log` entries behind any claim carried over from an earlier checkpoint. Tags alone are not enough: the tag *is* the classification under audit, so a critic given only tags can do nothing but agree with you, and a claim first raised at this checkpoint has no earlier log entry to check it against. Write this checkpoint's log entry down to `human_response` before the critic runs and hand over that pending block; the response fields get appended after. A critic that receives only the draft can check measurability and internal consistency — nothing more. It cannot tell `@user` from `@approved`, because that difference does not exist in the text, and the sanctioned subagent fallback below has no memory of the conversation to recover it from. If the critic can't be given the sourced list, say so at the checkpoint and scope its remit to measurability rather than reporting an attribution review that never happened.
 
    Ask it to adversarially review for gaps, inconsistencies, unstated assumptions, and — when it has the tagged list — misattributed claims: anything presented as the human's that traces back to an option label you wrote.
 
@@ -85,14 +85,14 @@ Every checkpoint — regardless of whether it needed a critic pass — gets one 
     - text: "<claim text>"
       verdict: "✓" | "✗"
       source: "@user" | "@approved" | "@inferred" | "@observed"
-      source_detail: "<the human's own words, the option label you wrote, or the path/command checked>"
+      source_detail: "<the human's own words, the option label you wrote, what an inference was derived from, or the path/command checked>"
       load_bearing: true | false
       justification: "<why>"
   agent_self_check: "<summary>"
   critic:
     invoked: true | false
     tool: "codex-plugin-cc" | "subagent-fallback" | null
-    inputs: [draft-section, tagged-claim-list, decisions-log]  # what it actually received
+    inputs: [draft-section, tagged-claim-list, decisions-log]  # exactly what was handed over; [] when invoked: false
     fallback_choice: install | subagent | skip | null   # decided once per slug, then reused
     verdict: "<summary or null>"
   human_response:

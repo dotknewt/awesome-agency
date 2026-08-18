@@ -63,6 +63,19 @@ feature failing to actually work; the rest are seams the review found around it.
   claim becomes `@approved`, never `@user`, since confirmation doesn't change
   who authored it; `options_authored_by` is logged only for `chose-option`
   answers, instead of forcing an invented value onto every free-text entry.
+- **The critic was still being handed the classification it was supposed to
+  audit.** Passing it the tagged list alone lets it do nothing but agree: the
+  tag is the claim under review, and a claim first raised at the current
+  checkpoint has no earlier log entry to check it against. The critic now
+  receives `source_detail` for every current claim — exact wording, exact
+  option label, what an inference came from, or the path read — as a pending
+  log block written before the human responds.
+- **Two log-schema placeholders that would have produced false entries.**
+  `source_detail` offered no form for an `@inferred` claim, so the one source
+  type whose evidence exists only in the agent's head had nowhere to record it;
+  and `critic.inputs` was written as a fixed non-empty list, which would have
+  logged inputs to a critic that never ran. `[]` when `invoked: false` is now
+  explicit — an audit field that lies by default is worse than no field.
 - **project-manager stopped pointing at a file it doesn't ship** (its dir has
   no `references/`, so a solo install dangled) and dropped an
   accepted-with-risk carve-out for a layer transition that doesn't exist —

@@ -55,7 +55,7 @@ Once all three files exist and each shows `status: complete` in its own frontmat
 - A one-line summary of what's now known: the goal, how success will be checked, and what environment gaps (if any) were flagged or explicitly accepted as risk. Summarize what the files say, not who said it — never re-attribute a layer's drafted claim to the user because they approved it at a checkpoint
 - That the idea is now ready for planning/implementation — this skill's job ends here; it does not write code or a build plan itself
 
-If any layer's status is not `complete` (e.g. the user paused partway through, or explicitly accepted an open risk rather than resolving it), say so plainly rather than reporting the process as finished.
+If any layer's status is not `complete` (e.g. the user paused partway through, or a layer is still waiting on a checkpoint), say so plainly rather than reporting the process as finished. Accepted risks are not that case — they leave a layer `complete`; report them in the summary as risks the user accepted, not as unfinished work.
 
 ## What this skill must never do
 

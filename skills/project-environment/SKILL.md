@@ -36,7 +36,7 @@ Rank every gap found by how much damage it could cause if left unaddressed (a mi
 - **File**: exact path
 - **Problem**: what's wrong or missing, stated as a specific, checkable claim (subject to the itemized claim test)
 - **Fix**: the exact change — not "improve this," but the actual replacement text, added section, or new file
-- **Source**: `@observed` with the path or command you actually checked, `@inferred` if you're reasoning from what the spec implies rather than from something you read, or the steward maintainer that reported it
+- **Source**: `@observed` with the path or command you actually checked — a steward maintainer's finding is `@observed` too, naming the maintainer and what it reported — or `@inferred` if you're reasoning from what the spec implies rather than from something you read
 
 Gaps are yours, not the user's. A gap the user accepted as risk, or picked from a batch you wrote, stays `@observed`/`@inferred` — accepting a risk is not the same as reporting a problem, and it must never be re-stated later as "the gap you flagged."
 
