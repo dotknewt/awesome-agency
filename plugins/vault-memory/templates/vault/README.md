@@ -15,7 +15,7 @@ through the `obsidian` MCP server (rooted here) and native tools. Start at `INDE
 | `_templates/` | note templates (Obsidian Templates folder) | you |
 | `_bases/` | Obsidian Bases dashboards (`review-due.base`) | you |
 
-The ten rules (full spec: `.claude/skills/vault-conventions/SKILL.md`):
+The ten rules (full spec: the `vault-conventions` skill shipped by the vault-memory plugin):
 1. Every note has frontmatter: `type, title, description (≤160 chars), status, created, updated, tags` + per-type keys.
 2. Filenames are kebab-case and **unique across the whole vault**; link with `[[basename]] — why`.
 3. `tags` is always a YAML list; **no inline `#hashtags`** in bodies.
