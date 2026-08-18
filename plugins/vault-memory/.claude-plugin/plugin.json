@@ -1,0 +1,24 @@
+{
+  "name": "vault-memory",
+  "version": "1.0.0",
+  "description": "Durable project memory in a git-native vault/ — atomic knowledge notes, ADRs, docs and provenance-bearing sources with a structural linter, retrieval and curation subagents, /vault-find /vault-save /vault-session /vault-review commands, and vault-audit / vault-research workflows. Backed by the mcpvault MCP server.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/awesome-agency",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "vault",
+    "knowledge-base",
+    "obsidian",
+    "mcp",
+    "context-engineering"
+  ],
+  "agents": [
+    "./agents/vault-librarian.md",
+    "./agents/vault-curator.md",
+    "./agents/vault-researcher.md"
+  ]
+}

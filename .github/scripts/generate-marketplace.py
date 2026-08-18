@@ -41,6 +41,7 @@ BUNDLE_ORDER = [
     "python-mcp-development",
     "ludus-toolkit",
     "memory-mcp",
+    "vault-memory",
     "superpowers",
 ]
 

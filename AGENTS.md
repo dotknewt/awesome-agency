@@ -203,8 +203,9 @@ There is no top-level build, lint, or test command beyond the CI workflow above.
 
 ## Project Memory
 
-Durable project memory lives in `vault/` (Markdown + flat YAML frontmatter, Obsidian-compatible). Auto-memory is OFF: nothing about
-this project is stored in user-global memory, and personal preferences never go into the vault (they belong in `~/.claude/`).
+Durable project memory lives in `vault/` (Markdown + flat YAML frontmatter, Obsidian-compatible), provided by the `vault-memory`
+plugin (`plugins/vault-memory/`). Auto-memory is OFF: nothing about this project is stored in user-global memory, and personal
+preferences never go into the vault (they belong in `~/.claude/`).
 
 ## Map — the `obsidian` MCP server is rooted at `vault/`: MCP path `kb/x.md` == native path `vault/kb/x.md`
 - `vault/INDEX.md` — root map (≤150 lines). Injected at SessionStart. Start here, not from search.
@@ -213,7 +214,7 @@ this project is stored in user-global memory, and personal preferences never go 
 - `vault/sources/` — one note per external source: provenance + verbatim excerpts + claims; excerpts immutable after capture
 - `vault/plans/` (plan-mode output) · `vault/sessions/` (hook-generated session notes) · `vault/archive/` (retired notes) — HISTORY:
   never read them by default; when continuing prior work read only the last session note's curated sections + the active plan.
-- Conventions (types, frontmatter, naming, links, lifecycle): skill `vault-conventions` (`.claude/skills/vault-conventions/SKILL.md`).
+- Conventions (types, frontmatter, naming, links, lifecycle): skill `vault-conventions` (`plugins/vault-memory/skills/vault-conventions/SKILL.md`).
   It auto-loads when you touch `vault/kb|docs|sources|archive` with native tools; when writing through MCP tools, invoke/read it first.
 
 ## Protocol
@@ -245,6 +246,6 @@ this project is stored in user-global memory, and personal preferences never go 
 - Write: `write_note` (creates dirs; pass the `frontmatter` object; `overwrite` without it wipes YAML), `update_frontmatter {merge:true}` (arrays are
   replaced wholesale — read first, send the full list; keys can't be deleted), `patch_note` (exact unique string; sees YAML too), `move_note`
   (no link rewrite — patch referrers first), `delete_note` only `trashMode:"local"`. Never `manage_tags add/remove` (promotes body `#tokens`); `manage_tags list` is fine.
-- Code, `.claude/**`, `AGENTS.md`, `.mcp.json`: native tools only (dot-paths and everything outside `vault/` are invisible to the MCP server).
-- Lint the vault any time: `node .claude/hooks/vault-lint.mjs --all` (or `--all --json`). Hooks validate every write into `vault/`
+- Code, `.claude/**`, `plugins/**`, `AGENTS.md`: native tools only (dot-paths and everything outside `vault/` are invisible to the MCP server).
+- Lint the vault any time: `node plugins/vault-memory/hooks/vault-lint.mjs --all` (or `--all --json`). Hooks validate every write into `vault/`
   (hard violations are denied, schema issues are warned) — fix warnings immediately.

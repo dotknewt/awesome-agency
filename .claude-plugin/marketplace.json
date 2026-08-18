@@ -51,6 +51,15 @@
       }
     },
     {
+      "name": "vault-memory",
+      "description": "Durable project memory in a git-native vault/ — atomic knowledge notes, ADRs, docs and provenance-bearing sources with a structural linter, retrieval and curation subagents, /vault-find /vault-save /vault-session /vault-review commands, and vault-audit / vault-research workflows. Backed by the mcpvault MCP server.",
+      "source": "./plugins/vault-memory",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "superpowers",
       "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
       "source": "./plugins/superpowers",

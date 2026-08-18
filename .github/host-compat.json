@@ -196,6 +196,16 @@
       "artifact": "plugins/memory-mcp",
       "capability": "bundled-mcp",
       "reason": "Ships an in-tree MCP server. Copilot users configure it manually; the bundle README documents the steps."
+    },
+    {
+      "artifact": "plugins/vault-memory",
+      "capability": "bundled-mcp",
+      "reason": "Ships the obsidian MCP server (mcpvault) via .mcp.json. Copilot users configure it manually; the bundle README documents the steps."
+    },
+    {
+      "artifact": "plugins/vault-memory",
+      "capability": "hook-events",
+      "reason": "Uses the Claude-only PostCompact event (in addition to shared events) to capture a session note after compaction runs. The bundle is Claude-only; other hooks (SessionStart, Stop, SessionEnd, PreToolUse, PostToolUse) still work on shared events."
     }
   ]
 }

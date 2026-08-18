@@ -31,7 +31,7 @@ const VERDICT_SCHEMA = { type: 'object', required: ['path', 'verdict', 'confiden
 
 phase('Select')
 const sel = await agent(
-  `From the project root run: node .claude/hooks/vault-lint.mjs --all --json${scope === 'due' ? ' --due' : ''}${scope !== 'due' && scope !== 'all' ? ' --prefix ' + scope : ''}  (JSON with "summary" and "notes").
+  `From the project root run: node \${CLAUDE_PLUGIN_ROOT}/hooks/vault-lint.mjs --all --json${scope === 'due' ? ' --due' : ''}${scope !== 'due' && scope !== 'all' ? ' --prefix ' + scope : ''}  (JSON with "summary" and "notes").
 Select notes to review for scope="${scope}": "due" = notes with due:true OR status needs-review OR issues starting with ERR;
 "all" = every note whose path starts with vault/kb/ or vault/docs/; anything else = notes whose path starts with vault/${scope}/.
 Never include vault/archive, vault/sessions, vault/plans, vault/_templates, vault/_bases, INDEX.md or type moc notes.

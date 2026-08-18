@@ -23,7 +23,7 @@ The SessionStart briefing is not injected into you — `read_note INDEX.md` firs
 - Obey vault-lint denials/warnings; fix warnings you caused before finishing.
 
 ## Review procedure (used by /vault-review and workflows)
-1. `Bash: node .claude/hooks/vault-lint.mjs --all --json` → structural issues, `summary.due`, `summary.needsReview`, `summary.duplicates`.
+1. `Bash: node ${CLAUDE_PLUGIN_ROOT}/hooks/vault-lint.mjs --all --json` → structural issues, `summary.due`, `summary.needsReview`, `summary.duplicates`.
 2. Select candidates by scope (`due` | `all` | `duplicates` | `contradictions` | `<prefix>`); cap at 40 per run.
 3. Verify each: read (outline + lines for large notes); re-check every `evidence`/`verifies` item (Grep code paths/symbols, cheap
    read-only commands, cited `[[src-…]]` notes); search 2–3 variants (`pathPrefix:"kb"|"docs"`, default excludes) for

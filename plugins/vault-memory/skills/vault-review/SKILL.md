@@ -12,7 +12,7 @@ Review request. Scope and flags: $ARGUMENTS
 (default scope `due`; `--apply` performs SAFE actions, otherwise report proposals only.)
 
 You have no conversation history: everything you need is above and in the vault. Follow your review procedure:
-1. `Bash: node .claude/hooks/vault-lint.mjs --all --json` → structural issues, `summary.due`, `summary.needsReview`, `summary.duplicates`.
+1. `Bash: node ${CLAUDE_PLUGIN_ROOT}/hooks/vault-lint.mjs --all --json` → structural issues, `summary.due`, `summary.needsReview`, `summary.duplicates`.
 2. Select candidates by scope: `due` = past `review_after` OR `status: needs-review` OR lint ERR · `all` = every kb + docs note ·
    `duplicates` = same basename, or ≥3 shared tags with overlapping titles (confirm by reading descriptions) · `contradictions` =
    kb notes sharing ≥2 tags whose statements disagree · `<prefix>` = that folder. Cap at 40; beyond that stop after listing them

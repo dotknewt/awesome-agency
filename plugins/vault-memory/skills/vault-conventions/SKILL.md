@@ -12,7 +12,7 @@ paths:
 # Vault conventions (authoritative)
 
 If a template, skill or agent prompt conflicts with this file, THIS file wins. Enforced mechanically by
-`.claude/hooks/vault-lint.mjs` (hard rules deny the write; soft rules warn). MCP paths omit the leading `vault/`
+`${CLAUDE_PLUGIN_ROOT}/hooks/vault-lint.mjs` (hard rules deny the write; soft rules warn). MCP paths omit the leading `vault/`
 (MCP `kb/x.md` == native `vault/kb/x.md`).
 
 ## 1. Layout and ownership

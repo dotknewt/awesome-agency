@@ -6,7 +6,7 @@ user-invocable: true
 ---
 # /vault-save — capture procedure (runs in the main context: you know what was learned)
 
-If the `vault-conventions` skill is not in context, invoke it (or Read `.claude/skills/vault-conventions/SKILL.md`) first —
+If the `vault-conventions` skill is not in context, invoke it (or Read `${CLAUDE_PLUGIN_ROOT}/skills/vault-conventions/SKILL.md`) first —
 §3 frontmatter schema, §5 triggers, §6 tool rules, §8 lifecycle. MCP paths omit `vault/` (MCP `kb/x.md` == native `vault/kb/x.md`).
 
 Arguments: $ARGUMENTS

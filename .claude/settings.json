@@ -14,7 +14,7 @@
     "allow": [
       "mcp__obsidian__*",
       "Edit(/vault/**)",
-      "Bash(node .claude/hooks/vault-lint.mjs *)",
+      "Bash(node plugins/vault-memory/hooks/vault-lint.mjs *)",
       "Bash(python3 -m json.tool .claude-plugin/marketplace.json)",
       "Bash(python3 -m json.tool .claude/settings.json)"
     ],
@@ -23,7 +23,8 @@
     ]
   },
   "enabledPlugins": {
-    "superpowers@awesome-agency": true
+    "superpowers@awesome-agency": true,
+    "vault-memory@awesome-agency": true
   },
   "plansDirectory": "vault/plans",
   "autoMemoryEnabled": false,
@@ -43,129 +44,6 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": false,
   "enabledMcpjsonServers": [
-    "obsidian",
     "context7"
-  ],
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh"
-            ],
-            "timeout": 10,
-            "statusMessage": "Loading vault briefing"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-capture.mjs",
-              "stop"
-            ],
-            "timeout": 20
-          }
-        ]
-      }
-    ],
-    "PostCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-capture.mjs",
-              "postcompact"
-            ],
-            "timeout": 20
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-capture.mjs",
-              "sessionend"
-            ],
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/vault-lint.mjs",
-              "pre"
-            ],
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "mcp__obsidian__(write_note|move_note|move_file|update_frontmatter|patch_note|manage_tags|delete_note)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/vault-lint.mjs",
-              "pre"
-            ],
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/vault-lint.mjs",
-              "post"
-            ],
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "mcp__obsidian__(write_note|move_note|move_file|update_frontmatter|patch_note|manage_tags)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/vault-lint.mjs",
-              "post"
-            ],
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
+  ]
 }
