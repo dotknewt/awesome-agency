@@ -17,13 +17,15 @@ Show the **full list** at the checkpoint, not just the failures. This is the act
 Bad example (fails the test): "make the report look good"
 Good example (passes the test): "the report must have 3 sections, each ending with a recommendation"
 
+Re-presenting a section the human already approved is the one exception to showing everything: list every new or changed claim in full, and collapse the untouched approved ones to a count plus the checkpoint that carries them ("9 previously approved claims unchanged — checkpoint 3"). The full list is the trust mechanism for claims currently under review; replaying approved ones verbatim at every later checkpoint is noise, and noise is how a real gap gets skimmed past.
+
 ## 2. Attribution: every claim carries its source
 
 You write most of the words in this interview — the questions, the option labels, the drafted claims, the summaries of what you heard. That creates a specific failure this rule exists to block: a claim **you** authored is offered to the human as an option, they pick it, and from then on you cite it back to them as something *they* reported. Nothing new was ever learned; your own guess acquired a human's name on it.
 
 So every line item in the itemized list carries a source tag alongside its ✓/✗ verdict:
 
-- `@user` — the human stated it in their own words, unprompted by a label you wrote
+- `@user` — the human stated it in their own words, unprompted by a label you wrote. A fact they confirmed by restating it themselves is `@user`; a fact they confirmed by agreeing to *your* paraphrase ("so what you're saying is X?" → "yes") is `@approved`, because the wording — and any detail you added while paraphrasing — is still yours. When the difference is load-bearing, ask them to say it back in their own words rather than guessing which tag applies
 - `@approved` — you drafted or proposed it; the human picked or confirmed your wording
 - `@inferred` — you derived it from something else and nobody has confirmed it yet
 - `@observed — <path, command, or output>` — you checked something concrete; cite what
@@ -33,8 +35,8 @@ Rules that follow from the tags:
 1. **Choosing an option you wrote is approval of your wording, not testimony.** It tells you the phrasing is acceptable; it does not establish that any fact asserted inside the label is true, and it never upgrades `@approved` to `@user`.
 2. **Never say "you said", "as you reported", "per your description", "you told me"** — or write the same attribution into a spec file or log — for anything not tagged `@user`. For `@approved` say "you approved my phrasing of X"; for `@inferred` say "I inferred X from Y — is that right?"; for `@observed` name the file or command.
 3. **Don't smuggle unverified facts into option labels.** If you need a fact confirmed, ask about the fact directly ("is X actually happening?") instead of embedding it in a label attached to a choice about something else. When a label has to carry an unconfirmed premise, phrase it as a condition — "if X is happening, then …" — so picking it doesn't silently ratify X.
-4. **Inference is fine; laundering it isn't.** An `@inferred` claim can stay in the draft, but it stays tagged, and it cannot be used as the grounding for a downstream claim until it's been confirmed as its own line item at a checkpoint.
-5. **In the written files** (`spec.md`, `verify.md`, `environment.md`) state claims flatly as spec claims — "the form drops to 3 fields" — rather than dressing them as reported testimony ("the user reports the form is too long") unless the claim really is `@user`. The `.decisions.log` is where provenance is recorded per claim; the spec itself should not invent an attribution the log can't back.
+4. **Inference is fine; laundering it isn't.** An `@inferred` claim can stay in the draft, but it stays tagged, and it cannot be used as the grounding for a downstream claim until it's been confirmed as its own line item at a checkpoint. Once confirmed it becomes `@approved` — or `@user` if the human restated it in their own words. Confirmation alone never promotes a claim to `@user`; that tag is about who authored the words, and that fact doesn't change retroactively.
+5. **Carry the tag into the written files.** In `spec.md`, `verify.md`, and `environment.md`, each claim ends with its source tag — "the signup form drops to 3 fields `@approved`" — and the prose around it stays flat. Flat means no narrated attribution: never "the user reports the form is too long," which is the same laundering one layer up. The `.decisions.log` holds the detail (exact wording, who authored the option, what was checked); the file holds the one-token version, because the file is what anyone actually reads later. A criterion that was your guess and a criterion that was the user's requirement fail very differently, and nobody reconstructs that by diffing a spec against its log.
 
 If, mid-draft, you catch yourself about to write a claim whose only source is a menu you wrote earlier, that is a `✗ gap` and a checkpoint — not a claim.
 
@@ -60,7 +62,13 @@ If a section's claims are all `✓`, none are load-bearing, and no unconfirmed i
 ## 5. Sign-off order at every checkpoint
 
 1. **Agent self-check** — state explicitly why you believe the draft meets criteria (or exactly what gap/load-bearing item you're bringing to the human), and read the source tags back: name every `@inferred` claim as yours, and every `@approved` claim as your wording they signed rather than something they reported. A claim whose only source is an option label you wrote earlier gets said out loud as exactly that.
-2. **Critic pass (conditional)** — run this step only if the current draft has 3+ sections, 300+ words, OR contains a `⚠ load-bearing` tag. Invoke the `codex-plugin-cc` plugin, asking it to adversarially review the draft for gaps, inconsistencies, unstated assumptions, and misattributed claims (anything presented as the human's that traces back to your own option labels). If `codex-plugin-cc` is not installed or fails to invoke, stop and ask the human explicitly: install it, fall back to an independent adversarial subagent (a fresh agent, no memory of the drafting conversation, told to try to refute the draft), or skip the critic pass for this checkpoint. Never silently substitute or silently skip.
+2. **Critic pass (conditional)** — run this step when the checkpoint carries a `⚠ load-bearing` tag, or when it is the layer's final checkpoint (the one that would set `status: complete`). Ordinary mid-draft gap checkpoints don't get one: a threshold that fires nearly every time teaches everyone to skim the critic, which costs more than it catches.
+
+   **Hand the critic its inputs, not just the prose.** Give it the drafted section, the tagged itemized list, and the `.decisions.log` entries behind any claim you want traced. A critic that receives only the draft can check measurability and internal consistency — nothing more. It cannot tell `@user` from `@approved`, because that difference does not exist in the text, and the sanctioned subagent fallback below has no memory of the conversation to recover it from. If the critic can't be given the tagged list, say so at the checkpoint and scope its remit to measurability rather than reporting an attribution review that never happened.
+
+   Ask it to adversarially review for gaps, inconsistencies, unstated assumptions, and — when it has the tagged list — misattributed claims: anything presented as the human's that traces back to an option label you wrote.
+
+   Invoke the `codex-plugin-cc` plugin for this. If it is not installed or fails to invoke, stop and ask the human explicitly: install it, fall back to an independent adversarial subagent (a fresh agent, no memory of the drafting conversation, told to try to refute the draft), or skip the critic pass. Record that answer once as `critic.fallback_choice` and reuse it for every later critic pass in this slug — re-asking the same question at each checkpoint is how a gate becomes a formality. Re-open it only if the human raises it or `codex-plugin-cc` becomes available. Never silently substitute or silently skip.
 3. **Human approval** — render a structured question (AskUserQuestion or equivalent) with the itemized list, its source tags, and, if run, the critic's findings. Never treat silence, a topic change, or free-text ambiguity as approval — require an explicit choice.
 
 Below the critic threshold, skip straight from self-check to human approval.
@@ -84,11 +92,13 @@ Every checkpoint — regardless of whether it needed a critic pass — gets one 
   critic:
     invoked: true | false
     tool: "codex-plugin-cc" | "subagent-fallback" | null
+    inputs: [draft-section, tagged-claim-list, decisions-log]  # what it actually received
+    fallback_choice: install | subagent | skip | null   # decided once per slug, then reused
     verdict: "<summary or null>"
   human_response:
     verbatim: "<the exact recorded answer, or the exact label chosen>"
     form: free-text | chose-option
-    options_authored_by: agent | human
+    options_authored_by: agent | human   # only when form: chose-option — omit for free-text
 ```
 
-Nothing here is optional formatting — the log is the audit trail that lets anyone verify later that judgment was actually applied, not hand-waved, and that every claim in the spec is traceable to whoever actually made it. `source` plus `human_response.form` is what makes a later reader able to tell an answer the human gave from a menu item they clicked.
+Nothing here is optional formatting — the log is the audit trail that lets anyone verify later that judgment was actually applied, not hand-waved, and that every claim in the spec is traceable to whoever actually made it. `source` plus `human_response.form` is what makes a later reader able to tell an answer the human gave from a menu item they clicked, and `critic.inputs` is what makes a critic verdict readable as evidence rather than a rubber stamp — a critic that never saw the tagged list did not check attribution, whatever its summary says.

@@ -35,11 +35,10 @@ Create or update `specs/SLUG/spec.md` with this shape. Target 200-500 words tota
 idea: "<working title>"
 slug: <slug>
 status: draft | in-progress | complete
-layers_complete: []
 ---
 
 ## Goal
-<prose + itemized claims where useful>
+<prose + itemized claims, each ending in its source tag — see protocol section 2>
 
 ## Scope
 ...
@@ -51,7 +50,7 @@ layers_complete: []
 ...
 ```
 
-Set `status: complete` and add `spec` to `layers_complete` only after the final checkpoint (Constraints) has an explicit human approval logged. Append every checkpoint to `specs/SLUG/spec.decisions.log` per the protocol's logging format.
+Set `status: complete` only after the final checkpoint (Constraints) has an explicit human approval logged. Each file's own `status` is the single source of truth for whether its layer is done — don't also maintain a roll-up array of completed layers across the three files, because three copies of derived state drift and nothing reconciles them. Append every checkpoint to `specs/SLUG/spec.decisions.log` per the protocol's logging format.
 
 ## Handing off
 

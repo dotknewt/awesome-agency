@@ -13,11 +13,11 @@ Read `references/checkpoint-protocol.md` before starting — the itemized claim 
 
 ## Standalone invocation and dependency check
 
-This skill depends on `specs/SLUG/spec.md` existing with `status: complete` (or at least `spec` present in `layers_complete`). If it's missing or incomplete when you're invoked directly:
+This skill depends on `specs/SLUG/spec.md` existing with `status: complete` — that file's own frontmatter is the only thing to check. If it's missing or incomplete when you're invoked directly:
 
 > "verify needs a signed-off Goal/Scope from project-spec to ground its criteria in. Run project-spec first, or proceed anyway knowing the criteria won't be grounded in an agreed goal?"
 
-Render this as an explicit choice — never silently proceed and never silently refuse. If the user chooses to proceed ungrounded, note that explicitly in `verify.md`'s frontmatter rather than pretending the dependency was satisfied.
+Render this as an explicit choice — never silently proceed and never silently refuse. If the user chooses to proceed ungrounded, record the state you actually observed in `grounded_in` (below) rather than pretending the dependency was satisfied.
 
 ## Interview flow
 
@@ -46,18 +46,18 @@ Ask explicitly, per idea, whether anything outside the spec document could be ch
 idea: "<working title>"
 slug: <slug>
 status: draft | in-progress | complete
-depends_on: [spec.md]
-layers_complete: [spec]
+grounded_in:
+  spec.md: complete | incomplete | missing   # the state observed when this file was written
 ---
 
 ## Evaluation Criteria
-<itemized, measurable claims>
+<itemized, measurable claims, each ending in its source tag>
 
 ## External Signal
 <specific check, or "N/A — <reason>">
 ```
 
-Restate (don't just link to) the specific Goal/Scope claims from spec.md that each evaluation criterion is grounded in, so this file is readable on its own without requiring the reader to open spec.md. Target 200-500 words. Append every checkpoint to `specs/SLUG/verify.decisions.log` per the protocol's logging format. Set `status: complete` and add `verify` to `layers_complete` only after both sections have explicit human approval logged.
+Restate (don't just link to) the specific Goal/Scope claims from spec.md that each evaluation criterion is grounded in, so this file is readable on its own without requiring the reader to open spec.md. A restated claim keeps the source tag it carried in spec.md — restating someone's claim doesn't make it yours, and re-deriving it doesn't make it theirs. Target 200-500 words. Append every checkpoint to `specs/SLUG/verify.decisions.log` per the protocol's logging format. Set `status: complete` only after both sections have explicit human approval logged — that means this layer's own checkpoints are signed off, and says nothing about whether its dependency was satisfied. `grounded_in` records that separately, and records what was actually there: never write `complete` into it because the run was allowed to continue.
 
 ## Handing off
 

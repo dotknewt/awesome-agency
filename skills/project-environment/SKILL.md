@@ -13,11 +13,11 @@ Read `references/checkpoint-protocol.md` before starting — the itemized claim 
 
 ## Standalone invocation and dependency check
 
-This skill depends on `specs/SLUG/spec.md` and `specs/SLUG/verify.md` both existing with `status: complete`. If invoked directly and either is missing:
+This skill depends on `specs/SLUG/spec.md` and `specs/SLUG/verify.md` both existing with `status: complete` — each file's own frontmatter, nothing else. If invoked directly and either is missing:
 
 > "environment gaps are easier to scope with a known goal and success criteria in hand. Run the missing layer(s) first, or proceed anyway scanning generically?"
 
-Explicit choice, never silent either way.
+Explicit choice, never silent either way. If the user proceeds anyway, `grounded_in` (below) records the state you actually observed for each dependency.
 
 ## Step 1 — Scan using existing maintainers, not from scratch
 
@@ -44,17 +44,37 @@ After the human responds to a batch (see Step 4), re-scan and report the next 5 
 
 ## Step 3 — Draft hook configs for risky actions
 
-For any gap that amounts to "an agent could take this action with no barrier and it would be hard to undo" (touching production, sending external communications, deleting data, exposing secrets, spending money), don't just flag it — draft an actual pre-tool-use hook configuration that would block or gate it, e.g.:
+For any gap that amounts to "an agent could take this action with no barrier and it would be hard to undo" (touching production, sending external communications, deleting data, exposing secrets, spending money), don't just flag it — draft an actual PreToolUse hook that would gate it. A drafted hook is two pieces: the settings entry and the script it points at. The path is `$CLAUDE_PROJECT_DIR`-relative because these hooks land in the user's own project, not in a plugin — `${CLAUDE_PLUGIN_ROOT}` only resolves for hooks shipped inside an installed plugin.
 
 ```json
 {
   "matcher": "Bash",
-  "hooks": [{
-    "type": "command",
-    "command": "grep -qE '(rm -rf /|DROP TABLE|git push --force)' <<< \"$TOOL_INPUT\" && echo 'blocked: destructive command requires explicit approval' && exit 1 || exit 0"
-  }]
+  "hooks": [{ "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/gate-prod-deploy.sh" }]
 }
 ```
+
+```bash
+#!/usr/bin/env bash
+# PreToolUse(Bash): make a production deploy require an explicit human decision.
+set -euo pipefail
+
+input=$(cat)                                              # payload arrives as JSON on stdin
+[ "$(jq -r '.tool_name // ""' <<<"$input")" = "Bash" ] || exit 0
+command=$(jq -r '.tool_input.command // ""' <<<"$input")
+
+grep -qE '(^|[[:space:]])(kubectl|helm|terraform|fly|flyctl)[[:space:]].*prod' <<<"$command" || exit 0
+
+jq -nc '{hookSpecificOutput: {hookEventName: "PreToolUse",
+         permissionDecision: "ask",
+         permissionDecisionReason: "targets production — confirm before running"}}'
+exit 0
+```
+
+Three mechanics a drafted hook gets wrong easily, all of which make it silently inert:
+
+- The payload is **JSON on stdin**, parsed with `jq`. There is no `$TOOL_INPUT` variable in a `type: command` hook — that interpolation exists only in `type: prompt` hooks.
+- **Deny** is a plain-text reason on **stderr** plus `exit 2`. **Ask** is the `hookSpecificOutput` JSON above on **stdout** plus `exit 0` — the only path that can express "ask", since `exit 2` can only block. Every other non-zero exit is a non-blocking error: the tool call proceeds.
+- A pattern list is a speed bump, not a control. `rm -fr`, added quoting, an alias, or a path built from a variable all walk straight past a regex. Draft narrowly, prefer `ask` over a promise of prevention, and when you present the hook, say plainly which cases it catches and which it doesn't — a gap closed on paper is worse than a gap left open, because nobody looks at it twice.
 
 Present the drafted hook alongside the gap it addresses so the human can review and apply it — this skill drafts hooks, it does not install or activate them unasked.
 
@@ -73,8 +93,9 @@ Render as a structured choice per gap (not one blanket yes/no for the whole batc
 idea: "<working title>"
 slug: <slug>
 status: draft | in-progress | complete
-depends_on: [spec.md, verify.md]
-layers_complete: [spec, verify]
+grounded_in:
+  spec.md: complete | incomplete | missing    # the state observed when this file was written
+  verify.md: complete | incomplete | missing
 ---
 
 ## Environment Gaps
@@ -84,7 +105,7 @@ layers_complete: [spec, verify]
 <drafted hook configs, tied to the gap each addresses>
 ```
 
-Target 200-500 words per batch cycle; if many batches are needed, that's a signal worth naming to the user, not silently absorbing. Append every checkpoint to `specs/SLUG/environment.decisions.log`. Set `status: complete` and add `environment` to `layers_complete` once every gap found is either fixed or explicitly accepted as risk — not just reported.
+Target 200-500 words per batch cycle; if many batches are needed, that's a signal worth naming to the user, not silently absorbing. Append every checkpoint to `specs/SLUG/environment.decisions.log`. Set `status: complete` once every gap found is either fixed or explicitly accepted as risk — not just reported. An accepted risk is a recorded decision, not an unfinished layer: it does not hold this file below `complete`.
 
 ## Handing off
 
