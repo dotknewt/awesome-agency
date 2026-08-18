@@ -3,7 +3,7 @@
  * vault-lint.mjs — vault note guard + linter (stdlib only; never exits non-zero).
  *   pre    PreToolUse : reads hook JSON on stdin; DENIES only hard violations (location/taxonomy/depth/filename/duplicate or
  *                       reserved basename/full write without frontmatter or invalid type; manage_tags add|remove; delete_note
- *                       without trashMode "local").
+ *                       without trashMode "local"). reference/ (generated corpora) is exempt from depth/kebab/unique-basename.
  *   post   PostToolUse: re-reads the written note; prints additionalContext for schema/enum/date/link problems.
  *   --all [--json] [--due] [--prefix <vault-rel-dir>]  lint the whole vault; markdown (default) or JSON report.
  * Spec: .claude/skills/vault-conventions/SKILL.md
@@ -18,9 +18,13 @@ const localDate = d => { d = d || new Date(); return `${d.getFullYear()}-${Strin
 const TODAY = localDate();
 const EXEMPT_TOP = new Set(['plans', 'sessions', '_templates', '_bases', '.obsidian', '.trash', 'node_modules', '.git']);
 const ROOT_FILES = new Set(['INDEX.md', 'README.md']);
-const TAXONOMY = { kb: ['kb', 'decision', 'moc'], docs: ['doc'], sources: ['source'], archive: ['kb', 'decision', 'moc', 'doc', 'source'] };
+const TAXONOMY = { kb: ['kb', 'decision', 'moc'], docs: ['doc'], sources: ['source'], archive: ['kb', 'decision', 'moc', 'doc', 'source'], reference: ['reference'] };
+// reference/ = generated corpus notes (pipeline-owned, path-addressed). Exempt from depth cap, kebab-case filenames, vault-wide
+// basename uniqueness and [[basename]] linking; still subject to the common frontmatter contract + REQ.reference.
+const REF_TOP = 'reference';
+const REF_FILE_RE = /^[A-Za-z0-9_][A-Za-z0-9_-]*\.md$/;
 const ENUM = {
-  type: ['kb', 'decision', 'moc', 'doc', 'source', 'plan', 'session', 'index'],
+  type: ['kb', 'decision', 'moc', 'doc', 'source', 'plan', 'session', 'index', 'reference'],
   status: {
     kb: ['draft', 'active', 'needs-review', 'superseded', 'archived'],
     doc: ['draft', 'active', 'needs-review', 'outdated', 'archived'],
@@ -29,6 +33,7 @@ const ENUM = {
     source: ['active', 'stale', 'dead-link', 'archived'],
     plan: ['draft', 'approved', 'in-progress', 'done', 'abandoned', 'superseded'],
     session: ['open', 'closed'],
+    reference: ['active', 'deprecated', 'archived'],
   },
   kind: { kb: ['fact', 'convention', 'gotcha', 'pattern', 'concept'], doc: ['tutorial', 'howto', 'reference', 'explanation'] },
   confidence: ['verified', 'likely', 'unverified'],
@@ -39,6 +44,7 @@ const REQ = {
   common: ['type', 'title', 'description', 'status', 'created', 'updated', 'tags'],
   kb: ['kind', 'importance', 'confidence', 'review_after'], decision: ['decided', 'review_after'], doc: ['kind', 'review_after'],
   source: ['url', 'retrieved', 'reliability'], plan: ['session_id'], session: ['session_id'], moc: [], index: [],
+  reference: ['source_url', 'license', 'commit', 'retrieved', 'modified'],
 };
 const LIMITS = { kbLines: 120, bytes: 25 * 1024, index: 150, description: 160 };
 const ARCHIVE_OK = new Set(['archived', 'superseded', 'deprecated', 'rejected', 'outdated', 'done', 'abandoned', 'closed', 'dead-link', 'stale']);
@@ -59,12 +65,17 @@ const relOf = abs => relative(VAULT, abs).split('\\').join('/');
 function vaultContext(excludeAbs) {
   const all = walk(VAULT).filter(p => p !== excludeAbs);
   const byBase = new Map();
-  for (const f of all) { const b = basename(f, extname(f)); byBase.set(b, [...(byBase.get(b) || []), 'vault/' + relOf(f)]); }
+  const refPaths = new Set();                                   // reference/ notes: linkable by full path only, never by basename
+  for (const f of all) {
+    const r = relOf(f);
+    if (r.startsWith(REF_TOP + '/')) { refPaths.add(r.replace(/\.md$/, '')); continue; }
+    const b = basename(f, extname(f)); byBase.set(b, [...(byBase.get(b) || []), 'vault/' + r]);
+  }
   // plans/sessions are outside the taxonomy but share the [[basename]] namespace → reserved names + linkable targets
   const reserved = new Map();
   for (const d of ['plans', 'sessions']) { const dd = join(VAULT, d); if (existsSync(dd)) for (const f of readdirSync(dd)) if (isMd(f)) reserved.set(basename(f, extname(f)), `vault/${d}/${f}`); }
   const linkable = new Set([...byBase.keys(), ...reserved.keys(), 'INDEX', 'README']);
-  return { all, byBase, reserved, dupes: new Map([...byBase].filter(([, v]) => v.length > 1)), linkable };
+  return { all, byBase, reserved, refPaths, dupes: new Map([...byBase].filter(([, v]) => v.length > 1)), linkable };
 }
 // Mirror mcpvault 0.16.0 normalizePath: '~' → $HOME; in-vault absolute path kept; anything else is vault-relative (leading '/' stripped).
 function mcpToAbs(p) {
@@ -158,7 +169,7 @@ function lintOne(abs, ctx) {
   if (!empty(fm.review_after) && isDate(fm.review_after) && fm.review_after <= TODAY && top !== 'archive') rec.due = true;
   if (ctx) {
     const seen = new Set();
-    for (const m of bodyNoCode.matchAll(LINK_RE)) { const tgt = m[1].trim(); const b = (tgt.includes('/') ? basename(tgt) : tgt).replace(/\.md$/, ''); if (!ctx.linkable.has(b) && !seen.has(b)) { seen.add(b); warn(`unresolved link [[${tgt}]] — create that note or fix the basename`); } }
+    for (const m of bodyNoCode.matchAll(LINK_RE)) { const tgt = m[1].trim(); const b = (tgt.includes('/') ? basename(tgt) : tgt).replace(/\.md$/, ''); const rt = tgt.replace(/^vault\//, '').replace(/\.md$/, ''); const isRef = rt.startsWith(REF_TOP + '/'); const key = isRef ? rt : b; if (!seen.has(key) && (isRef ? !ctx.refPaths.has(rt) : !ctx.linkable.has(b))) { seen.add(key); warn(`unresolved link [[${tgt}]] — create that note or fix the basename`); } }
     if (ctx.dupes.has(rec.base)) err(`duplicate basename '${rec.base}' (also: ${ctx.dupes.get(rec.base).filter(p => p !== rec.path).join(', ')})`);
   }
   return rec;
@@ -175,13 +186,15 @@ function pre() {
   const rel = relOf(abs); const segs = rel.split('/'); const top = segs[0]; const file = segs[segs.length - 1];
   if (segs.length === 1) { if (!ROOT_FILES.has(file)) deny(`'${rel}' — only INDEX.md and README.md may live at the vault root; put notes under kb/, docs/, sources/`); return; }
   if (EXEMPT_TOP.has(top)) return;
-  if (!TAXONOMY[top]) return deny(`'${rel}' — top-level folder '${top}/' is not part of the vault taxonomy (kb|docs|sources|archive|plans|sessions)`);
-  if (segs.length - 1 > 2) return deny(`'${rel}' — more than 2 folder levels (max: kb/decisions/x.md, archive/kb/x.md)`);
+  if (!TAXONOMY[top]) return deny(`'${rel}' — top-level folder '${top}/' is not part of the vault taxonomy (kb|docs|sources|archive|reference|plans|sessions)`);
+  const isRef = top === REF_TOP;
+  if (!isRef && segs.length - 1 > 2) return deny(`'${rel}' — more than 2 folder levels (max: kb/decisions/x.md, archive/kb/x.md)`);
   if (top === 'archive' && !(segs.length === 3 && ['kb', 'docs', 'sources'].includes(segs[1]))) return deny(`'${rel}' — archived notes live at archive/<kb|docs|sources>/<same-basename>.md`);
-  if (!/^[a-z0-9][a-z0-9-]*\.md$/.test(file)) return deny(`'${file}' — filenames must be lowercase kebab-case [a-z0-9-].md`);
+  if (isRef) { if (!REF_FILE_RE.test(file)) return deny(`'${file}' — reference/ filenames must match [A-Za-z0-9_][A-Za-z0-9_-]*.md (case-preserving; no spaces or dots)`); }
+  else if (!/^[a-z0-9][a-z0-9-]*\.md$/.test(file)) return deny(`'${file}' — filenames must be lowercase kebab-case [a-z0-9-].md`);
   const isMove = name === 'mcp__obsidian__move_note' || name === 'mcp__obsidian__move_file';
   const isNew = !existsSync(abs);
-  if (isNew && !(isMove && oldAbs && basename(oldAbs) === basename(abs))) {
+  if (!isRef && isNew && !(isMove && oldAbs && basename(oldAbs) === basename(abs))) {
     const ctx = vaultContext(oldAbs);
     const b = basename(abs, extname(abs));
     if (ctx.byBase.has(b)) return deny(`basename '${b}' already exists (${ctx.byBase.get(b).join(', ')}) — basenames must be unique vault-wide`);

@@ -4,8 +4,8 @@ Durable project memory in a git-native vault, so knowledge survives across
 sessions and compaction instead of being rediscovered every time.
 
 Bundles a note taxonomy and lifecycle (`kb/` atomic knowledge + ADRs, `docs/`
-Diátaxis docs, `sources/` provenance notes, plus `plans/` and `sessions/`
-history), a structural linter enforced on every write, retrieval/curation/
+Diátaxis docs, `sources/` provenance notes, an optional `reference/` class for
+pipeline-generated corpora, plus `plans/` and `sessions/` history), a structural linter enforced on every write, retrieval/curation/
 research subagents, and the [`mcpvault`](https://github.com/bitbonsai/mcpvault)
 MCP server so notes are addressable both as files and via MCP tools.
 

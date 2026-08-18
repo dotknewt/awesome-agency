@@ -55,10 +55,11 @@ settings.local.json
 .superpowers/
 node_modules/
 .claude/settings.local.json
-vault/.trash/
-vault/
+# A root-level vault/ (vault-memory in this repo) stays local. Anchored: plugins/vault-memory/templates/vault/ is the shipped scaffold.
+/vault/.trash/
+/vault/
 # Obsidian: commit only the shared config files
-vault/.obsidian/*
-!vault/.obsidian/app.json
-!vault/.obsidian/types.json
-!vault/.obsidian/templates.json
+/vault/.obsidian/*
+!/vault/.obsidian/app.json
+!/vault/.obsidian/types.json
+!/vault/.obsidian/templates.json
