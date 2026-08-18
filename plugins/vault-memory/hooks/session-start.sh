@@ -15,8 +15,8 @@ field() { printf '%s' "$INPUT" | tr -d '\n' | sed -n "s/.*\"$1\"[[:space:]]*:[[:
 SRC="$(field source)"; [ -n "$SRC" ] || SRC="startup"
 SID="$(field session_id)"
 
-if [ ! -d "$V" ]; then
-  echo "<vault-briefing status=\"missing\">vault/ does not exist under $ROOT (launch claude from the repo root, or create vault/ per the vault-conventions skill §1).</vault-briefing>"
+if [ ! -f "$V/INDEX.md" ]; then
+  echo "<vault-briefing status=\"missing\">vault/INDEX.md does not exist under $ROOT (launch claude from the repo root, or run /vault-init to scaffold the vault).</vault-briefing>"
   exit 0
 fi
 
