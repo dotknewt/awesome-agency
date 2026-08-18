@@ -55,6 +55,7 @@ Installing a bundle plus one of its skills standalone loads that skill twice
 | `python-mcp-development` | Python MCP server development with FastMCP guidance, generation, and best-practice instructions. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
 | `superpowers` | Vendored [obra/superpowers](https://github.com/obra/superpowers) (MIT) — brainstorm → plan → subagent-driven TDD → review, with a SessionStart skill injector. |
+| `project-workflow` | Spec-gap interview before any code — `project-manager` sequences `project-spec` (goal/scope/non-goals), `project-verify` (measurable criteria + external signals), and `project-environment` (AGENTS.md/KB/skill/guardrail gaps with drafted hooks) into `specs/<slug>/`, human-signed-off at each checkpoint. |
 
 `engineering-toolkit`, `github-toolkit`, `hooks-toolkit`,
 `work-objects-toolkit`, and `extension-audit` are parked under `wip/plugins/`

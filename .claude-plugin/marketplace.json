@@ -69,6 +69,15 @@
       }
     },
     {
+      "name": "project-workflow",
+      "description": "Close the spec gaps before any code is written: a project-manager orchestrator runs three interview layers in sequence — project-spec (Goal, Scope, Non-goals, Constraints), project-verify (measurable evaluation criteria and external success signals), and project-environment (AGENTS.md, knowledge-base, skill, and guardrail gaps, with drafted hook configs) — each writing to specs/<slug>/ behind an explicit human sign-off at every checkpoint.",
+      "source": "./plugins/project-workflow",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "agent-model-assignment",
       "description": "Use when deciding which model an agent or subagent should run on, or reviewing an existing assignment. Triggers on \"which model should this agent use\", \"assign a model\", \"is haiku enough for this…",
       "version": "1.0.0",
@@ -311,6 +320,34 @@
       "description": "Search, create, and manage notes in the Obsidian vault with wikilinks and index notes. Use when user wants to find, create, or organize notes in Obsidian.",
       "version": "1.0.0",
       "source": "./skills/obsidian-vault",
+      "strict": false
+    },
+    {
+      "name": "project-environment",
+      "description": "Scans AGENTS.md, the knowledge base, the skill set, and guardrails/hooks for gaps relevant to a spec'd-out idea, and drafts hook configs for any risky action found — the third of three…",
+      "version": "1.0.0",
+      "source": "./skills/project-environment",
+      "strict": false
+    },
+    {
+      "name": "project-manager",
+      "description": "Orchestrates a spec-gap-closing interview before any code, docs, or planning begins on a new idea, feature, task, project, extension, or enhancement. Use this whenever the user expresses real intent…",
+      "version": "1.0.0",
+      "source": "./skills/project-manager",
+      "strict": false
+    },
+    {
+      "name": "project-spec",
+      "description": "Interviews the user to draft the Goal, Scope, Non-goals, and Constraints of a new idea, feature, task, or project into specs/SLUG/spec.md — the first of three spec-gap-closing layers, run before any…",
+      "version": "1.0.0",
+      "source": "./skills/project-spec",
+      "strict": false
+    },
+    {
+      "name": "project-verify",
+      "description": "Defines precise, measurable evaluation criteria and identifies any external signal that would prove success for an idea already spec'd out — the second of three spec-gap-closing layers, run before…",
+      "version": "1.0.0",
+      "source": "./skills/project-verify",
       "strict": false
     },
     {

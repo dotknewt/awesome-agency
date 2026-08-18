@@ -1,0 +1,20 @@
+{
+  "name": "project-workflow",
+  "version": "0.1.0",
+  "description": "Close the spec gaps before any code is written: a project-manager orchestrator runs three interview layers in sequence — project-spec (Goal, Scope, Non-goals, Constraints), project-verify (measurable evaluation criteria and external success signals), and project-environment (AGENTS.md, knowledge-base, skill, and guardrail gaps, with drafted hook configs) — each writing to specs/<slug>/ behind an explicit human sign-off at every checkpoint.",
+  "repository": "https://github.com/dotknewt/awesome-agency",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "spec",
+    "requirements",
+    "planning",
+    "verification",
+    "interview",
+    "guardrails"
+  ]
+}

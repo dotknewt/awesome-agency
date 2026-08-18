@@ -43,6 +43,7 @@ BUNDLE_ORDER = [
     "memory-mcp",
     "vault-memory",
     "superpowers",
+    "project-workflow",
 ]
 
 MICRO_VERSION = "1.0.0"
