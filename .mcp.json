@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@bitbonsai/mcpvault@0.16.0",
+        "${CLAUDE_PROJECT_DIR:-.}/vault"
+      ],
+      "env": {}
+    }
+  }
+}

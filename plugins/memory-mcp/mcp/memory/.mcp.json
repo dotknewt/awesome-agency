@@ -3,8 +3,11 @@
     "memory": {
       "command": "docker",
       "args": [
-        "mcp", "gateway", "run",
-        "--catalog", "${CLAUDE_PLUGIN_ROOT}/mcp/memory/memory-catalog.yaml"
+        "mcp",
+        "gateway",
+        "run",
+        "--catalog",
+        "${CLAUDE_PLUGIN_ROOT}/mcp/memory/memory-catalog.yaml"
       ]
     }
   }
