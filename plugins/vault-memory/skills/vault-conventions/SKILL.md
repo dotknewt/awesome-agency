@@ -25,16 +25,38 @@ If a template, skill or agent prompt conflicts with this file, THIS file wins. E
 | `plans/` | plan-mode files (`type: plan`); frontmatter stamped by the Stop hook | plan mode; `/vault-session` updates status | no | **never** |
 | `sessions/` | session notes (`type: session`) | Stop/PostCompact/SessionEnd hook (generated parts); `/vault-session` (curated parts) | pointer only | **never** |
 | `archive/` | retired notes, same basename, flat under `archive/kb|docs|sources/` | curator; `/vault-save` on SUPERSEDE | no | only with `--history` |
+| `reference/` | **generated** corpus notes (`type: reference`), one folder per ingested corpus (`reference/<corpus>/…`), any depth | the consuming project's ingestion pipeline only — never agents by hand | no | **never** (address by path; see §1a) |
 | `_templates/`, `_bases/`, `.obsidian/`, `.trash/` | templates, dashboards, app config, local trash | humans / tools | no | never |
 
 Hard rules (the lint hook denies): a `.md` at the vault root other than `INDEX.md`/`README.md`; a top-level folder outside this
 list; more than 2 folder levels (`kb/decisions/x.md` and `archive/kb/x.md` are the maximum); non-kebab filenames; duplicate
-basenames anywhere in the vault; a full write into `kb|docs|sources` without frontmatter or with an invalid `type`.
-Default search exclusions: `excludePaths:["archive","sessions","plans","_templates","_bases"]` unless the task is history/continuation.
+basenames anywhere in the vault; a full write into `kb|docs|sources` without frontmatter or with an invalid `type`. `reference/`
+is exempt from the depth, kebab-case and unique-basename rules only (§1a).
+Default search exclusions: `excludePaths:["archive","sessions","plans","reference","_templates","_bases"]` unless the task is history/continuation.
+
+### 1a. The `reference/` class (generated corpora)
+`reference/` holds notes a pipeline derives from a pinned external corpus (docs, schemas, spreadsheets), so an agent can answer
+from the vault without a web call. It differs from every other folder and the rules of §1–§4 apply only where restated here:
+- **Pipeline-owned.** Only the consuming project's ingestion tool writes, moves or deletes here; agents never hand-edit a
+  `reference/` note (edits are overwritten on re-ingest). Upstream deletions remove the note on re-ingest without per-file
+  confirmation — git history is the recovery path. The interactive `delete_note` guard is unchanged (agents don't delete corpus notes).
+- **Path-addressed, never `[[basename]]`.** Basenames repeat by design (the same column name in 48 tables), so `wiki_link`/basename
+  resolution is silently wrong. Link to a corpus note only by full vault-relative path — `[[reference/<corpus>/<dir>/<Name>]]` — and read
+  it with `read_note {path}` / `get_note_outline` + `read_note_lines`. The linter resolves such links by path, not basename.
+- **Layout and names** are the consuming project's contract (a conventions document next to its spec): any depth under
+  `reference/<corpus>/`; filenames case-preserving `[A-Za-z0-9_][A-Za-z0-9_-]*.md` (an identifier such as a column name is a filename
+  as-is; folders/slugs stay kebab-case). Basename uniqueness, the ≥1-inbound-link rule, `review_after` cadence, the SessionStart due-count
+  and the ~8-note MOC rule do not apply; the corpus ships its own generated index/MOC notes.
+- **Frontmatter:** the common keys (§3) plus `source_url`, `license`, `commit` (upstream pin), `retrieved` (YYYY-MM-DD, volatile),
+  `modified: true|false`; `status` ∈ `active|deprecated|archived`; optional `deprecated: true`, `include_sources`, `aliases`.
+- **Never in default search.** `search_notes` walks every `.md` regardless (cost scales with corpus size), so always pass
+  `pathPrefix` or the `excludePaths` default; cross-record questions are answered from the corpus's generated index notes by path.
 
 ## 2. Naming
 - Filenames: kebab-case `[a-z0-9-]`, `.md`, ≤60 chars, containing the key nouns (filename matches count in search; `t` = basename).
-- **Basenames are unique across the whole vault** (`wiki_link` resolves `[[basename]]` by basename; duplicates resolve shallowest-first).
+  Exception: `reference/` (§1a) keeps identifier casing.
+- **Basenames are unique across the whole vault** (`wiki_link` resolves `[[basename]]` by basename; duplicates resolve shallowest-first)
+  — except under `reference/`, which is therefore never linked by basename (§1a).
 - kb: `kb/<claim-or-topic>.md` (e.g. `migrations-run-before-seeds.md`); the title is a declarative claim.
 - decisions: `kb/decisions/adr-NNNN-<slug>.md` (4 digits; next = highest existing + 1, via `Glob vault/kb/decisions/adr-*.md`).
 - docs: `docs/{howto,reference,explanation,tutorial}-<slug>.md` · sources: `sources/src-<domain-or-publisher>-<topic>.md`.
@@ -99,6 +121,7 @@ fact 90 · doc 90 · pattern 120 · convention/concept/decision 180 · importanc
   `## Decisions`, `## Knowledge written`, `## Open questions`, `## Next step`, `## Checkpoints` (hook-appended).
 - Links: `[[basename]]` for vault notes (add `— why` on the same line); `[text](url)` for the web; `[[basename#Heading]]` allowed
   (mcpvault ignores the fragment). Every kb note has ≥1 outgoing link and ≥1 inbound link (a MOC/INDEX line counts); an unlinked note is a bug.
+  Corpus notes are the exception: link them by full path `[[reference/…/Name]]`; they need no inbound link.
 - No inline `#hashtags` anywhere in bodies (mcpvault `manage_tags add/remove` would promote every `#token` into YAML tags).
 - Prose ≠ evidence: `confidence: verified` requires at least one `evidence` entry.
 

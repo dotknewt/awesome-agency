@@ -1,0 +1,36 @@
+filters:
+  and:
+    - or:
+        - file.inFolder("kb")
+        - file.inFolder("docs")
+    - 'status != "archived"'
+    - 'status != "superseded"'
+formulas:
+  days_overdue: 'if(review_after, (today() - date(review_after)).days, "")'
+properties:
+  formula.days_overdue:
+    displayName: Days overdue
+views:
+  - type: table
+    name: Due
+    filters:
+      and:
+        - review_after
+        - 'date(review_after) <= today()'
+    order: [file.name, type, kind, status, importance, confidence, review_after, formula.days_overdue, description]
+    sort:
+      - property: review_after
+        direction: ASC
+  - type: table
+    name: Needs review
+    filters:
+      and:
+        - 'status == "needs-review"'
+    order: [file.name, type, kind, updated, description]
+  - type: table
+    name: Never reviewed (>90d)
+    filters:
+      and:
+        - '!reviewed'
+        - '(today() - date(updated)).days > 90'
+    order: [file.name, type, updated, description]

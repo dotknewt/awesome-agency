@@ -20,7 +20,7 @@ Type is optional; infer it: **decision** = a choice among alternatives · **doc*
 
 ## 2. Search before create (mandatory; 2–4 calls, ≤20 results each)
 - `mcp__obsidian__list_all_tags` once → reuse the vocabulary; do not invent near-duplicate tags.
-- `mcp__obsidian__search_notes {query:"<key terms>", pathPrefix:"kb", excludePaths:["archive","sessions","plans","_templates","_bases"], limit:10}`
+- `mcp__obsidian__search_notes {query:"<key terms>", pathPrefix:"kb", excludePaths:["archive","sessions","plans","reference","_templates","_bases"], limit:10}`
   with 2–3 lexical variants (singular/plural, synonym, expected filename words); `Grep '^description:' vault/kb` for a one-call overview.
 - `mcp__obsidian__get_frontmatter` on the top 3 hits → compare claim/description.
 Decide: **NOOP** (already captured; at most bump `reviewed`) · **UPDATE** (same claim, add detail: `patch_note` the body, bump `updated`) ·
