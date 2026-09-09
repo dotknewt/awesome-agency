@@ -1,5 +1,15 @@
 # Ludus Toolkit Release Notes
 
+## v0.2.0 (2026-09-09)
+
+### Skills
+
+- **OS template maintenance now has focused workflows for release updates and
+  keyboard-layout changes.** These operations require different validation and
+  rename rules than general Ludus range management, so
+  `update-os-template` and `change-template-input-language` provide targeted
+  guidance without expanding the broader CLI and configuration skills.
+
 ## v0.1.1 (2026-08-06)
 
 ### Packaging

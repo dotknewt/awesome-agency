@@ -34,7 +34,7 @@
     },
     {
       "name": "ludus-toolkit",
-      "description": "Ludus cyber-range toolkit — skills for the Ludus CLI, range configuration, environment guidance, and troubleshooting, plus a bundled MCP server for driving the Ludus API from Claude.",
+      "description": "Ludus cyber-range toolkit — skills for CLI use, range configuration, environment guidance, troubleshooting, and OS template maintenance, plus a bundled MCP server for driving the Ludus API from Claude.",
       "source": "./plugins/ludus-toolkit",
       "author": {
         "name": "dotKnewt",
@@ -96,6 +96,13 @@
       "description": "Ask which skill or flow fits your situation. A router over the skills in this repo.",
       "version": "1.0.0",
       "source": "./skills/ask-matt",
+      "strict": false
+    },
+    {
+      "name": "change-template-input-language",
+      "description": "Change keyboard input languages and layouts in Ludus Packer OS templates. Use when converting a Windows, Debian, Kali, or Ubuntu template from one keyboard locale to another, including template…",
+      "version": "1.0.0",
+      "source": "./skills/change-template-input-language",
       "strict": false
     },
     {
@@ -425,6 +432,13 @@
       "description": "Move issues and external PRs through a state machine of triage roles — categorise, verify, grill if needed, and write agent-ready briefs.",
       "version": "1.0.0",
       "source": "./skills/triage",
+      "strict": false
+    },
+    {
+      "name": "update-os-template",
+      "description": "Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or other OS release needs a template based on the latest existing template, including the…",
+      "version": "1.0.0",
+      "source": "./skills/update-os-template",
       "strict": false
     },
     {

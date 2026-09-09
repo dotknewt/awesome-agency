@@ -1,0 +1,182 @@
+---
+name: change-template-input-language
+description: Change keyboard input languages and layouts in Ludus Packer OS templates. Use when converting a Windows, Debian, Kali, or Ubuntu template from one keyboard locale to another, including template directory and .pkr.hcl renames, Packer naming edits, Autounattend.xml InputLocale, preseed xkb-keymap, and Ubuntu autoinstall keyboard settings.
+---
+
+# Change Template Input Language
+
+Convert an existing template to a different keyboard input language without
+changing its display language, system locale, regional format, or ISO unless
+the user explicitly requests those changes too.
+
+## Required Inputs
+
+Determine these values before editing:
+
+- Exact template under `awesome-ludus-sauce/templates/`
+- Requested physical keyboard layout and, when relevant, its variant
+- Existing and target locale tokens used in the template name
+- OS-specific installer value: Windows input locale or Linux XKB layout and
+  variant
+
+Keyboard layout, language locale, and filename token are different identifier
+systems. Do not assume one value is valid in all three. Ask one short question
+if the requested physical layout is ambiguous, such as ANSI US versus British,
+standard versus Dvorak, or a locale with multiple national layouts.
+
+## Identifier Lookup
+
+Validate values before editing. Do not invent them.
+
+- Ubuntu, Debian, and Kali use XKB identifiers. Use `reference/xorg.lst` as
+  the bundled reference. Layouts are listed under `! layout`; variants are
+  listed under `! variant` and name their compatible layout before the
+  description. Valid XKB options are listed under `! option`. The Ubuntu
+  autoinstall `layout` and `variant` fields map to `XKBLAYOUT` and
+  `XKBVARIANT`.
+- If local XKB rules are unavailable, use the target release's
+  `keyboard-configuration` package or official Ubuntu/Debian documentation.
+- Windows `InputLocale` accepts a supported BCP 47 language tag for that
+  language's default keyboard, such as `en-US`, or a locale-ID and keyboard
+  layout pair such as `0409:00000409`. Multiple values are semicolon-separated
+  and the first is the default. Confirm values using Microsoft documentation
+  or the target Windows image's keyboard-layout registry data.
+- Use lowercase country-style tokens in Ludus template names when that matches
+  the repository convention, for example `us` or `no`. Preserve all other
+  basename components exactly.
+
+For standard Norwegian Bokmal QWERTY, use:
+
+| Context | Value |
+| --- | --- |
+| Template name token | `no` |
+| Windows `InputLocale` | `nb-NO` |
+| Linux XKB layout | `no` |
+| Linux XKB variant | empty string |
+
+The standard Norwegian layout is already QWERTY. Do not use `nb` as an XKB
+layout and do not use `variant: qwerty`; neither identifies the standard
+Norwegian XKB keyboard.
+
+## Required Rename
+
+1. Derive the target basename by replacing only the existing locale token in
+   the source basename. For example,
+   `ubuntu-24.04.2-x64-us-desktop` becomes
+   `ubuntu-24.04.2-x64-no-desktop`.
+2. Stop and report a conflict if the target directory already exists.
+3. Rename the template directory to the target basename.
+4. Rename its top-level `.pkr.hcl` file so its basename exactly matches the
+   renamed directory.
+5. Do not rename release-neutral support files such as `Autounattend.xml`,
+   `kali-preseed.cfg`, `debian-13-preseed.cfg`, or `http/user-data`.
+
+This workflow changes the existing template in place. Copy it instead only if
+the user explicitly asks to retain both locale variants.
+
+## Required Packer Edits
+
+Inspect the complete renamed `.pkr.hcl`; do not limit the change to `vm_name`.
+
+1. Change the `vm_name` default to `<target-basename>-template`.
+2. Replace locale-bearing internal source labels when they contain the old
+   template locale. Update the matching `build.sources` reference in the same
+   edit. Leave release-neutral labels alone.
+3. Update old template basenames or locale-bearing file paths found in string
+   values.
+4. Update installer boot-command keyboard values that would override or race
+   the answer file:
+   - Debian: update `keymap=<xkb-layout>` if present.
+   - Kali: update every keyboard parameter present, commonly
+     `console-keymaps-at/keymap`, `kbd-chooser/method`, and
+     `keyboard-configuration/xkb-keymap`.
+5. Do not change `iso_url`, `iso_checksum`, UI language, system locale,
+   timezone, country, or `template_description` unless one contains an actual
+   stale template identifier or the user requested broader localization.
+
+Search before replacing short tokens such as `us` or `no`; never perform a
+blind repository-wide replacement.
+
+## OS-Specific Answer Files
+
+### Windows
+
+Edit every active `<InputLocale>` element in `Autounattend.xml`, across every
+configuration pass in which it appears:
+
+```xml
+<InputLocale>nb-NO</InputLocale>
+```
+
+Replace the element text regardless of its current value. Leave
+`SetupUILanguage`, `SystemLocale`, `UILanguage`, and `UserLocale` unchanged for
+an input-language-only request. Preserve XML namespaces and formatting.
+
+### Debian
+
+Find the actual preseed filename rather than assuming it is literally
+`preseed.cfg`. Change the active keyboard selection to the validated XKB
+layout:
+
+```text
+d-i keyboard-configuration/xkb-keymap select no
+```
+
+Also update any `keymap=` boot argument in the `.pkr.hcl` as described above.
+Do not change `debian-installer/locale` for an input-language-only request.
+
+### Kali
+
+Find the actual preseed filename and change the active keyboard selection:
+
+```text
+d-i keyboard-configuration/xkb-keymap select no
+```
+
+Update all keyboard-related boot arguments in the `.pkr.hcl` to the same XKB
+layout. Do not change `debian-installer`, `locale`, or language-support values
+for an input-language-only request.
+
+### Ubuntu
+
+Edit `http/user-data`. `keyboard` must be a mapping nested under `autoinstall`,
+and `layout` and `variant` must be nested beneath `keyboard`:
+
+```yaml
+autoinstall:
+  version: 1
+  keyboard:
+    layout: no
+    variant: ""
+```
+
+Use the validated XKB variant exactly. Use `variant: ""` for the standard
+layout. For comparison, standard US QWERTY is `layout: us` with
+`variant: ""`; `layout: en` with `variant: us` is not the correct XKB pair.
+Leave the top-level autoinstall `locale` unchanged for an
+input-language-only request.
+
+## Verification
+
+Before finishing:
+
+1. Confirm the directory basename and `.pkr.hcl` basename are identical.
+2. Confirm the `vm_name` default is that basename plus `-template`.
+3. Search the converted template for the old full basename and old keyboard
+   values. Classify each remaining match; ISO filenames and prose may
+   legitimately contain language text.
+4. Confirm all Windows `InputLocale` elements have the requested value, or all
+   Linux installer and boot-command keyboard values agree.
+5. For Ubuntu, verify YAML indentation and confirm `layout` and `variant` are
+   children of `keyboard`, which is a child of `autoinstall`.
+6. Run `packer fmt -check <target.pkr.hcl>` when Packer is installed. If it
+   fails only because formatting differs, run `packer fmt <target.pkr.hcl>` and
+   check again.
+7. Run an available YAML parser or autoinstall schema validator for Ubuntu and
+   an XML parser for Windows.
+8. Run `git diff --check` and inspect the complete diff for unintended locale,
+   ISO, timezone, or display-language changes.
+
+Report the old and new template basenames, the requested physical layout, the
+platform-specific values used, every file renamed or edited, and any checks
+that could not be run.
