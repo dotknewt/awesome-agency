@@ -34,7 +34,7 @@
     },
     {
       "name": "ludus-toolkit",
-      "description": "Ludus cyber-range toolkit — skills for CLI use, range configuration, environment guidance, troubleshooting, and OS template maintenance, plus a bundled MCP server for driving the Ludus API from Claude.",
+      "description": "Ludus cyber-range toolkit — skills for CLI use, range configuration, environment guidance, troubleshooting, and OS template maintenance, plus a bundled MCP server for driving the Ludus API from Claude Code or OpenCode.",
       "source": "./plugins/ludus-toolkit",
       "author": {
         "name": "dotKnewt",

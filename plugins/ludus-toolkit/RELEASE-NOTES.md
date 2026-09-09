@@ -1,5 +1,18 @@
 # Ludus Toolkit Release Notes
 
+## v0.3.0 (2026-09-09)
+
+### OpenCode
+
+- **The full toolkit can now be installed into OpenCode projects without
+  retaining this repository or relying on Claude Code's plugin loader.** The
+  project-local installer dereferences all six pooled skill directories,
+  preserves their supporting references, and safely merges a direct Docker
+  stdio MCP definition while refusing conflicting or comment-bearing configs.
+  The setup guide covers credentials, container networking, authenticated
+  verification, and uploads, and CI validates both installation behavior and
+  generated configuration against OpenCode's published schema.
+
 ## v0.2.0 (2026-09-09)
 
 ### Skills

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ludus": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "LUDUS_URL",
+        "-e",
+        "LUDUS_API_KEY",
+        "ludus-mcp:local"
+      ],
+      "environment": {
+        "LUDUS_URL": "{env:LUDUS_URL}",
+        "LUDUS_API_KEY": "{env:LUDUS_API_KEY}"
+      },
+      "enabled": true
+    }
+  }
+}
