@@ -52,6 +52,7 @@ catalog to it, then set the `url` value — the gateway resolves it into
 
 ```bash
 docker mcp profile create --name ludus
+cp ludus-catalog.yaml ~/.docker/mcp/catalogs/ludus-catalog.yaml
 docker mcp profile server add ludus --server file://ludus-catalog.yaml
 docker mcp profile config ludus --set ludus-mcp.url=https://198.51.100.1:8080
 docker mcp profile config ludus --get-all  # confirm the url is stored
