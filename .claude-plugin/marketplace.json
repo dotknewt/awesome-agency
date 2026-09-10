@@ -442,6 +442,13 @@
       "strict": false
     },
     {
+      "name": "update-local-plugin-skills",
+      "description": "Use when asked to \"update local plugin skills\", \"pull plugin skills\", \"sync plugin skills to OpenCode\", \"rsync skills to .opencode\", or refresh skills from a locally checked-out plugin repository.",
+      "version": "1.0.0",
+      "source": "./skills/update-local-plugin-skills",
+      "strict": false
+    },
+    {
       "name": "update-os-template",
       "description": "Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or Windows Server release needs a template based on the latest existing template, including…",
       "version": "1.0.0",
