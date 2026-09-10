@@ -50,18 +50,24 @@ template variant is ambiguous. Never guess an ISO checksum.
    `debian`, and `kali`,
    `windows-<release>-<arch>[-<qualifier>...]-<locale>` for Windows clients, and
    `windows-server-<release>-<arch>[-<qualifier>...]-<locale>` for Windows
-   Server. Use dots for numeric releases, underscores for semantic alphanumeric
+   Server. Use dots for numeric releases, hyphens for semantic alphanumeric
    release parts and multiword qualifiers, and an explicit lowercase two-letter
    locale as the final field. For example, reconstruct legacy
    `debian-13-2-x64-no-server` as `debian-13.6.0-x64-server-no`. When updating
-   `windows-server-2019-x64-no_security_updates-us`, preserve
-   `no_security_updates` and `us` while changing only the release semantics.
+   `windows-server-2019-x64-no-security-updates-us`, preserve
+   `no-security-updates` and `us` while changing only the release semantics.
+   Use compound releases such as `11-22h2`. Require lowercase ASCII DNS-compatible
+   names without underscores: each dot-separated label must be 1–63 characters
+   and start and end with a letter or digit; the full name must be at most 253
+   characters without a trailing root dot. Check the final built name including
+   `-template` against both limits as well as the basename.
    Add qualifiers only when directly evidenced by the template: retain
-   `enterprise`, explicitly identified `no_security_updates`, and genuine
+   `enterprise`, explicitly identified `no-security-updates`, and genuine
    `tpm` when a TPM device is configured. Never infer `tpm` from bypass registry
    commands or harvest incidental installer/provisioner settings. Omit
    `tpm_bypas`, `tpm_bypass`, `standard`, `standard_evaluation`, and
-   `desktop_experience` from names without changing template settings.
+   `desktop_experience` from names without changing template settings. Their
+   hyphenated spellings remain excluded too; never add `flare-vm` as an OS qualifier.
 6. Stop and report the conflict if the target directory or target `.pkr.hcl`
    already exists. Do not merge into or overwrite an existing template.
 7. Copy the entire source directory to the new directory so supporting files,
@@ -129,14 +135,15 @@ architecture, ISO type, and filename. Obtain the checksum for that exact ISO.
 Before finishing:
 
 1. Confirm the target basename uses the applicable family shape, dots for
-   numeric release components, underscores within semantic release or qualifier
+   numeric release components, hyphens within semantic release or qualifier
    fields, the Linux role position when applicable, and a final explicit locale.
    If the source is a named `flare-vm-<locale>` environment, confirm that the
    explicit naming decision was recorded before any target name was chosen and
    that no release, OS, architecture, edition, or feature was inferred.
 2. Confirm the target directory and `.pkr.hcl` basename are identical.
 3. Confirm `vm_name` is the canonical target basename plus exactly one
-   `-template` suffix.
+   `-template` suffix. Validate both names against the DNS label boundaries,
+   63-character label limit, and 253-character total limit above.
 4. Confirm `template_description` names the new OS release and no longer names
    the source release.
 5. For Ubuntu, confirm the `proxmox-iso` source label matches the target major

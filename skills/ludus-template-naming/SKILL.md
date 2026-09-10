@@ -11,9 +11,13 @@ template's semantics; normalize only their representation.
 
 ## Canonical Grammar
 
-Use hyphens between semantic fields and underscores within one semantic field.
-Use lowercase ASCII throughout. Keep numeric release components dot-separated,
-and join semantic alphanumeric release parts with underscores.
+Use lowercase ASCII letters, digits, hyphens, and dots only; never underscores.
+Use hyphens between fields and within compound releases or multiword qualifiers.
+Keep numeric release components dot-separated. Both basenames and final built
+names must be DNS-compatible: each dot-separated label is 1–63 characters,
+starts and ends with a letter or digit, and the full textual name is at most
+253 characters without a trailing root dot. Include the built `-template`
+suffix when checking these limits; it extends the final label.
 
 | Family | Shape |
 | --- | --- |
@@ -31,10 +35,11 @@ Require a final lowercase two-letter locale token, including default `us`.
 Treat that token as filename metadata only. Validate the physical keyboard,
 XKB layout and variant, or Windows InputLocale independently.
 
-Use dots for numeric releases such as `24.04.2`, `13.2`, and `2024.4`. Use an
-underscore when a release combines a numeric product release with a semantic
-alphanumeric part, as in `11_22h2`. Use underscores for multiword qualifiers,
-as in `no_security_updates`; keep distinct qualifiers as separate hyphen fields.
+Use dots for numeric releases such as `24.04.2`, `13.2`, and `2024.4`. Use a
+hyphen when a release combines a numeric product release with a semantic
+alphanumeric part, as in `11-22h2`. Use hyphens for multiword qualifiers,
+as in `no-security-updates`. The architecture token ends the release; hyphens
+alone do not distinguish separate qualifiers from words within one qualifier.
 
 ## Examples
 
@@ -42,9 +47,9 @@ as in `no_security_updates`; keep distinct qualifiers as separate hyphen fields.
 ubuntu-24.04.2-x64-desktop-no
 debian-13.2-x64-server-no
 kali-2024.4-x64-desktop-no
-windows-11_22h2-x64-enterprise-no
-windows-server-2019-x64-no_security_updates-us
-windows-server-2019-x64-no_security_updates-no
+windows-11-22h2-x64-enterprise-no
+windows-server-2019-x64-no-security-updates-us
+windows-server-2019-x64-no-security-updates-no
 flare-vm-no
 flare-vm-us-template
 ```
@@ -65,14 +70,16 @@ built template name to that basename plus exactly one `-template` suffix.
    role when applicable, qualifiers, and locale from file content rather than
    token position. Add a qualifier only when the template provides direct
    evidence for it: retain `enterprise`, explicitly identified
-   `no_security_updates`, and genuine `tpm` when a TPM device is configured.
+   `no-security-updates`, and genuine `tpm` when a TPM device is configured.
    Never infer `tpm` from bypass registry commands, or harvest installer and
    provisioner settings as naming qualifiers.
 4. Omit `tpm_bypas`, `tpm_bypass`, `standard`, `standard_evaluation`, and
    `desktop_experience` from names. These are not naming fields; do not change
-   the underlying template settings while omitting them.
+   the underlying template settings while omitting them. Their hyphenated
+   spellings (`tpm-bypas`, `tpm-bypass`, `standard-evaluation`, and
+   `desktop-experience`) remain excluded too; never add `flare-vm` as an OS qualifier.
 5. Ask one short question when evidence does not resolve a token. Never assume
-   `no` means Norwegian; it can belong to `no_security_updates`, while the
+   `no` means Norwegian; it can belong to `no-security-updates`, while the
    locale requires installer or other direct locale evidence.
 6. Construct the basename with the family-specific shape and separators above.
 7. Stop if the target directory or target `.pkr.hcl` already exists, including
@@ -109,7 +116,8 @@ validator never reads HCL, infers semantics, or renames files.
 | --- | --- |
 | Put locale before Linux role | Put locale in the final field |
 | Write `13-2` or `13_2` | Write numeric release `13.2` |
-| Write `no-security-updates` | Write one qualifier `no_security_updates` |
+| Write `11_22h2` or `no_security_updates` | Write `11-22h2` or `no-security-updates` |
+| Check only the basename's DNS length | Check the final `-template` name too |
 | Omit default US locale | Append explicit `us` |
 | Infer locale from `no` alone | Inspect installer keyboard configuration |
 | Add `-template` to files | Add it only to the built `vm_name` |

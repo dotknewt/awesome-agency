@@ -11,17 +11,17 @@ import sys
 LINUX_FAMILIES = {"ubuntu", "debian", "kali"}
 ARCHITECTURES = {"x64", "arm64"}
 LINUX_ROLES = {"desktop", "server"}
-ALLOWED_NAME = re.compile(r"^[a-z0-9._-]+$")
-RELEASE = re.compile(r"^[0-9]+(?:\.[0-9]+)*(?:_[a-z0-9]*[a-z][a-z0-9]*)*$")
-QUALIFIER = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
+ALLOWED_NAME = re.compile(r"^[a-z0-9.-]+$")
+RELEASE = re.compile(r"^[0-9]+(?:\.[0-9]+)*(?:-[a-z0-9]*[a-z][a-z0-9]*)*$")
+QUALIFIER = re.compile(r"^[a-z0-9]+$")
 LOCALE = re.compile(r"^[a-z]{2}$")
 BANNED_QUALIFIERS = {
-    "flare_vm",
-    "tpm_bypas",
-    "tpm_bypass",
+    "flare-vm",
+    "tpm-bypas",
+    "tpm-bypass",
     "standard",
-    "standard_evaluation",
-    "desktop_experience",
+    "standard-evaluation",
+    "desktop-experience",
 }
 
 
@@ -42,9 +42,19 @@ def validate_name(name: str) -> str | None:
     if not name.isascii() or name != name.lower():
         return "lowercase ASCII"
     if not name or not ALLOWED_NAME.fullmatch(name):
-        return "name must use lowercase ASCII letters, digits, dots, underscores, and hyphens"
-    if any(separator in name for separator in ("--", "__", "..")):
+        return "name must use lowercase ASCII letters, digits, dots, and hyphens"
+    if any(separator in name for separator in ("--", "..")):
         return "repeated separator"
+
+    # Validate the supplied name before stripping the built suffix: it consumes
+    # both label and total DNS length budget.
+    if len(name) > 253:
+        return "DNS name must not exceed 253 characters"
+    for label in name.split("."):
+        if len(label) > 63:
+            return "DNS labels must not exceed 63 characters"
+        if not label or not label[0].isalnum() or not label[-1].isalnum():
+            return "DNS labels must start and end with a letter or digit"
 
     suffix_count = name.count("-template")
     if suffix_count:
@@ -65,23 +75,31 @@ def validate_name(name: str) -> str | None:
     if has_hyphenated_numeric_release(fields):
         return "numeric release components must use dots"
 
+    release_start = 2 if fields[:2] == ["windows", "server"] else 1
+    architecture_index = next(
+        (index for index in range(release_start, len(fields)) if fields[index] in ARCHITECTURES),
+        None,
+    )
+    if architecture_index is None:
+        return "architecture must be x64 or arm64"
+    release = "-".join(fields[release_start:architecture_index])
+    remaining = fields[architecture_index + 1:]
+
     if fields[0] in LINUX_FAMILIES:
-        if len(fields) < 5:
+        if len(remaining) < 2:
             return "expected Linux shape: <os>-<release>-<arch>-<role>[-<qualifier>...]-<locale>"
-        release, arch, role = fields[1:4]
-        qualifiers = fields[4:-1]
+        role = remaining[0]
+        qualifiers = remaining[1:-1]
     elif len(fields) > 1 and fields[1] == "server":
-        if len(fields) < 5:
+        if not remaining:
             return "expected Windows Server shape: windows-server-<release>-<arch>[-<qualifier>...]-<locale>"
-        release, arch = fields[2:4]
         role = None
-        qualifiers = fields[4:-1]
+        qualifiers = remaining[:-1]
     else:
-        if len(fields) < 4:
+        if not remaining:
             return "expected Windows client shape: windows-<release>-<arch>[-<qualifier>...]-<locale>"
-        release, arch = fields[1:3]
         role = None
-        qualifiers = fields[3:-1]
+        qualifiers = remaining[:-1]
 
     if role is not None and role not in LINUX_ROLES:
         return "Linux role must be desktop or server"
@@ -90,25 +108,22 @@ def validate_name(name: str) -> str | None:
     if not LOCALE.fullmatch(locale):
         return "final locale must be two lowercase letters"
     if not RELEASE.fullmatch(release):
-        if re.fullmatch(r"[0-9]+(?:_[0-9]+)+", release):
-            return "numeric release components must use dots"
-        return "release must start with digits and use dots for numeric parts or underscores for semantic alphanumeric parts"
-    if arch not in ARCHITECTURES:
-        return "architecture must be x64 or arm64"
+        return "release must start with digits and use dots for numeric parts or hyphens for semantic alphanumeric parts"
+    # Hyphens also join multiword qualifiers. Match banned phrases on token
+    # boundaries so spelling them as separate fields cannot evade exclusion.
     banned_qualifier = next(
-        (qualifier for qualifier in qualifiers if qualifier in BANNED_QUALIFIERS),
+        (
+            banned
+            for index in range(len(qualifiers))
+            for end in range(index + 1, len(qualifiers) + 1)
+            if (banned := "-".join(qualifiers[index:end])) in BANNED_QUALIFIERS
+        ),
         None,
     )
     if banned_qualifier is not None:
         return f"banned naming field: {banned_qualifier}"
-    ambiguous_qualifier = ["no", "security", "updates"]
-    if any(
-        qualifiers[index : index + 3] == ambiguous_qualifier
-        for index in range(len(qualifiers) - 2)
-    ):
-        return "write the multiword qualifier as no_security_updates"
     if any(not QUALIFIER.fullmatch(qualifier) for qualifier in qualifiers):
-        return "qualifiers must use lowercase alphanumerics with underscores inside a field"
+        return "qualifiers must use lowercase alphanumerics joined by hyphens"
     return None
 
 
