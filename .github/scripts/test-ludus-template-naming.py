@@ -26,6 +26,11 @@ VALID_NAMES = tuple(
     for name in (basename, f"{basename}-template")
 ) + (
     "windows-11_22h2-arm64-us",
+    "windows-11_22h2-x64-tpm-us",
+    "flare-vm-no",
+    "flare-vm-no-template",
+    "flare-vm-us",
+    "flare-vm-us-template",
 )
 
 INVALID_NAMES = {
@@ -50,6 +55,24 @@ INVALID_NAMES = {
     "ubuntu-template-24.04.2-x64-desktop-us": "-template is allowed only as one terminal suffix",
     "windows-11_22h2-x64-enterprise-no-extra": "final locale must be two lowercase letters",
     "debian-13_2-x64-server-us": "numeric release components must use dots",
+    "windows-11_22h2-x64-tpm_bypas-us": "banned naming field: tpm_bypas",
+    "windows-11_22h2-x64-tpm_bypass-us": "banned naming field: tpm_bypass",
+    "windows-11_22h2-x64-standard-us": "banned naming field: standard",
+    "windows-11_22h2-x64-standard_evaluation-us": "banned naming field: standard_evaluation",
+    "windows-11_22h2-x64-desktop_experience-us": "banned naming field: desktop_experience",
+    "flare-vm": "FLARE names must use flare-vm-<locale>",
+    "flare-vm-usa": "FLARE names must use flare-vm-<locale>",
+    "flare-vm-US": "lowercase ASCII",
+    "flare-vm-no-extra": "FLARE names must use flare-vm-<locale>",
+    "flare_vm-no": "unknown OS family; expected ubuntu, debian, kali, windows, or windows-server",
+    "flare-vm-no-template-template": "-template is allowed only as one terminal suffix",
+    "windows-11_23h2-x64-enterprise-flare_vm-no_security_updates-tpm_bypass-no": "banned naming field: flare_vm",
+    "windows-11_23h2-x64-enterprise-flare_vm-no_security_updates-tpm_bypass-no-template": "banned naming field: flare_vm",
+    "windows-server-2022-x64-tpm_bypas-us": "banned naming field: tpm_bypas",
+    "windows-server-2022-x64-tpm_bypass-us": "banned naming field: tpm_bypass",
+    "windows-server-2022-x64-standard-us": "banned naming field: standard",
+    "windows-server-2022-x64-standard_evaluation-us": "banned naming field: standard_evaluation",
+    "windows-server-2022-x64-desktop_experience-us": "banned naming field: desktop_experience",
 }
 
 

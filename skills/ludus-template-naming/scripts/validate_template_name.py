@@ -15,6 +15,14 @@ ALLOWED_NAME = re.compile(r"^[a-z0-9._-]+$")
 RELEASE = re.compile(r"^[0-9]+(?:\.[0-9]+)*(?:_[a-z0-9]*[a-z][a-z0-9]*)*$")
 QUALIFIER = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
 LOCALE = re.compile(r"^[a-z]{2}$")
+BANNED_QUALIFIERS = {
+    "flare_vm",
+    "tpm_bypas",
+    "tpm_bypass",
+    "standard",
+    "standard_evaluation",
+    "desktop_experience",
+}
 
 
 def has_hyphenated_numeric_release(fields: list[str]) -> bool:
@@ -45,6 +53,11 @@ def validate_name(name: str) -> str | None:
         name = name.removesuffix("-template")
         if "-template" in name:
             return "built name must contain exactly one terminal -template suffix"
+
+    if name.startswith("flare-vm"):
+        if re.fullmatch(r"flare-vm-[a-z]{2}", name):
+            return None
+        return "FLARE names must use flare-vm-<locale>"
 
     fields = name.split("-")
     if not fields or fields[0] not in LINUX_FAMILIES | {"windows"}:
@@ -82,6 +95,12 @@ def validate_name(name: str) -> str | None:
         return "release must start with digits and use dots for numeric parts or underscores for semantic alphanumeric parts"
     if arch not in ARCHITECTURES:
         return "architecture must be x64 or arm64"
+    banned_qualifier = next(
+        (qualifier for qualifier in qualifiers if qualifier in BANNED_QUALIFIERS),
+        None,
+    )
+    if banned_qualifier is not None:
+        return f"banned naming field: {banned_qualifier}"
     ambiguous_qualifier = ["no", "security", "updates"]
     if any(
         qualifiers[index : index + 3] == ambiguous_qualifier

@@ -1,5 +1,11 @@
 # Ludus Toolkit Release Notes
 
+## v0.4.1 (2026-09-10)
+
+### Windows Naming
+
+- **Windows template naming now preserves identity while filtering incidental metadata.** The naming, locale-change, and OS-update skills keep the FLARE identity, suppress incidental Windows metadata fields, and retain genuine TPM distinctions. The validator regressions cover naming syntax; corpus review remains a model dry run rather than workflow coverage.
+
 ## v0.4.0 (2026-09-10)
 
 ### Skills
