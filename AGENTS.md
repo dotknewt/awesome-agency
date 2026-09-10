@@ -201,6 +201,40 @@ a `.vendored` bundle still must bump `plugin.json` and record the entry in `LOCA
 
 There is no top-level build, lint, or test command beyond the CI workflow above.
 
+## OpenCode distribution maintenance
+
+OpenCode is a generated projection of the canonical marketplace, not a second
+catalog. Keep `.claude-plugin/marketplace.json` authoritative and change the
+Python renderer/runtime only when the generated host-specific behavior needs
+to change. Installable content must remain self-contained after the source
+checkout is removed; managed state under `.opencode/awesome-agency/` records
+ownership, hashes, versions, models, and runtime contributions.
+
+Before changing OpenCode distribution behavior, inspect the actual pinned CLI
+with `opencode --version` and `opencode --help`. The measured target is
+OpenCode 1.18.30. Runtime hook claims require mocked SDK tests unless a live
+lifecycle test has been added; do not describe `session.idle` as a verified
+Claude `SessionEnd` equivalent. New hook events or MCP/config fields must be
+added to `.github/host-compat.json` with evidence and handled by
+`.github/scripts/check-opencode.py`; unknown constructs must fail clearly.
+
+Run the following after installer, runtime, or installable-content changes:
+
+```sh
+python3 .github/scripts/check-opencode.py
+python3 -m unittest discover -s opencode/tests -p 'test_*.py' -v
+node --test opencode/tests/runtime.test.mjs
+```
+
+Use `python3 .github/scripts/check-opencode.py --runtime` only when the pinned
+OpenCode binary is available. It creates temporary HOME/XDG directories and a
+temporary project, explicitly loads only the generated local plugin, disables
+external plugin discovery/MCP startup, and does not use credentials. Schema
+validation is separate from runtime discovery;
+CI downloads the public OpenCode schema for the existing Ludus fragment test.
+Document prerequisites for Ludus Docker and vault/mcpvault connectivity, but
+never start those services from CI or installer tests.
+
 ## Project Memory
 
 Durable project memory lives in `vault/` (Markdown + flat YAML frontmatter, Obsidian-compatible), provided by the `vault-memory`

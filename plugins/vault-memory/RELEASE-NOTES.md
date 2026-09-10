@@ -1,5 +1,14 @@
 # vault-memory Release Notes
 
+## v1.3.0 (2026-09-09)
+
+### Fixes
+
+- **OpenCode sessions now use the SDK message store instead of assuming a Claude
+  transcript exists.** The capture hook accepts normalized messages, preserves
+  curated sections and token metadata, and keeps idle checkpoints open while
+  retaining the existing redaction and empty-session safeguards.
+
 ## v1.2.0 (2026-08-18)
 
 ### Fixes

@@ -31,6 +31,23 @@ claude plugin install ember-agent@awesome-agency
 Installing a bundle plus one of its skills standalone loads that skill twice
 (once per plugin namespace) — harmless, but avoid it.
 
+### OpenCode
+
+OpenCode uses the repository's generated projection rather than installing the
+Claude marketplace directly. Requirements and lifecycle details are in
+[`opencode/README.md`](opencode/README.md). The shortest project install is:
+
+```sh
+python3 -m pip install -r opencode/requirements.txt
+python3 opencode/install.py install steward --project /path/to/project
+```
+
+Use `--global` for `$XDG_CONFIG_HOME/opencode` (or `~/.config/opencode`),
+`--model provider/model` for an agent override, and `--dry-run` to preview a
+mutation. Restart OpenCode after install/update/uninstall. The installer
+preserves local edits and unrelated JSON/JSONC configuration, and reports
+conflicts before writing instead of overwriting user files.
+
 ## Layout
 
 | Directory | Contents |
@@ -79,7 +96,9 @@ with the bundle.
 - Change bundle membership: add/remove symlinks under `plugins/<name>/`,
   bump the version in its `plugin.json`, regenerate.
 - CI (`.github/workflows/validate.yml`) fails on stale manifests, broken
-  symlinks, invalid `plugin.json`, and malformed skill frontmatter.
+  symlinks, invalid `plugin.json`, malformed skill frontmatter, and OpenCode
+  projection drift. Run `python3 .github/scripts/check-opencode.py` when
+  changing an installable entry.
 
 Formerly this marketplace aggregated three sibling repos
 (`dotknewt/skills`, `dotknewt/agents`, `dotknewt/toolkits`); their content now
