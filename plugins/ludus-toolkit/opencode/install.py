@@ -19,6 +19,7 @@ SKILL_NAMES = (
     "ludus-cli",
     "ludus-environment-guide",
     "ludus-range-config",
+    "ludus-template-naming",
     "ludus-troubleshoot",
     "update-os-template",
 )
@@ -179,7 +180,7 @@ def write_config(path: Path, config: dict[str, object]) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Install ludus-toolkit's six skills into an OpenCode project."
+        description="Install ludus-toolkit's seven skills into an OpenCode project."
     )
     parser.add_argument("project", type=Path, help="path to the consuming project")
     parser.add_argument(

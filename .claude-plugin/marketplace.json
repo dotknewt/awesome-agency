@@ -34,7 +34,7 @@
     },
     {
       "name": "ludus-toolkit",
-      "description": "Ludus cyber-range toolkit — skills for CLI use, range configuration, environment guidance, troubleshooting, and OS template maintenance, plus a bundled MCP server for driving the Ludus API from Claude Code or OpenCode.",
+      "description": "Ludus cyber-range toolkit — skills for CLI use, range configuration, environment guidance, troubleshooting, and OS template maintenance with canonical template naming, plus a bundled MCP server for driving the Ludus API from Claude Code or OpenCode.",
       "source": "./plugins/ludus-toolkit",
       "author": {
         "name": "dotKnewt",
@@ -295,6 +295,13 @@
       "strict": false
     },
     {
+      "name": "ludus-template-naming",
+      "description": "Use when naming, renaming, reviewing, or validating Ludus Packer OS templates, especially when legacy names have ambiguous locale, role, edition, release, or feature tokens such as no or…",
+      "version": "1.0.0",
+      "source": "./skills/ludus-template-naming",
+      "strict": false
+    },
+    {
       "name": "ludus-troubleshoot",
       "description": "Diagnose and resolve Ludus deployment, networking, template, WireGuard, Proxmox, and Ansible issues. Use when users report failures, errors, unreachable systems, failed joins, or unexpected behavior…",
       "version": "1.0.0",
@@ -436,7 +443,7 @@
     },
     {
       "name": "update-os-template",
-      "description": "Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or other OS release needs a template based on the latest existing template, including the…",
+      "description": "Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or Windows Server release needs a template based on the latest existing template, including…",
       "version": "1.0.0",
       "source": "./skills/update-os-template",
       "strict": false

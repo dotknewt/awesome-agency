@@ -692,7 +692,7 @@ class TestRealMarketplace(unittest.TestCase):
     def test_every_published_entry_materializes_real_complete_paths(self):
         repo = Path(__file__).resolve().parents[2]
         entries = catalog_mod.load_entries(repo)
-        self.assertEqual(len(entries), 75)
+        self.assertEqual(len(entries), 76)
         target = Path(tempfile.mkdtemp())
         try:
             rendered_by_name = {

@@ -60,7 +60,7 @@
   "opencode": {
     "version": "1.18.30",
     "binary": "opencode",
-    "expected_entries": 75,
+    "expected_entries": 76,
     "runtime_adapter": "opencode/runtime/agency.js",
     "hook_fields": ["matcher", "hooks", "type", "command", "args", "shell", "async", "timeout", "statusMessage"],
     "mcp_server_fields": ["type", "command", "args", "env", "environment", "enabled", "url", "headers", "timeout"],

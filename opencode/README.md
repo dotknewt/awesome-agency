@@ -1,6 +1,6 @@
 # OpenCode installer
 
-This installer projects the 75 entries in the Claude marketplace into an
+This installer projects the 76 entries in the Claude marketplace into an
 OpenCode project or global configuration. It uses the current checkout as its
 source; it never fetches, publishes, or edits the marketplace.
 

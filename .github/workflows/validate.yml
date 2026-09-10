@@ -30,6 +30,9 @@ jobs:
       - name: Install OpenCode installer dependencies
         run: python -m pip install -r opencode/requirements.txt
 
+      - name: Validate Ludus template naming
+        run: python .github/scripts/test-ludus-template-naming.py
+
       - name: Validate OpenCode config and installer
         run: |
           curl --fail --silent --show-error --location \
