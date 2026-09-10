@@ -1,5 +1,18 @@
 # Ludus Toolkit Release Notes
 
+## v0.4.2 (2026-09-10)
+
+### Template Naming
+
+- **Canonical template names now satisfy DNS naming constraints.** Underscores
+  in compound releases and qualifiers could produce unusable DNS names; the
+  naming, OS-update, and locale-change skills now use `11-22h2` and
+  `no-security-updates`, while retaining dotted numeric releases. The validator
+  enforces label boundaries, 63-character labels, and the 253-character total
+  limit on supplied basenames and built names including `-template`. Regression
+  coverage preserves FLARE identities and excluded Windows metadata while
+  exercising the new parser and DNS limits.
+
 ## v0.4.1 (2026-09-10)
 
 ### Windows Naming
