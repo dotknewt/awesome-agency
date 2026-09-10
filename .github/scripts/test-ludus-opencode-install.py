@@ -22,6 +22,7 @@ SKILL_NAMES = {
     "ludus-cli",
     "ludus-environment-guide",
     "ludus-range-config",
+    "ludus-template-naming",
     "ludus-troubleshoot",
     "update-os-template",
 }
@@ -73,10 +74,25 @@ def main() -> int:
         clean.mkdir()
         run_installer(clean)
         assert_installed(clean)
+        installed_validator = (
+            clean
+            / ".opencode"
+            / "skills"
+            / "ludus-template-naming"
+            / "scripts"
+            / "validate_template_name.py"
+        )
+        source_validator = (
+            SKILL_SOURCE
+            / "ludus-template-naming"
+            / "scripts"
+            / "validate_template_name.py"
+        )
+        assert installed_validator.read_bytes() == source_validator.read_bytes()
         generated = json.loads((clean / "opencode.json").read_text(encoding="utf-8"))
         validator.validate(generated)
         repeat = run_installer(clean)
-        assert "6 skill(s) already current" in repeat.stdout
+        assert "7 skill(s) already current" in repeat.stdout
         assert "OpenCode config already current" in repeat.stdout
 
         preserved = base / "preserved"

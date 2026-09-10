@@ -1,6 +1,6 @@
 # Install ludus-toolkit for OpenCode
 
-This installer copies all six Ludus skills into a consuming project's standard
+This installer copies all seven Ludus skills into a consuming project's standard
 `.opencode/skills/` directory and can add the bundled MCP definition to the
 project-root `opencode.json`. The copies contain real files, including all skill
 references, so they do not depend on this repository after installation.
@@ -50,7 +50,7 @@ with identical content is safe. It stops before writing if an installed skill or
 `.opencode/opencode.json`; in those cases, merge the files manually rather than
 discarding comments or creating competing configuration locations.
 
-For a manual installation, copy the six directories under
+For a manual installation, copy the seven directories under
 `plugins/ludus-toolkit/skills/` into `/path/to/project/.opencode/skills/` while
 dereferencing symlinks, then merge the `mcp.ludus` object from
 [`opencode.json`](./opencode.json) into the project's existing OpenCode config.
