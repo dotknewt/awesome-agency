@@ -23,6 +23,9 @@ Keyboard layout, language locale, and filename token are different identifier
 systems. Do not assume one value is valid in all three. Ask one short question
 if the requested physical layout is ambiguous, such as ANSI US versus British,
 standard versus Dvorak, or a locale with multiple national layouts.
+Stop before renaming and ask one short question if directory and installer
+evidence do not resolve a legacy basename token. Never assume `no` is the
+locale; it can belong to a qualifier such as `no_security_updates`.
 
 ## Identifier Lookup
 
@@ -41,9 +44,14 @@ Validate values before editing. Do not invent them.
   layout pair such as `0409:00000409`. Multiple values are semicolon-separated
   and the first is the default. Confirm values using Microsoft documentation
   or the target Windows image's keyboard-layout registry data.
-- Use lowercase country-style tokens in Ludus template names when that matches
-  the repository convention, for example `us` or `no`. Preserve all other
-  basename components exactly.
+- Reconstruct the complete basename with hyphens between semantic fields and
+  underscores within one field. Use dots for numeric release components and
+  underscores for semantic alphanumeric release parts. Use
+  `<os>-<release>-<arch>-<role>[-<qualifier>...]-<locale>` for Linux,
+  `windows-<release>-<arch>[-<qualifier>...]-<locale>` for Windows clients, and
+  `windows-server-<release>-<arch>[-<qualifier>...]-<locale>` for Windows
+  Server. Require `desktop` or `server` in the Linux role position and an
+  explicit lowercase two-letter locale, including `us`, as the final field.
 
 For standard Norwegian Bokmal QWERTY, use:
 
@@ -60,11 +68,14 @@ Norwegian XKB keyboard.
 
 ## Required Rename
 
-1. Derive the target basename by replacing only the existing locale token in
-   the source basename. For example,
-   `ubuntu-24.04.2-x64-us-desktop` becomes
-   `ubuntu-24.04.2-x64-no-desktop`.
-2. Stop and report a conflict if the target directory already exists.
+1. Classify the family, release, architecture, Linux role when applicable,
+   qualifiers, and locale from the complete template directory and installer
+   evidence, then reconstruct the full canonical target basename. For example,
+   legacy `ubuntu-24.04.2-x64-us-desktop` becomes
+   `ubuntu-24.04.2-x64-desktop-no`.
+2. Stop and report a conflict before renaming if either the target directory or
+   target top-level `.pkr.hcl` already exists. Do not merge into or overwrite
+   either target.
 3. Rename the template directory to the target basename.
 4. Rename its top-level `.pkr.hcl` file so its basename exactly matches the
    renamed directory.
@@ -160,21 +171,25 @@ input-language-only request.
 
 Before finishing:
 
-1. Confirm the directory basename and `.pkr.hcl` basename are identical.
-2. Confirm the `vm_name` default is that basename plus `-template`.
-3. Search the converted template for the old full basename and old keyboard
+1. Confirm the target basename follows the family shape, uses dots for numeric
+   release components and underscores within semantic fields, places the Linux
+   role correctly when applicable, and ends with an explicit locale.
+2. Confirm the directory basename and `.pkr.hcl` basename are identical.
+3. Confirm the built name and `vm_name` default follow the same canonical
+   basename plus exactly one `-template` suffix.
+4. Search the converted template for the old full basename and old keyboard
    values. Classify each remaining match; ISO filenames and prose may
    legitimately contain language text.
-4. Confirm all Windows `InputLocale` elements have the requested value, or all
+5. Confirm all Windows `InputLocale` elements have the requested value, or all
    Linux installer and boot-command keyboard values agree.
-5. For Ubuntu, verify YAML indentation and confirm `layout` and `variant` are
+6. For Ubuntu, verify YAML indentation and confirm `layout` and `variant` are
    children of `keyboard`, which is a child of `autoinstall`.
-6. Run `packer fmt -check <target.pkr.hcl>` when Packer is installed. If it
+7. Run `packer fmt -check <target.pkr.hcl>` when Packer is installed. If it
    fails only because formatting differs, run `packer fmt <target.pkr.hcl>` and
    check again.
-7. Run an available YAML parser or autoinstall schema validator for Ubuntu and
+8. Run an available YAML parser or autoinstall schema validator for Ubuntu and
    an XML parser for Windows.
-8. Run `git diff --check` and inspect the complete diff for unintended locale,
+9. Run `git diff --check` and inspect the complete diff for unintended locale,
    ISO, timezone, or display-language changes.
 
 Report the old and new template basenames, the requested physical layout, the

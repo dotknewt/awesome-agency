@@ -1,6 +1,6 @@
 ---
 name: update-os-template
-description: Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or other OS release needs a template based on the latest existing template, including the template name, iso_checksum, iso_url, vm_name, template_description, and release-specific source identifiers.
+description: Clone and update Ludus Packer templates for a new OS release. Use when a new Debian, Ubuntu, Kali, Windows, or Windows Server release needs a template based on the latest existing template, including the template name, iso_checksum, iso_url, vm_name, template_description, and release-specific source identifiers.
 ---
 
 # Update An OS Template
@@ -32,10 +32,22 @@ template variant is ambiguous. Never guess an ISO checksum.
    newest compatible template as the source.
 4. Read its `.pkr.hcl` and inspect all files in the template directory for
    release-specific references before copying.
-5. Construct the target template name by replacing only the release component
-   in the source name. Preserve the existing naming style and suffix. For
-   example, Debian directory names may encode `13.2` as `13-2`, while Ubuntu
-   names may retain dots.
+5. Classify the source's family, architecture, Linux role when applicable,
+   locale, edition, and feature qualifiers from directory contents, then
+   reconstruct the full canonical target basename with the new release. Accept
+   only `ubuntu`, `debian`, `kali`, `windows`, and `windows-server`. Stop and
+   require an explicit naming-schema decision before constructing a name for
+   any other family. Use
+   `<os>-<release>-<arch>-<role>[-<qualifier>...]-<locale>` for `ubuntu`,
+   `debian`, and `kali`,
+   `windows-<release>-<arch>[-<qualifier>...]-<locale>` for Windows clients, and
+   `windows-server-<release>-<arch>[-<qualifier>...]-<locale>` for Windows
+   Server. Use dots for numeric releases, underscores for semantic alphanumeric
+   release parts and multiword qualifiers, and an explicit lowercase two-letter
+   locale as the final field. For example, reconstruct legacy
+   `debian-13-2-x64-no-server` as `debian-13.6.0-x64-server-no`. When updating
+   `windows-server-2019-x64-no_security_updates-us`, preserve
+   `no_security_updates` and `us` while changing only the release semantics.
 6. Stop and report the conflict if the target directory or target `.pkr.hcl`
    already exists. Do not merge into or overwrite an existing template.
 7. Copy the entire source directory to the new directory so supporting files,
@@ -102,21 +114,25 @@ architecture, ISO type, and filename. Obtain the checksum for that exact ISO.
 
 Before finishing:
 
-1. Confirm the target directory and `.pkr.hcl` basename are identical.
-2. Confirm `vm_name` is the target basename plus `-template`.
-3. Confirm `template_description` names the new OS release and no longer names
+1. Confirm the target basename uses the applicable family shape, dots for
+   numeric release components, underscores within semantic release or qualifier
+   fields, the Linux role position when applicable, and a final explicit locale.
+2. Confirm the target directory and `.pkr.hcl` basename are identical.
+3. Confirm `vm_name` is the canonical target basename plus exactly one
+   `-template` suffix.
+4. Confirm `template_description` names the new OS release and no longer names
    the source release.
-4. For Ubuntu, confirm the `proxmox-iso` source label matches the target major
+5. For Ubuntu, confirm the `proxmox-iso` source label matches the target major
    and minor release and every reference uses the new label.
-5. Confirm the ISO URL's filename is the file matched in the checksum manifest.
-6. For Debian, confirm `iso_url` uses `/cdimage/archive/<version>/`, not
+6. Confirm the ISO URL's filename is the file matched in the checksum manifest.
+7. For Debian, confirm `iso_url` uses `/cdimage/archive/<version>/`, not
    `/cdimage/release/<version>/`.
-7. Confirm the checksum has the declared algorithm prefix and expected digest
+8. Confirm the checksum has the declared algorithm prefix and expected digest
    length.
-8. Run `packer fmt -check <target.pkr.hcl>` when Packer is installed. If it
+9. Run `packer fmt -check <target.pkr.hcl>` when Packer is installed. If it
    fails only because formatting differs, run `packer fmt <target.pkr.hcl>` and
    check again.
-9. Run `git diff --check` and inspect the resulting diff to ensure the source
+10. Run `git diff --check` and inspect the resulting diff to ensure the source
    template was not modified and no unrelated files changed.
 
 Report the source and target template names, ISO URL, checksum source, files

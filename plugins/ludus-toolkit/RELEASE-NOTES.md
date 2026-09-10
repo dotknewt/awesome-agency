@@ -1,5 +1,17 @@
 # Ludus Toolkit Release Notes
 
+## v0.4.0 (2026-09-10)
+
+### Skills
+
+- **Ludus OS templates now have one canonical, machine-checkable naming
+  grammar.** Legacy names used the same short tokens for locale and feature
+  meaning and varied field order by OS family, making maintenance workflows
+  prone to silent misclassification. The new `ludus-template-naming` skill and
+  dependency-free validator require explicit final locales, semantic field
+  ordering, and unambiguous separators; the locale-change and OS-update skills
+  now reconstruct that form instead of preserving legacy positions.
+
 ## v0.3.0 (2026-09-09)
 
 ### OpenCode
