@@ -19,8 +19,15 @@ const LIM = { prompts: 12, promptChars: 240, files: 40, lastMsg: 800, compact: 4
 const GEN_START = '<!-- generated:start -->', GEN_END = '<!-- generated:end -->';
 const GEN_KEYS = new Set(['type', 'session_id', 'title', 'slug', 'date', 'started', 'updated', 'ended', 'status', 'model', 'cwd', 'git_branch', 'prompts', 'tools_used', 'files_touched', 'plans', 'tokens_in', 'tokens_out', 'tokens_cache_read']);
 const CURATED = ['## Summary', '## Decisions', '## Knowledge written', '## Open questions', '## Next step', '## Checkpoints'];
-const WRITE_TOOLS = new Set(['Write', 'Edit', 'MultiEdit', 'NotebookEdit', 'mcp__obsidian__write_note', 'mcp__obsidian__update_frontmatter', 'mcp__obsidian__patch_note', 'mcp__obsidian__move_note', 'mcp__obsidian__move_file']);
+const WRITE_TOOLS = new Set(['Write', 'Edit', 'write', 'edit', 'apply_patch', 'MultiEdit', 'NotebookEdit', 'mcp__obsidian__write_note', 'mcp__obsidian__update_frontmatter', 'mcp__obsidian__patch_note', 'mcp__obsidian__move_note', 'mcp__obsidian__move_file']);
 const SKIP = ['<local-command', '<command-name>', '<system-reminder>', '<task-notification>', '<bash-input>', '<bash-stdout>', '<bash-stderr>'];
+const normalizeTool = name => {
+  if (name === 'write') return 'Write';
+  if (name === 'edit') return 'Edit';
+  const m = /^(?:mcp[_-])?([^_]+)_(write_note|update_frontmatter|patch_note|move_note|move_file|delete_note|manage_tags)$/.exec(String(name || ''));
+  return m ? `mcp__${m[1]}__${m[2]}` : name;
+};
+const projectAbs = p => (typeof p === 'string' && p ? resolve(ROOT, p) : null);
 
 // ---------- dates (local) ----------
 const pad = n => String(n).padStart(2, '0');
@@ -95,16 +102,101 @@ function parseTranscript(path) {
         if (b.type === 'text' && b.text?.trim()) { t.lastAssistant = b.text.trim(); if (m.id) t.turnIds.add(m.id); }
         if (b.type === 'tool_use') {
           t.tools[b.name] = (t.tools[b.name] || 0) + 1;
-          if (!WRITE_TOOLS.has(b.name)) continue;
+          const name = normalizeTool(b.name);
+          if (!WRITE_TOOLS.has(name)) continue;
           const i = b.input || {};
-          let fp = i.file_path || i.notebook_path || null;
-          if (!fp && b.name.startsWith('mcp__obsidian__')) fp = mcpToAbs(i.newPath || i.path);
-          if (!fp) continue;
-          const rel = relToRoot(resolve(fp));
-          t.files.add(rel);
-          if (rel.startsWith('vault/plans/') && rel.endsWith('.md')) { t.plans.add(rel); if (['Write', 'Edit', 'MultiEdit'].includes(b.name)) t.plansWritten.add(rel); }
+          const paths = name.startsWith('mcp__obsidian__')
+            ? [i.path, i.oldPath, i.newPath].map(mcpToAbs).filter(Boolean)
+            : [i.file_path || i.notebook_path].map(projectAbs).filter(Boolean);
+          for (const fp of paths) {
+            const rel = relToRoot(fp);
+            t.files.add(rel);
+            if (rel.startsWith('vault/plans/') && rel.endsWith('.md')) {
+              t.plans.add(rel);
+              if (['Write', 'Edit', 'MultiEdit', 'mcp__obsidian__write_note', 'mcp__obsidian__update_frontmatter', 'mcp__obsidian__patch_note'].includes(name)) t.plansWritten.add(rel);
+            }
+          }
         }
       }
+    }
+  }
+  return t;
+}
+
+// OpenCode exposes persisted messages through its SDK rather than a Claude transcript.
+// Keep the downstream note serializer unchanged by adapting the SDK shape here.
+function parseMessages(messages) {
+  const t = { slug: null, title: null, branch: null, model: null, first: null, last: null, prompts: [], tools: {}, files: new Set(),
+    plans: new Set(), plansWritten: new Set(), usage: new Map(), turnIds: new Set(), lastAssistant: null, compactSummaries: [] };
+  const stamp = value => value ? new Date(value).toISOString() : '';
+  for (const item of messages || []) {
+    const info = item?.info || {};
+    const parts = Array.isArray(item?.parts) ? item.parts : [];
+    const timestamp = stamp(info.time?.created);
+    if (timestamp) { t.first ??= timestamp; t.last = timestamp; }
+    if (info.role === 'user') {
+      const text = parts.filter(p => p?.type === 'text' && !p.ignored).map(p => p.text).filter(Boolean).join('\n').trim();
+      if (parts.some(p => p?.type === 'compaction') && text) t.compactSummaries.push(redact(text).slice(0, LIM.compact));
+      if (text && !parts.some(p => p?.type === 'compaction')) t.prompts.push({ ts: timestamp, text: redact(text).replace(/\s+/g, ' ').slice(0, LIM.promptChars) });
+      continue;
+    }
+    if (info.role !== 'assistant') continue;
+    t.model ??= info.providerID && info.modelID ? `${info.providerID}/${info.modelID}` : null;
+    if (info.tokens && info.id) t.usage.set(info.id, {
+      input_tokens: info.tokens.input || 0,
+      output_tokens: info.tokens.output || 0,
+      cache_read_input_tokens: info.tokens.cache?.read || 0,
+      cache_creation_input_tokens: info.tokens.cache?.write || 0,
+    });
+    if (info.summary) {
+      const summary = parts.filter(p => p?.type === 'text').map(p => p.text).filter(Boolean).join('\n').trim();
+      if (summary) t.compactSummaries.push(redact(summary).slice(0, LIM.compact));
+    }
+    for (const part of parts) {
+      if (part?.type === 'text' && part.text?.trim()) { t.lastAssistant = part.text.trim(); t.turnIds.add(info.id); }
+      if (part?.type !== 'tool') continue;
+       const name = normalizeTool(part.tool || 'unknown');
+      t.tools[name] = (t.tools[name] || 0) + 1;
+      if (!WRITE_TOOLS.has(name)) continue;
+      const input = part.state?.input || {};
+       let filePath = input.filePath || input.file_path || input.notebook_path || null;
+       const paths = name.startsWith('mcp__obsidian__')
+         ? [input.path, input.oldPath, input.newPath].map(mcpToAbs).filter(Boolean)
+         : [filePath].map(projectAbs).filter(Boolean);
+        for (const fp of paths) t.files.add(relToRoot(fp));
+        if (name === 'apply_patch' && typeof input.patchText === 'string') {
+          let operation = null;
+          for (const line of input.patchText.split(/\r?\n/)) {
+            const file = /^\*\*\* (Add|Update|Delete) File: (.+)$/.exec(line);
+            if (file) {
+              operation = file[1];
+              const rel = relToRoot(projectAbs(file[2]));
+              t.files.add(rel);
+              if (rel.startsWith('vault/plans/') && rel.endsWith('.md')) {
+                t.plans.add(rel);
+                if (operation !== 'Delete') t.plansWritten.add(rel);
+              }
+              continue;
+            }
+            const move = /^\*\*\* Move to: (.+)$/.exec(line);
+            if (!move) continue;
+            const rel = relToRoot(projectAbs(move[1]));
+            t.files.add(rel);
+            if (rel.startsWith('vault/plans/') && rel.endsWith('.md')) {
+              t.plans.add(rel);
+              if (operation !== 'Delete') t.plansWritten.add(rel);
+            }
+          }
+        }
+       for (const candidate of (name.startsWith('mcp__obsidian__') ? [input.path, input.oldPath, input.newPath] : [filePath, input.movePath])) {
+         const absolute = name.startsWith('mcp__obsidian__') ? mcpToAbs(candidate) : projectAbs(candidate);
+         if (!absolute) continue;
+         const rel = relToRoot(absolute);
+         if (rel.startsWith('vault/plans/') && rel.endsWith('.md')) {
+           t.plans.add(rel);
+           if (['Write', 'Edit', 'write', 'edit', 'mcp__obsidian__write_note', 'mcp__obsidian__update_frontmatter', 'mcp__obsidian__patch_note'].includes(name)) t.plansWritten.add(rel);
+         }
+       }
     }
   }
   return t;
@@ -165,7 +257,7 @@ function main() {
   let input = {}; try { input = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch {}
   if (process.env.VAULT_SESSION_CAPTURE === '0' || input.agent_id) return;
   const sid = input.session_id; if (!sid) return;
-  const t = parseTranscript(input.transcript_path);
+  const t = Array.isArray(input.messages) ? parseMessages(input.messages) : parseTranscript(input.transcript_path);
   if (MODE === 'stop' && typeof input.last_assistant_message === 'string' && input.last_assistant_message.trim()) t.lastAssistant = input.last_assistant_message.trim(); // stdin is authoritative (transcript may lag)
   t.lastAssistant = redact(t.lastAssistant);
 
@@ -173,7 +265,7 @@ function main() {
 
   let notePath = findNote(sid);
   if (!notePath) {
-    if (t.prompts.length === 0 && (MODE === 'stop' || !t.lastAssistant)) return;      // no note for empty sessions
+     if (t.prompts.length === 0 && !t.lastAssistant && Object.keys(t.tools).length === 0) return;      // no note for empty sessions
     mkdirSync(DIR, { recursive: true });
     const base = `${day(t.first)}--${t.slug || slugify(t.title) || 'session-' + sid.slice(0, 8)}`;
     notePath = join(DIR, base + '.md');

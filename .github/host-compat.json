@@ -1,7 +1,7 @@
 {
   "$comment": "Host capability matrix for awesome-agency. Single source of truth for what Claude Code and GitHub Copilot CLI each honor. Consumed by .github/scripts/check-host-compat.py and documented in .claude/skills/host-portability/. Observed behavior outranks vendor documentation: where the two disagree, record what was actually seen and say so in `evidence`.",
-  "version": 1,
-  "updated": "2026-08-06",
+  "version": 2,
+  "updated": "2026-09-09",
   "hosts": {
     "claude": {
       "name": "Claude Code",
@@ -13,6 +13,13 @@
       "reference": false,
       "install": "/plugin install <plugin>@awesome-agency",
       "note": "Reads .claude-plugin/marketplace.json and dereferences symlinks at install time. Verified against ~/.copilot/installed-plugins/ on 2026-08-06, contradicting GitHub's docs."
+    },
+    "opencode": {
+      "name": "OpenCode",
+      "reference": false,
+      "version": "1.18.30",
+      "install": "python3 opencode/install.py install ENTRY --project PATH",
+      "note": "OpenCode receives generated skills, agents, commands, runtime adapters, and managed MCP settings; it does not consume the Claude marketplace directly."
     }
   },
 
@@ -49,6 +56,52 @@
     "Elicitation",
     "ElicitationResult"
   ],
+
+  "opencode": {
+    "version": "1.18.30",
+    "binary": "opencode",
+    "expected_entries": 76,
+    "runtime_adapter": "opencode/runtime/agency.js",
+    "hook_fields": ["matcher", "hooks", "type", "command", "args", "shell", "async", "timeout", "statusMessage"],
+    "mcp_server_fields": ["type", "command", "args", "env", "environment", "enabled", "url", "headers", "timeout"],
+    "hook_adapters": {
+      "SessionStart": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "system transform tests"},
+      "Stop": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "session.idle tests"},
+      "PostCompact": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "session.compacted tests"},
+      "SessionEnd": {"status": "unsupported", "evidence": "OpenCode 1.18.30 has no verified SessionEnd equivalent; idle remains open"},
+      "PreToolUse": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "tool.execute.before tests"},
+      "PostToolUse": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "tool.execute.after tests"}
+    },
+    "hook_declarations": [
+      {
+        "source": "plugins/superpowers/hooks/hooks.json",
+        "sha256": "47fd72cc8bedf31c72702b35b4ed7bab670294d658c4ce518330337525a3798b",
+        "adapter": "opencode/runtime/agency.js",
+        "coverage": ["opencode/tests/runtime.test.mjs"],
+        "test_names": ["only selected Superpowers injects one system instruction"]
+      },
+      {
+        "source": "plugins/vault-memory/hooks/hooks.json",
+        "sha256": "608287eb5c6d0c7a0e097b6410eb96cd214bf35c50700fc695bc0449795693dd",
+        "adapter": "opencode/runtime/agency.js",
+        "coverage": ["opencode/tests/runtime.test.mjs"],
+        "test_names": [
+          "vault briefing uses the active project and is restored after compaction",
+          "SDK capture is project/session isolated, redacted, curated, and remains open on idle",
+          "compaction capture keeps a checkpoint and opt-out skips SDK reads",
+          "native and MCP vault writes are denied before execution and unrelated tools pass through",
+          "clean post validation preserves the original output"
+        ]
+      }
+    ],
+    "evidence": {
+      "startup": "Measured with OpenCode 1.18.30: `opencode debug startup` exits 0 using temporary HOME/XDG directories and an explicitly configured local generated plugin.",
+      "discovery": "The CI discovery check uses temporary HOME/XDG directories, an empty temporary project except for generated artifacts, and an explicit plugin list containing only the generated local plugin; no global external plugins are available.",
+      "hooks": "Hook behavior is covered by `node --test opencode/tests/runtime.test.mjs` with a mocked OpenCode SDK. Live lifecycle hook execution is not claimed.",
+      "commands": "Installer projection tests generate OpenCode commands for every skill carrying `disable-model-invocation: true`.",
+      "connectivity": "No CI check connects to Ludus, Obsidian/mcpvault, Docker, or a paid model; those require user credentials/services."
+    }
+  },
 
   "capabilities": [
     {
