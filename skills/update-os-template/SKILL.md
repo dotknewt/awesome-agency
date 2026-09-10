@@ -32,7 +32,15 @@ template variant is ambiguous. Never guess an ISO checksum.
    newest compatible template as the source.
 4. Read its `.pkr.hcl` and inspect all files in the template directory for
    release-specific references before copying.
-5. Classify the source's family, architecture, Linux role when applicable,
+5. Classify an explicitly named environment before applying an OS-shaped
+   grammar. If the source is `flare-vm-no` or another `flare-vm-<locale>`
+   identity (including a terminal `-template` suffix), stop before selecting a
+   target name or entering generic release reconstruction. Require an explicit
+   naming decision: either retain the unchanged identity, or specify a new
+   named-environment identity and its schema. Never derive a release-bearing
+   FLARE name or silently reuse the unchanged identity for an OS upgrade. Do
+   not continue until that decision is recorded. For OS-shaped names only,
+   classify the source's family, architecture, Linux role when applicable,
    locale, edition, and feature qualifiers from directory contents, then
    reconstruct the full canonical target basename with the new release. Accept
    only `ubuntu`, `debian`, `kali`, `windows`, and `windows-server`. Stop and
@@ -48,6 +56,12 @@ template variant is ambiguous. Never guess an ISO checksum.
    `debian-13-2-x64-no-server` as `debian-13.6.0-x64-server-no`. When updating
    `windows-server-2019-x64-no_security_updates-us`, preserve
    `no_security_updates` and `us` while changing only the release semantics.
+   Add qualifiers only when directly evidenced by the template: retain
+   `enterprise`, explicitly identified `no_security_updates`, and genuine
+   `tpm` when a TPM device is configured. Never infer `tpm` from bypass registry
+   commands or harvest incidental installer/provisioner settings. Omit
+   `tpm_bypas`, `tpm_bypass`, `standard`, `standard_evaluation`, and
+   `desktop_experience` from names without changing template settings.
 6. Stop and report the conflict if the target directory or target `.pkr.hcl`
    already exists. Do not merge into or overwrite an existing template.
 7. Copy the entire source directory to the new directory so supporting files,
@@ -117,6 +131,9 @@ Before finishing:
 1. Confirm the target basename uses the applicable family shape, dots for
    numeric release components, underscores within semantic release or qualifier
    fields, the Linux role position when applicable, and a final explicit locale.
+   If the source is a named `flare-vm-<locale>` environment, confirm that the
+   explicit naming decision was recorded before any target name was chosen and
+   that no release, OS, architecture, edition, or feature was inferred.
 2. Confirm the target directory and `.pkr.hcl` basename are identical.
 3. Confirm `vm_name` is the canonical target basename plus exactly one
    `-template` suffix.
