@@ -27,6 +27,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install OpenCode Node test dependencies
+        run: npm ci --prefix opencode
+      - name: Typecheck SDD dispatcher
+        run: npm run typecheck:sdd --prefix opencode
+
       - name: Install OpenCode installer dependencies
         run: python -m pip install -r opencode/requirements.txt
 
@@ -46,6 +51,12 @@ jobs:
 
       - name: Run OpenCode runtime tests
         run: node --test opencode/tests/runtime.test.mjs
+
+      - name: Run OpenCode dispatcher and composition tests
+        run: |
+          node --import ./opencode/node_modules/tsx/dist/loader.mjs --test \
+            opencode/sdd/skills/subagent-model-policy/tests/dispatch.test.mjs \
+            opencode/tests/composition.test.mjs
 
       - name: Check generated OpenCode projection
         run: python .github/scripts/check-opencode.py

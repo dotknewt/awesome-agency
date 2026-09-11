@@ -214,6 +214,8 @@ def _apply_selection(
         getattr(args, "project", None),
     )
     for rel, data in contribution.items():
+        if rel in desired_all and desired_all[rel] != data:
+            raise StateError(f"collision: runtime contribution disagrees on {rel}")
         desired_all[rel] = data
         owners_all[rel] = list(sorted(selected))
         modes_all[rel] = 0o644
