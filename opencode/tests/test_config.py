@@ -24,6 +24,14 @@ from agency.config import (
 import install as installer
 
 
+SDD_PATHS = {
+    "skills/subagent-model-policy/SKILL.md",
+    "agents/sdd-worker.md",
+    "agents/sdd-reviewer.md",
+    "awesome-agency/runtime/subagent-dispatch.ts",
+}
+
+
 def _entry(name: str, source: Path, kind: str = "bundle") -> Entry:
     return Entry(name, source, "1.0.0", kind, {})
 
@@ -71,7 +79,54 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(runtime["entries"][0]["version"], "1.0.0")
         self.assertEqual(runtime["entries"][0]["source"], str(source.resolve()))
         self.assertIn("contribution", runtime["entries"][0])
-        self.assertIn("config", result[PLUGIN_PATH].decode())
+        plugin = result[PLUGIN_PATH].decode()
+        self.assertIn("import { AwesomeAgency }", plugin)
+        self.assertIn("import SubagentDispatch", plugin)
+        self.assertIn("export default async function", plugin)
+        self.assertNotIn("export { AwesomeAgency }", plugin)
+
+    def test_automatic_sdd_preserves_native_permissions(self):
+        from agency.content import _parse_frontmatter
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root / "bundle"
+            source.mkdir()
+            result = render_configuration([_entry("bundle", source)], root / ".opencode", root)
+
+        self.assertIn("skills/subagent-model-policy/SKILL.md", result)
+        self.assertIn("awesome-agency/runtime/subagent-dispatch.ts", result)
+        self.assertNotIn("plugins/subagent-dispatch.ts", result)
+        for role in ("worker", "reviewer"):
+            front, _ = _parse_frontmatter(result[f"agents/sdd-{role}.md"].decode())
+            self.assertEqual(front["model"], "openai/gpt-5.6-sol")
+            self.assertEqual(front["permission"]["task"], "deny")
+            self.assertEqual(front["permission"]["subagent_dispatch"], "deny")
+            if role == "reviewer":
+                self.assertEqual(front["permission"]["edit"], "deny")
+                self.assertEqual(front["permission"]["bash"], "deny")
+
+    def test_automatic_sdd_sources_are_package_relative_and_required(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root / "synthetic-repo" / "bundle"
+            source.mkdir(parents=True)
+            original_read_bytes = Path.read_bytes
+
+            def fail_sdd_worker(path):
+                if path.as_posix().endswith("sdd/agents/sdd-worker.md"):
+                    raise OSError("missing packaged source")
+                return original_read_bytes(path)
+
+            with mock.patch.object(Path, "read_bytes", fail_sdd_worker):
+                with self.assertRaisesRegex(StateError, "cannot read automatic SDD sources"):
+                    render_configuration([_entry("bundle", source)], root / ".opencode", root)
+
+    def test_empty_configuration_does_not_emit_automatic_sdd(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            result = render_configuration([], root / ".opencode", root)
+        self.assertTrue(SDD_PATHS.isdisjoint(result))
 
     def test_unrelated_user_config_and_mcp_are_not_owned(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -84,7 +139,10 @@ class ConfigTests(unittest.TestCase):
             source.mkdir()
             result = render_configuration([_entry("bundle", source)], root / ".opencode", root)
 
-        self.assertEqual(set(result), {RUNTIME_PATH, RUNTIME_AGENCY_PATH, RUNTIME_VAULT_PATH, PLUGIN_PATH})
+        self.assertEqual(
+            set(result),
+            {RUNTIME_PATH, RUNTIME_AGENCY_PATH, RUNTIME_VAULT_PATH, PLUGIN_PATH} | SDD_PATHS,
+        )
         self.assertNotIn(b"username", result[RUNTIME_PATH])
 
     def test_jsonc_and_competing_locations_are_read_without_rewrite(self):
@@ -231,7 +289,7 @@ class ConfigTests(unittest.TestCase):
             runtime = json.loads(result[RUNTIME_PATH].decode())
         self.assertEqual(runtime["entries"][0]["package_root"], "awesome-agency/packages/agents/issue-filer")
 
-    def test_runtime_and_plugin_share_ownership_across_partial_lifecycle(self):
+    def test_runtime_and_automatic_sdd_share_ownership_across_partial_lifecycle(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             repo = self._repo(root)
@@ -240,19 +298,103 @@ class ConfigTests(unittest.TestCase):
             self.assertEqual(installer.main(["install", "one", "--repo", str(repo), "--project", str(project)]), 0)
             self.assertEqual(installer.main(["install", "two", "--repo", str(repo), "--project", str(project)]), 0)
             state = json.loads((project / ".opencode" / "awesome-agency" / "state.json").read_text())
-            for rel in (RUNTIME_PATH, RUNTIME_AGENCY_PATH, RUNTIME_VAULT_PATH, PLUGIN_PATH):
+            for rel in (RUNTIME_PATH, RUNTIME_AGENCY_PATH, RUNTIME_VAULT_PATH, PLUGIN_PATH, *SDD_PATHS):
                 self.assertEqual(set(state["files"][rel]["owners"]), {"one", "two"})
 
             self.assertEqual(installer.main(["uninstall", "one", "--repo", str(repo), "--project", str(project)]), 0)
             runtime = json.loads((project / ".opencode" / RUNTIME_PATH).read_text())
             self.assertEqual([entry["name"] for entry in runtime["entries"]], ["two"])
             self.assertTrue((project / ".opencode" / PLUGIN_PATH).is_file())
+            state = json.loads((project / ".opencode" / "awesome-agency" / "state.json").read_text())
+            for rel in SDD_PATHS:
+                self.assertEqual(state["files"][rel]["owners"], ["two"])
+                self.assertTrue((project / ".opencode" / rel).is_file())
 
+            shutil.rmtree(repo)
             self.assertEqual(installer.main(["uninstall", "two", "--repo", str(repo), "--project", str(project)]), 0)
             self.assertFalse((project / ".opencode" / RUNTIME_PATH).exists())
             self.assertFalse((project / ".opencode" / RUNTIME_AGENCY_PATH).exists())
             self.assertFalse((project / ".opencode" / RUNTIME_VAULT_PATH).exists())
             self.assertFalse((project / ".opencode" / PLUGIN_PATH).exists())
+            for rel in SDD_PATHS:
+                self.assertFalse((project / ".opencode" / rel).exists())
+
+    def test_install_dry_run_leaves_no_target_files(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = self._repo(root)
+            project = root / "project"
+            project.mkdir()
+            self.assertEqual(installer.main([
+                "install", "one", "--repo", str(repo), "--project", str(project), "--dry-run",
+            ]), 0)
+            self.assertFalse((project / ".opencode").exists())
+
+    def test_update_introduces_automatic_sdd_into_old_installation(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = self._repo(root)
+            project = root / "project"
+            project.mkdir()
+
+            def old_configuration(entries, target, project_root):
+                rendered = render_configuration(entries, target, project_root)
+                rendered = {rel: data for rel, data in rendered.items() if rel not in SDD_PATHS}
+                rendered[PLUGIN_PATH] = (
+                    b'// Generated by awesome-agency. Do not edit; it is transaction-owned.\n'
+                    b'export { AwesomeAgency } from "../awesome-agency/runtime/agency.js"\n'
+                )
+                return rendered
+
+            with mock.patch.object(installer, "render_configuration", side_effect=old_configuration):
+                self.assertEqual(installer.main([
+                    "install", "one", "--repo", str(repo), "--project", str(project),
+                ]), 0)
+            target = project / ".opencode"
+            self.assertFalse(any((target / rel).exists() for rel in SDD_PATHS))
+
+            self.assertEqual(installer.main([
+                "update", "one", "--repo", str(repo), "--project", str(project),
+            ]), 0)
+            for rel in SDD_PATHS:
+                self.assertTrue((target / rel).is_file())
+
+    def test_conflicting_user_agent_refuses_install_without_other_writes(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = self._repo(root)
+            project = root / "project"
+            conflict = project / ".opencode" / "agents" / "sdd-worker.md"
+            conflict.parent.mkdir(parents=True)
+            conflict.write_bytes(b"user agent\n")
+
+            self.assertEqual(installer.main([
+                "install", "one", "--repo", str(repo), "--project", str(project),
+            ]), 1)
+            self.assertEqual(conflict.read_bytes(), b"user agent\n")
+            self.assertEqual(
+                [path.relative_to(project / ".opencode").as_posix() for path in (project / ".opencode").rglob("*") if path.is_file()],
+                ["agents/sdd-worker.md"],
+            )
+
+    def test_marketplace_runtime_collision_refuses_install_before_writing(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = self._repo(root)
+            project = root / "project"
+            project.mkdir()
+            original = installer.render_entry
+
+            def conflicting_render(entry, target, model):
+                rendered = original(entry, target, model)
+                rendered["agents/sdd-worker.md"] = b"incompatible marketplace agent\n"
+                return rendered
+
+            with mock.patch.object(installer, "render_entry", side_effect=conflicting_render):
+                self.assertEqual(installer.main([
+                    "install", "one", "--repo", str(repo), "--project", str(project),
+                ]), 1)
+            self.assertFalse((project / ".opencode").exists())
 
     def test_generated_hook_resolves_env_paths_and_preserves_user_precedence(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -278,7 +420,7 @@ console.log(JSON.stringify(cfg))
 """
             env = dict(os.environ, AGENCY_TOKEN="secret-value")
             result = subprocess.run(
-                ["node", "--input-type=module", "-e", script, str(target / PLUGIN_PATH), str(root)],
+                ["node", "--input-type=module", "-e", script, str(target / RUNTIME_AGENCY_PATH), str(root)],
                 check=False,
                 capture_output=True,
                 text=True,
