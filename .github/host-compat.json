@@ -1,7 +1,7 @@
 {
   "$comment": "Host capability matrix for awesome-agency. Single source of truth for what Claude Code and GitHub Copilot CLI each honor. Consumed by .github/scripts/check-host-compat.py and documented in .claude/skills/host-portability/. Observed behavior outranks vendor documentation: where the two disagree, record what was actually seen and say so in `evidence`.",
   "version": 2,
-  "updated": "2026-09-09",
+  "updated": "2026-09-11",
   "hosts": {
     "claude": {
       "name": "Claude Code",
@@ -60,7 +60,7 @@
   "opencode": {
     "version": "1.18.30",
     "binary": "opencode",
-    "expected_entries": 76,
+    "expected_entries": 77,
     "runtime_adapter": "opencode/runtime/agency.js",
     "hook_fields": ["matcher", "hooks", "type", "command", "args", "shell", "async", "timeout", "statusMessage"],
     "mcp_server_fields": ["type", "command", "args", "env", "environment", "enabled", "url", "headers", "timeout"],
@@ -96,7 +96,7 @@
     ],
     "evidence": {
       "startup": "Measured with OpenCode 1.18.30: `opencode debug startup` exits 0 using temporary HOME/XDG directories and an explicitly configured local generated plugin.",
-      "discovery": "The CI discovery check uses temporary HOME/XDG directories, an empty temporary project except for generated artifacts, and an explicit plugin list containing only the generated local plugin; no global external plugins are available.",
+      "discovery": "The CI discovery check uses temporary HOME/XDG directories, an empty temporary project except for generated artifacts, and an explicit plugin list containing only the generated local plugin; OpenCode 1.18.30 loads the installed wrapper's TypeScript dispatcher and resolves @opencode-ai/plugin/tool from the host without target/source/global project dependencies.",
       "hooks": "Hook behavior is covered by `node --test opencode/tests/runtime.test.mjs` with a mocked OpenCode SDK. Live lifecycle hook execution is not claimed.",
       "commands": "Installer projection tests generate OpenCode commands for every skill carrying `disable-model-invocation: true`.",
       "connectivity": "No CI check connects to Ludus, Obsidian/mcpvault, Docker, or a paid model; those require user credentials/services."

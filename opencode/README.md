@@ -1,6 +1,6 @@
 # OpenCode installer
 
-This installer projects the 76 entries in the Claude marketplace into an
+This installer projects the 77 entries in the Claude marketplace into an
 OpenCode project or global configuration. It uses the current checkout as its
 source; it never fetches, publishes, or edits the marketplace.
 
@@ -9,7 +9,7 @@ source; it never fetches, publishes, or edits the marketplace.
 - Python 3.10 or newer
 - `PyYAML` (frontmatter parsing) and `jsonschema` (schema checks):
   `python3 -m pip install -r opencode/requirements.txt`
-- OpenCode 1.18.30 or newer for runtime use. CI measures 1.18.30.
+- OpenCode 1.18.30 is the measured runtime target.
 - Node.js only for the runtime tests and vault helpers.
 - Docker only when using the Ludus MCP gateway.
 
@@ -59,6 +59,29 @@ Explicit-only skills (`disable-model-invocation: true`) also receive a
 generated `.opencode/commands/<skill>.md` entry. This is an OpenCode command
 projection, not a claim that OpenCode honors Claude frontmatter fields.
 
+## Automatic SDD support
+
+Every nonempty install or update automatically includes the
+`subagent-model-policy` skill, `sdd-worker` and `sdd-reviewer` agents, and the
+`subagent_dispatch` tool. They are OpenCode runtime support rather than
+marketplace entries, so no extra selection is needed. The dispatcher defaults
+workers and reviewers to `openai/gpt-5.6-sol`; an explicit `model` argument to
+`subagent_dispatch` takes precedence, while a resumed task without an override
+keeps its previous model. The dispatcher verifies that the selected model is
+available and that the child actually used it instead of silently falling back.
+
+Installer `--model` is separate: it overrides only marketplace agents selected
+by that install or update command. It does not change the automatic SDD default.
+The controller must have the selected provider/model configured when it invokes
+the dispatcher; installing content does not contact a provider or start a model.
+
+OpenCode 1.18.30 was measured in isolated HOME/XDG directories loading the
+installed generated JavaScript wrapper, its TypeScript dispatcher import, and
+`@opencode-ai/plugin/tool` from the host runtime. The installed target needs no
+`npm install`, `package.json`, source checkout, or user-global plugin for that
+startup path. This SDK and TypeScript loading behavior is a measured 1.18.30
+prerequisite; re-run the isolated runtime check when changing OpenCode versions.
+
 ## Update, uninstall, and recovery
 
 Update all entries already selected in the target from the current checkout, or
@@ -89,7 +112,9 @@ The managed state records owners, versions, models, modes, and hashes under
 `.opencode/awesome-agency/`. Local edits to managed files are never silently
 overwritten or deleted. An update or uninstall reports a conflict; save or
 revert the local edit, then repeat the command. If another selected entry owns
-the same file, removing one entry preserves it. If the marketplace catalog and
+the same file, removing one entry preserves it. Automatic SDD support is shared
+by every selected entry, so partial uninstall retains it and uninstalling the
+final entry removes its unmodified managed files. If the marketplace catalog and
 source pools are unavailable, uninstall still works from the persisted state
 and managed runtime as long as `opencode/install.py` remains available. The
 installer itself is not copied into the target, so removing the entire
@@ -157,10 +182,15 @@ not lost.
 Run the checks locally:
 
 ```sh
+npm ci --prefix opencode
+npm run typecheck:sdd --prefix opencode
 python3 .github/scripts/check-opencode.py
 python3 .github/scripts/check-opencode.py --runtime
 python3 -m unittest discover -s opencode/tests -p 'test_*.py' -v
 node --test opencode/tests/runtime.test.mjs
+node --import ./opencode/node_modules/tsx/dist/loader.mjs --test \
+  opencode/sdd/skills/subagent-model-policy/tests/dispatch.test.mjs \
+  opencode/tests/composition.test.mjs
 ```
 
 The projection check renders every marketplace entry individually, verifies
@@ -172,3 +202,6 @@ generated plugin; it does not use global external plugins, starts no real MCP
 service, and uses no credentials. It asserts that OpenCode's resolved config
 lists the generated plugin and contains a synthetic disabled MCP server
 injected by that plugin's config hook. It never edits a user's OpenCode config.
+The same discovery run requires the automatic policy skill and both SDD agents,
+including their structured model and permission rules. Quit and restart
+OpenCode after every install or update so these generated contributions reload.

@@ -19,6 +19,86 @@ spec.loader.exec_module(checker)
 
 
 class CheckerRegressionTests(unittest.TestCase):
+    def test_automatic_runtime_conflict_with_rendered_sdd_agent_fails(self):
+        desired = {"agents/sdd-worker.md": b"marketplace agent"}
+        owners = {"agents/sdd-worker.md": ["conflicting-entry"]}
+        with self.assertRaisesRegex(RuntimeError, "automatic-runtime disagrees on agents/sdd-worker.md"):
+            checker.merge_rendered(
+                desired,
+                owners,
+                "automatic-runtime",
+                {"agents/sdd-worker.md": b"automatic SDD agent"},
+                ["conflicting-entry"],
+            )
+
+    def test_discovered_sdd_agent_requires_structured_model_and_permissions(self):
+        output = json.dumps({
+            "model": {"providerID": "openai", "modelID": "gpt-5.6-sol"},
+            "permission": [
+                {"permission": "*", "action": "allow", "pattern": "*"},
+                {"permission": "task", "action": "deny", "pattern": "*"},
+                {"permission": "subagent_dispatch", "action": "deny", "pattern": "*"},
+            ],
+        }).encode()
+        checker.assert_discovered_agent(
+            output,
+            "sdd-worker",
+            {"task": "deny", "subagent_dispatch": "deny"},
+        )
+        bad = json.dumps({
+            "model": {"providerID": "openai", "modelID": "gpt-5.6-luna"},
+            "permission": [
+                {"permission": "task", "action": "deny", "pattern": "*"},
+                {"permission": "subagent_dispatch", "action": "deny", "pattern": "*"},
+            ],
+        }).encode()
+        with self.assertRaisesRegex(RuntimeError, "model differs"):
+            checker.assert_discovered_agent(
+                bad,
+                "sdd-worker",
+                {"task": "deny", "subagent_dispatch": "deny"},
+            )
+
+    def test_discovered_sdd_agent_rejects_unsafe_or_malformed_permission_rules(self):
+        base = {
+            "model": {"providerID": "openai", "modelID": "gpt-5.6-sol"},
+            "permission": [
+                {"permission": "*", "action": "allow", "pattern": "*"},
+                {"permission": "task", "action": "deny", "pattern": "*"},
+                {"permission": "subagent_dispatch", "action": "deny", "pattern": "*"},
+            ],
+        }
+        cases = {
+            "missing deny": [base["permission"][0], base["permission"][2]],
+            "wrong action": [base["permission"][0], {"permission": "task", "action": "ask", "pattern": "*"}, base["permission"][2]],
+            "later wildcard allow": [*base["permission"], {"permission": "*", "action": "allow", "pattern": "*"}],
+            "malformed rule": [*base["permission"], {"permission": "task", "action": "invalid", "pattern": "*"}],
+        }
+        for label, permissions in cases.items():
+            with self.subTest(label=label), self.assertRaises(RuntimeError):
+                checker.assert_discovered_agent(
+                    json.dumps({**base, "permission": permissions}).encode(),
+                    "sdd-worker",
+                    {"task": "deny", "subagent_dispatch": "deny"},
+                )
+
+    def test_isolated_environment_removes_opencode_and_node_injection(self):
+        injected = {
+            "OPENCODE_CONFIG": "/tmp/injected.json",
+            "OPENCODE_CONFIG_CONTENT": '{"plugin":["injected"]}',
+            "OPENCODE_CONFIG_DIR": "/tmp/injected",
+            "OPENCODE_FAKE_FUTURE_OVERRIDE": "injected",
+            "NODE_PATH": "/tmp/modules",
+            "NODE_OPTIONS": "--import=/tmp/injected.mjs",
+            "PATH": "/usr/bin",
+        }
+        with tempfile.TemporaryDirectory() as raw, patch.dict(checker.os.environ, injected, clear=True):
+            env = checker.isolated_environment(Path(raw))
+        self.assertEqual(env["PATH"], "/usr/bin")
+        self.assertFalse(any(key.startswith("OPENCODE_") for key in env))
+        self.assertNotIn("NODE_PATH", env)
+        self.assertNotIn("NODE_OPTIONS", env)
+
     def test_disabled_plugin_proof_requires_local_plugin_and_disabled_server(self):
         plugin = Path("/tmp/project/.opencode/plugins/awesome-agency.js")
         output = json.dumps({
@@ -26,6 +106,15 @@ class CheckerRegressionTests(unittest.TestCase):
             "mcp": {"synthetic": {"enabled": False}},
         }).encode()
         checker.assert_debug_config(output, plugin, "synthetic")
+        with self.assertRaisesRegex(RuntimeError, "exactly the generated local plugin"):
+            checker.assert_debug_config(
+                json.dumps({
+                    "plugin": [plugin.as_uri(), "file:///tmp/injected-plugin.js"],
+                    "mcp": {"synthetic": {"enabled": False}},
+                }).encode(),
+                plugin,
+                "synthetic",
+            )
         with self.assertRaises(RuntimeError):
             checker.assert_debug_config(
                 json.dumps({"plugin": [plugin.as_uri()], "mcp": {"synthetic": {"enabled": True}}}).encode(),

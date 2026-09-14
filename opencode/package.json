@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "scripts": {
+    "test:sdd": "node --import ./node_modules/tsx/dist/loader.mjs --test sdd/skills/subagent-model-policy/tests/dispatch.test.mjs",
+    "typecheck:sdd": "tsc --noEmit --target ES2023 --module NodeNext --moduleResolution NodeNext --strict --skipLibCheck sdd/plugins/subagent-dispatch.ts"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.18.30",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3"
+  }
+}

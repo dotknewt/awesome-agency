@@ -56,6 +56,24 @@ def check_public_files(name: str, rendered: dict[str, bytes]) -> None:
                 fail(f"{name}: {relative} has no OpenCode frontmatter")
 
 
+def merge_rendered(
+    desired: dict[str, bytes],
+    owners: dict[str, list[str]],
+    name: str,
+    rendered: dict[str, bytes],
+    owner_names: list[str],
+) -> None:
+    """Merge one rendered contribution without hiding byte-level collisions."""
+    for relative, data in rendered.items():
+        if relative in desired and desired[relative] != data:
+            fail(f"joint install collision: {name} disagrees on {relative}")
+        desired[relative] = data
+        path_owners = owners.setdefault(relative, [])
+        for owner in owner_names:
+            if owner not in path_owners:
+                path_owners.append(owner)
+
+
 def hook_files(source: Path):
     yield from (path for path in source.rglob("hooks.json") if path.is_file())
 
@@ -181,13 +199,10 @@ def check_projection(metadata: dict) -> tuple[int, list[str]]:
         owners: dict[str, list[str]] = {}
         desired: dict[str, bytes] = {}
         for name, rendered in rendered_by_name.items():
-            for relative, data in rendered.items():
-                if relative in desired and desired[relative] != data:
-                    fail(f"joint install collision: {name} disagrees on {relative}")
-                desired[relative] = data
-                owners.setdefault(relative, []).append(name)
-        desired.update(render_configuration(list(entries.values()), target, None))
-        owners.update({relative: sorted(entries) for relative in desired if relative not in owners})
+            merge_rendered(desired, owners, name, rendered, [name])
+        contribution = render_configuration(list(entries.values()), target, None)
+        check_public_files("automatic-runtime", contribution)
+        merge_rendered(desired, owners, "automatic-runtime", contribution, sorted(entries))
         plan_operation(target, desired, owners)
 
         explicit = set()
@@ -258,9 +273,12 @@ def assert_debug_config(output: bytes, plugin_path: Path, synthetic_server: str)
         fail(f"OpenCode debug config was not JSON: {error}")
     plugins = config.get("plugin", [])
     plugin_uri = plugin_path.resolve().as_uri()
-    if not any(isinstance(item, str) and (item in {str(plugin_path), plugin_uri})
-               for item in plugins):
-        fail(f"OpenCode debug config did not list the generated local plugin: {plugin_path}")
+    accepted = {str(plugin_path.resolve()), plugin_uri}
+    if not isinstance(plugins, list) or len(plugins) != 1 or plugins[0] not in accepted:
+        fail(
+            "OpenCode debug config plugin list was not exactly the generated local plugin: "
+            f"expected one of {sorted(accepted)!r}, found {plugins!r}"
+        )
     server = config.get("mcp", {}).get(synthetic_server)
     if not isinstance(server, dict) or server.get("enabled") is not False:
         fail(f"OpenCode config hook did not inject disabled synthetic MCP server {synthetic_server!r}")
@@ -276,6 +294,68 @@ def assert_discovered_skills(output: bytes, expected_skills: set[str]) -> None:
     missing = expected_skills - names
     if missing:
         fail(f"OpenCode skill discovery missed installed skills: {', '.join(sorted(missing))}")
+
+
+def assert_discovered_agent(output: bytes, name: str, expected_permissions: dict[str, str]) -> dict:
+    try:
+        agent = json.loads(output.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        fail(f"OpenCode debug agent {name} output was not JSON: {error}")
+    if not isinstance(agent, dict):
+        fail(f"OpenCode debug agent {name} output was not an object")
+    model = agent.get("model")
+    if model != {"providerID": "openai", "modelID": "gpt-5.6-sol"}:
+        fail(f"OpenCode agent {name} model differs: {model!r}")
+    permissions = agent.get("permission")
+    if not isinstance(permissions, list):
+        fail(f"OpenCode agent {name} has no permission rule list: {permissions!r}")
+    for index, rule in enumerate(permissions):
+        if (
+            not isinstance(rule, dict)
+            or not isinstance(rule.get("permission"), str)
+            or not isinstance(rule.get("pattern"), str)
+            or rule.get("action") not in {"allow", "ask", "deny"}
+        ):
+            fail(f"OpenCode agent {name} has malformed permission rule {index}: {rule!r}")
+    for permission, expected in expected_permissions.items():
+        direct = [
+            rule for rule in permissions
+            if rule["permission"] == permission and rule["pattern"] == "*"
+        ]
+        if not direct or direct[-1]["action"] != expected:
+            actual = direct[-1]["action"] if direct else None
+            fail(
+                f"OpenCode agent {name} permission {permission!r} lacks the required "
+                f"global {expected!r} rule: found {actual!r}"
+            )
+        actual = None
+        for rule in permissions:
+            if rule["pattern"] == "*" and rule["permission"] in {"*", permission}:
+                actual = rule["action"]
+        if actual != expected:
+            fail(
+                f"OpenCode agent {name} effective permission {permission!r} differs: "
+                f"expected {expected!r}, found {actual!r}"
+            )
+    return agent
+
+
+def isolated_environment(root: Path) -> dict[str, str]:
+    """Return an environment that cannot inject OpenCode config or Node modules."""
+    env = {
+        key: value for key, value in os.environ.items()
+        if not key.startswith("OPENCODE_") and key not in {"NODE_PATH", "NODE_OPTIONS"}
+    }
+    env.update({
+        "HOME": str(root / "home"),
+        "XDG_CONFIG_HOME": str(root / "config"),
+        "XDG_DATA_HOME": str(root / "data"),
+        "XDG_CACHE_HOME": str(root / "cache"),
+        "XDG_STATE_HOME": str(root / "state"),
+        "LUDUS_URL": "",
+        "LUDUS_API_KEY": "",
+    })
+    return env
 
 
 def isolated_project(root: Path, name: str) -> Path:
@@ -301,25 +381,17 @@ def install_entries(project: Path, entries: dict, env: dict[str, str]) -> None:
 
 def run_runtime_discovery(metadata: dict) -> None:
     binary = metadata["binary"]
-    try:
-        version = subprocess.run([binary, "--version"], check=True, capture_output=True, text=True).stdout.strip()
-    except (OSError, subprocess.CalledProcessError) as error:
-        fail(f"cannot execute pinned OpenCode discovery binary {binary}: {error}")
-    if version != metadata["version"]:
-        fail(f"OpenCode version mismatch: expected {metadata['version']}, found {version}")
     with tempfile.TemporaryDirectory(prefix="awesome-agency-opencode-runtime-") as temp:
         root = Path(temp)
-        home = root / "home"
-        env = os.environ.copy()
-        env.update({
-            "HOME": str(home),
-            "XDG_CONFIG_HOME": str(root / "config"),
-            "XDG_DATA_HOME": str(root / "data"),
-            "XDG_CACHE_HOME": str(root / "cache"),
-            "XDG_STATE_HOME": str(root / "state"),
-            "LUDUS_URL": "",
-            "LUDUS_API_KEY": "",
-        })
+        env = isolated_environment(root)
+        try:
+            version = subprocess.run(
+                [binary, "--version"], env=env, check=True, capture_output=True, text=True,
+            ).stdout.strip()
+        except (OSError, subprocess.CalledProcessError) as error:
+            fail(f"cannot execute pinned OpenCode discovery binary {binary}: {error}")
+        if version != metadata["version"]:
+            fail(f"OpenCode version mismatch: expected {metadata['version']}, found {version}")
         entries = load_entries(ROOT)
         project = isolated_project(root, "all-entries")
         target = project / ".opencode"
@@ -383,14 +455,29 @@ def run_runtime_discovery(metadata: dict) -> None:
         )
         if skill.returncode != 0:
             fail(f"OpenCode skill discovery failed:\n{skill.stderr.decode(errors='replace')}")
-        assert_discovered_skills(skill.stdout, {"doublecheck"})
+        assert_discovered_skills(skill.stdout, {"doublecheck", "subagent-model-policy"})
         agent = subprocess.run(
             [binary, "debug", "agent", "doublecheck"], cwd=runtime_project, env=env,
             check=False, capture_output=True,
         )
         if agent.returncode != 0 or b"doublecheck" not in agent.stdout:
             fail(f"OpenCode agent discovery did not expose the installed projection:\n{agent.stderr.decode(errors='replace')}")
-    print(f"OpenCode {version} isolated startup/discovery passed (local plugin enabled, temporary HOME/XDG, no MCP credentials)")
+        for name, permissions in {
+            "sdd-worker": {"task": "deny", "subagent_dispatch": "deny"},
+            "sdd-reviewer": {"edit": "deny", "bash": "deny", "task": "deny", "subagent_dispatch": "deny"},
+        }.items():
+            discovered = subprocess.run(
+                [binary, "debug", "agent", name], cwd=runtime_project, env=env,
+                check=False, capture_output=True,
+            )
+            if discovered.returncode != 0:
+                fail(f"OpenCode agent discovery failed for {name}:\n{discovered.stderr.decode(errors='replace')}")
+            assert_discovered_agent(discovered.stdout, name, permissions)
+    print(
+        f"OpenCode {version} isolated startup/discovery passed "
+        "(installed TS dispatcher + host SDK loaded, local plugin enabled, "
+        "temporary HOME/XDG, no MCP credentials)"
+    )
 
 
 def main() -> int:
