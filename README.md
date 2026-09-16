@@ -71,6 +71,7 @@ conflicts before writing instead of overwriting user files.
 | `docker-toolkit` | Multi-stage Dockerfiles and MCP-server containerization. |
 | `python-mcp-development` | Python MCP server development with FastMCP guidance, generation, and best-practice instructions. |
 | `ludus-toolkit` | Ludus cyber-range skills + bundled MCP server. |
+| `libvirt-toolkit` | Local or remote `qemu:///session` VM lifecycle, immutable QCOW2 templates, linked working VMs, powered-off toolkit snapshots, and an evidence-bearing handoff into bundled guest access. |
 | `superpowers` | Vendored [obra/superpowers](https://github.com/obra/superpowers) (MIT) — brainstorm → plan → subagent-driven TDD → review, with a SessionStart skill injector. |
 | `project-workflow` | Spec-gap interview before any code — `project-manager` sequences `project-spec` (goal/scope/non-goals), `project-verify` (measurable criteria + external signals), and `project-environment` (AGENTS.md/KB/skill/guardrail gaps with drafted hooks) into `specs/<slug>/`, human-signed-off at each checkpoint. |
 
@@ -80,9 +81,18 @@ and are no longer installable; `agent-doublecheck` was retired in favour of the
 standalone `doublecheck-agent` entry. The skills those bundles carried are still
 individually installable from the pools.
 
-`work-object-guard` and `extension-audit` are the skills without standalone
-entries — they depend on scripts or hooks shipped by parked bundles, so they
-stay unshipped until those bundles return.
+`work-object-guard`, `extension-audit`, and `libvirt-vms` are the skills without
+standalone entries. The first two depend on scripts or hooks shipped by parked
+bundles and stay unshipped until those bundles return; `libvirt-vms` ships only
+inside `libvirt-toolkit` because its lifecycle operations require that bundle's
+MCP server.
+
+`guest-access` is also independently installable for provider-neutral SSH trust,
+authentication, project transfer, and regular-user execution. Install
+`libvirt-toolkit` to receive it together with the libvirt provider workflow. After
+updating the marketplace or generated OpenCode projection, refresh/update the
+selected entry and restart the host application; this repository does not refresh
+other projects' installed copies automatically.
 Similarly, prefer installing `steward` over the standalone `maintain`
 skill — the orchestrator dispatches the five maintainer agents that only ship
 with the bundle.

@@ -1,6 +1,6 @@
 # OpenCode installer
 
-This installer projects the 77 entries in the Claude marketplace into an
+This installer projects the 78 entries in the Claude marketplace into an
 OpenCode project or global configuration. It uses the current checkout as its
 source; it never fetches, publishes, or edits the marketplace.
 
@@ -9,9 +9,12 @@ source; it never fetches, publishes, or edits the marketplace.
 - Python 3.10 or newer
 - `PyYAML` (frontmatter parsing) and `jsonschema` (schema checks):
   `python3 -m pip install -r opencode/requirements.txt`
-- OpenCode 1.18.30 is the measured runtime target.
+- An installed OpenCode CLI is needed only for isolated runtime discovery;
+  compatibility is validated by behavior rather than an exact version.
 - Node.js only for the runtime tests and vault helpers.
 - Docker only when using the Ludus MCP gateway.
+- `uv`, `virsh`, and `qemu-img` on a server host only when using
+  `libvirt-toolkit`; the launcher acquires pinned `mcp==2.2.0`.
 
 The installer does not need OpenCode, Node, Docker, an API key, or network
 credentials. Runtime integration tests use a mocked SDK. The schema test is
@@ -75,12 +78,13 @@ by that install or update command. It does not change the automatic SDD default.
 The controller must have the selected provider/model configured when it invokes
 the dispatcher; installing content does not contact a provider or start a model.
 
-OpenCode 1.18.30 was measured in isolated HOME/XDG directories loading the
-installed generated JavaScript wrapper, its TypeScript dispatcher import, and
-`@opencode-ai/plugin/tool` from the host runtime. The installed target needs no
-`npm install`, `package.json`, source checkout, or user-global plugin for that
-startup path. This SDK and TypeScript loading behavior is a measured 1.18.30
-prerequisite; re-run the isolated runtime check when changing OpenCode versions.
+OpenCode 1.18.31 was measured on 2026-09-16 in isolated HOME/XDG directories
+loading the installed generated JavaScript wrapper, its TypeScript dispatcher
+import, and `@opencode-ai/plugin/tool` from the host runtime. The installed
+projection needs no `npm install`, `package.json`, source checkout, or
+user-global plugin for that startup path. Re-run the isolated runtime check
+against the installed CLI to validate this SDK and TypeScript loading behavior;
+the SDK and lockfile pins are test dependency versions, not a runtime target.
 
 ## Update, uninstall, and recovery
 
@@ -152,12 +156,28 @@ gateway when that bundle's service is selected.
 active project's `vault/` directory. Install Node/npx and configure the vault
 layout before using its MCP tools. The runtime also provides native OpenCode
 tool checks and vault briefing/capture. No installer or CI check connects to
-Ludus, Docker, Obsidian, mcpvault, or a model service.
+Ludus, Docker, Obsidian, mcpvault, libvirt, a real VM, or a model service.
+
+`libvirt-toolkit` projects its bundled PEP 723 launcher as a local MCP server:
+
+```text
+uv run --script <installed-package>/mcp/libvirt/server.py
+```
+
+The installed package is self-contained after the source checkout is removed.
+The server always controls the account's host-local `qemu:///session`; state,
+journals, domain ownership, and absolute disk/NVRAM paths belong to that server
+host. For SSH deployment, copy the complete `mcp/libvirt/` directory to an
+absolute path owned by the remote VM owner and configure a distinct connection
+name. See `plugins/libvirt-toolkit/README.md` for the schema-valid OpenCode
+example, dependencies, snapshot model, and manual journal recovery. Installer
+and CI checks disable the managed `libvirt` connection and never start its real
+server.
 
 ## Lifecycle differences
 
-OpenCode 1.18.30 was measured with `opencode debug startup` using an explicitly
-configured generated local plugin. The
+OpenCode 1.18.31 was measured on 2026-09-16 with `opencode debug startup` using
+an explicitly configured generated local plugin. The
 runtime adapter is tested with a mocked SDK, not by claiming live lifecycle
 coverage. It maps chat/system transforms, `session.idle`,
 `session.compacted`, `tool.execute.before`, and `tool.execute.after` to the

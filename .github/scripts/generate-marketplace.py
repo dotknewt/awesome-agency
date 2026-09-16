@@ -24,11 +24,11 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / ".claude-plugin" / "marketplace.json"
 
 # Skills that only work inside their bundle (they depend on plugin-level
-# scripts or hooks) and therefore get no standalone micro-entry. Both owning
-# bundles are currently parked under wip/plugins/, so these stay unshipped.
+# scripts, hooks, or MCP servers) and therefore get no standalone micro-entry.
 BUNDLE_BOUND_SKILLS = {
     "work-object-guard",  # needs ${CLAUDE_PLUGIN_ROOT}/scripts + PreToolUse hook
     "extension-audit",  # ships a bundled CLI under scripts/
+    "libvirt-vms",  # needs libvirt-toolkit's bundled MCP server
 }
 # Skill dirs that are not shippable skills at all.
 NON_SKILL_DIRS = {"in-progress"}
@@ -40,6 +40,7 @@ BUNDLE_ORDER = [
     "docker-toolkit",
     "python-mcp-development",
     "ludus-toolkit",
+    "libvirt-toolkit",
     "memory-mcp",
     "vault-memory",
     "superpowers",

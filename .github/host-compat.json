@@ -1,7 +1,7 @@
 {
   "$comment": "Host capability matrix for awesome-agency. Single source of truth for what Claude Code and GitHub Copilot CLI each honor. Consumed by .github/scripts/check-host-compat.py and documented in .claude/skills/host-portability/. Observed behavior outranks vendor documentation: where the two disagree, record what was actually seen and say so in `evidence`.",
   "version": 2,
-  "updated": "2026-09-11",
+  "updated": "2026-09-16",
   "hosts": {
     "claude": {
       "name": "Claude Code",
@@ -17,7 +17,6 @@
     "opencode": {
       "name": "OpenCode",
       "reference": false,
-      "version": "1.18.30",
       "install": "python3 opencode/install.py install ENTRY --project PATH",
       "note": "OpenCode receives generated skills, agents, commands, runtime adapters, and managed MCP settings; it does not consume the Claude marketplace directly."
     }
@@ -58,9 +57,8 @@
   ],
 
   "opencode": {
-    "version": "1.18.30",
     "binary": "opencode",
-    "expected_entries": 77,
+    "expected_entries": 79,
     "runtime_adapter": "opencode/runtime/agency.js",
     "hook_fields": ["matcher", "hooks", "type", "command", "args", "shell", "async", "timeout", "statusMessage"],
     "mcp_server_fields": ["type", "command", "args", "env", "environment", "enabled", "url", "headers", "timeout"],
@@ -68,7 +66,7 @@
       "SessionStart": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "system transform tests"},
       "Stop": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "session.idle tests"},
       "PostCompact": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "session.compacted tests"},
-      "SessionEnd": {"status": "unsupported", "evidence": "OpenCode 1.18.30 has no verified SessionEnd equivalent; idle remains open"},
+      "SessionEnd": {"status": "unsupported", "evidence": "Measured with OpenCode 1.18.30 on 2026-09-11: no verified SessionEnd equivalent; idle remains open"},
       "PreToolUse": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "tool.execute.before tests"},
       "PostToolUse": {"status": "adapter", "runtime": "opencode/runtime/agency.js", "evidence": "tool.execute.after tests"}
     },
@@ -95,11 +93,11 @@
       }
     ],
     "evidence": {
-      "startup": "Measured with OpenCode 1.18.30: `opencode debug startup` exits 0 using temporary HOME/XDG directories and an explicitly configured local generated plugin.",
-      "discovery": "The CI discovery check uses temporary HOME/XDG directories, an empty temporary project except for generated artifacts, and an explicit plugin list containing only the generated local plugin; OpenCode 1.18.30 loads the installed wrapper's TypeScript dispatcher and resolves @opencode-ai/plugin/tool from the host without target/source/global project dependencies.",
+      "startup": "Measured with installed OpenCode 1.18.31 on 2026-09-16: `opencode debug startup` exits 0 using temporary HOME/XDG directories and an explicitly configured local generated plugin. CI repeats this behavioral check against latest stable; the measured version is evidence, not a compatibility target.",
+      "discovery": "Measured with installed OpenCode 1.18.31 on 2026-09-16: the isolated discovery check uses temporary HOME/XDG directories, an empty temporary project except for generated artifacts, disabled real MCP connections, and an explicit plugin list containing only the generated local plugin; the installed wrapper's TypeScript dispatcher loads and resolves @opencode-ai/plugin/tool from the host without target/source/global project dependencies. CI reruns these behavioral checks against latest stable.",
       "hooks": "Hook behavior is covered by `node --test opencode/tests/runtime.test.mjs` with a mocked OpenCode SDK. Live lifecycle hook execution is not claimed.",
       "commands": "Installer projection tests generate OpenCode commands for every skill carrying `disable-model-invocation: true`.",
-      "connectivity": "No CI check connects to Ludus, Obsidian/mcpvault, Docker, or a paid model; those require user credentials/services."
+      "connectivity": "No CI check connects to libvirt or a real VM, Ludus, Obsidian/mcpvault, Docker, or a paid model; those require separately provisioned services, credentials, or explicit live-test authorization."
     }
   },
 

@@ -1,0 +1,17 @@
+{
+  "name": "libvirt-toolkit",
+  "version": "1.0.7",
+  "description": "Safe libvirt lifecycle and provider handoff for publishing QCOW2 templates, managing qemu:///session VMs, and continuing into verified guest access.",
+  "author": {
+    "name": "dotKnewt",
+    "email": "dotknewt@keemail.me"
+  },
+  "repository": "https://github.com/dotknewt/awesome-agency",
+  "license": "MIT",
+  "keywords": [
+    "libvirt",
+    "qemu",
+    "virtual-machines",
+    "mcp"
+  ]
+}

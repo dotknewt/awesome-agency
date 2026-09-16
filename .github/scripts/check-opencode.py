@@ -363,7 +363,9 @@ def isolated_project(root: Path, name: str) -> Path:
     project.mkdir()
     (project / "opencode.json").write_text(
         json.dumps({"$schema": "https://opencode.ai/config.json", "mcp": {
-            "ludus": {"enabled": False}, "obsidian": {"enabled": False}
+            "libvirt": {"enabled": False},
+            "ludus": {"enabled": False},
+            "obsidian": {"enabled": False},
         }}), encoding="utf-8"
     )
     return project
@@ -389,9 +391,7 @@ def run_runtime_discovery(metadata: dict) -> None:
                 [binary, "--version"], env=env, check=True, capture_output=True, text=True,
             ).stdout.strip()
         except (OSError, subprocess.CalledProcessError) as error:
-            fail(f"cannot execute pinned OpenCode discovery binary {binary}: {error}")
-        if version != metadata["version"]:
-            fail(f"OpenCode version mismatch: expected {metadata['version']}, found {version}")
+            fail(f"cannot execute installed OpenCode discovery binary {binary}: {error}")
         entries = load_entries(ROOT)
         project = isolated_project(root, "all-entries")
         target = project / ".opencode"
@@ -482,7 +482,7 @@ def run_runtime_discovery(metadata: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--runtime", action="store_true", help="also run the pinned OpenCode binary in an isolated environment")
+    parser.add_argument("--runtime", action="store_true", help="also run the installed OpenCode binary in an isolated environment")
     args = parser.parse_args()
     matrix = json.loads((ROOT / ".github/host-compat.json").read_text(encoding="utf-8"))
     metadata = matrix.get("opencode")

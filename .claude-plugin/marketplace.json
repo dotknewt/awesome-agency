@@ -42,6 +42,15 @@
       }
     },
     {
+      "name": "libvirt-toolkit",
+      "description": "Safe libvirt lifecycle and provider handoff for publishing QCOW2 templates, managing qemu:///session VMs, and continuing into verified guest access.",
+      "source": "./plugins/libvirt-toolkit",
+      "author": {
+        "name": "dotKnewt",
+        "email": "dotknewt@keemail.me"
+      }
+    },
+    {
       "name": "memory-mcp",
       "description": "Persistent knowledge-graph memory for Claude — packages the official MCP reference Knowledge Graph Memory Server as a Docker image, run through the Docker MCP Gateway, so entities, relations, and observations persist across sessions.",
       "source": "./plugins/memory-mcp",
@@ -229,6 +238,13 @@
       "description": "Grill the user relentlessly about a plan or design. Use when the user wants to stress-test a plan before building, or uses any 'grill' trigger phrases.",
       "version": "1.0.0",
       "source": "./skills/grilling",
+      "strict": false
+    },
+    {
+      "name": "guest-access",
+      "description": "Use when an existing VM must be reached over SSH, guest access is refused or unreachable, a project must be copied or synchronized into a guest, or commands and tests must run inside the guest. Do…",
+      "version": "1.0.0",
+      "source": "./skills/guest-access",
       "strict": false
     },
     {

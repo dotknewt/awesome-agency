@@ -19,6 +19,30 @@ spec.loader.exec_module(checker)
 
 
 class CheckerRegressionTests(unittest.TestCase):
+    def test_runtime_discovery_accepts_installed_version_and_reaches_startup(self):
+        commands = []
+
+        def run(command, **_kwargs):
+            commands.append(command)
+            if command == ["opencode", "--version"]:
+                return SimpleNamespace(stdout="9.99.0\n", returncode=0)
+            if command == ["opencode", "debug", "startup"]:
+                return SimpleNamespace(stdout="", stderr="startup rejected", returncode=1)
+            self.fail(f"unexpected subprocess command: {command!r}")
+
+        metadata = {"binary": "opencode"}
+        with (
+            patch.object(checker, "load_entries", return_value={}),
+            patch.object(checker, "install_entries"),
+            patch.object(checker, "expected_installed_files", return_value=set()),
+            patch.object(checker, "assert_installed_artifacts"),
+            patch.object(checker.subprocess, "run", side_effect=run),
+            self.assertRaisesRegex(RuntimeError, "OpenCode 9.99.0 isolated startup failed"),
+        ):
+            checker.run_runtime_discovery(metadata)
+
+        self.assertIn(["opencode", "debug", "startup"], commands)
+
     def test_automatic_runtime_conflict_with_rendered_sdd_agent_fails(self):
         desired = {"agents/sdd-worker.md": b"marketplace agent"}
         owners = {"agents/sdd-worker.md": ["conflicting-entry"]}
