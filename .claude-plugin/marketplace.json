@@ -423,6 +423,13 @@
       "strict": false
     },
     {
+      "name": "tailscale-acl-management",
+      "description": "Use when asked to write, simplify, refactor, or review Tailscale ACLs, grants, or tailnet HuJSON policies; make access rules leaner or easier to read; investigate overlapping permissions or bypassed…",
+      "version": "1.0.0",
+      "source": "./skills/tailscale-acl-management",
+      "strict": false
+    },
+    {
       "name": "tdd",
       "description": "Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions \"red-green-refactor\", or wants integration tests.",
       "version": "1.0.0",

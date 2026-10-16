@@ -1,0 +1,57 @@
+{
+  "skill_name": "tailscale-acl-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Make this leaner without changing access. Is the narrow grant protecting prod? Policy: {\"groups\":{\"group:ops\":[\"alice@example.com\"],\"group:dev\":[\"bob@example.com\"]},\"tagOwners\":{\"tag:prod\":[],\"tag:dev\":[]},\"postures\":{\"posture:managed\":{\"assertions\":[\"node:os == 'linux'\"]}},\"grants\":[{\"src\":[\"group:ops\"],\"dst\":[\"tag:prod\"],\"ip\":[\"tcp:22\"],\"srcPosture\":[\"posture:managed\"]},{\"src\":[\"group:dev\"],\"dst\":[\"tag:dev\"],\"ip\":[\"tcp:443\"]}],\"acls\":[{\"action\":\"accept\",\"src\":[\"autogroup:member\"],\"dst\":[\"tag:prod:*\"]}]}",
+      "expected_output": "Explain the union across ACLs and grants, identify the broad ACL as bypassing the apparent posture/port restriction for direct members, preserve existing access in cleanup, and label removal of the broad ACL as a separate access change.",
+      "files": [],
+      "assertions": [
+        "Names both overlapping rules and gives a concrete unintended permitted connection, with tailnet-membership assumptions explicit.",
+        "Does not claim that ordering or specificity overrides an allow.",
+        "Does not silently remove the broad ACL in a permission-preserving cleanup.",
+        "Includes a failing-posture test with srcPostureAttrs and explicit proto, labeled as expected to fail against the existing policy when it asserts intended denial.",
+        "Distinguishes proposed tests from executed validation."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you collapse these into one grant for readability and show a test? The complete rule list is [{\"src\":[\"alice@example.com\"],\"dst\":[\"192.0.2.10\"],\"ip\":[\"tcp:22\"]},{\"src\":[\"bob@example.com\"],\"dst\":[\"192.0.2.20\"],\"ip\":[\"tcp:443\"]}]. Need unchanged access.",
+      "expected_output": "Keep two grants, explain source-destination-port cross-product widening, improve formatting or aliases only if helpful, and supply concrete positive and negative regression tests.",
+      "files": [],
+      "assertions": [
+        "Rejects a single merged grant as changing access and names at least one newly allowed flow.",
+        "Provides explicit TCP tests for original flows and forbidden cross-combinations.",
+        "Uses concrete single-port destinations, not CIDRs, wildcards, or port ranges in tests.",
+        "Does not introduce tags or group memberships without an identity basis."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Clean up my policy: remove acls:[] because empty fields are clutter, turn hosts into tags, and simplify SSH. Full policy: {\"hosts\":{\"build\":\"100.64.0.8\"},\"acls\":[],\"tagOwners\":{\"tag:build\":[]},\"autoApprovers\":{\"routes\":{\"10.40.0.0/16\":[\"tag:build\"]}},\"ssh\":[{\"action\":\"check\",\"src\":[\"alice@example.com\"],\"dst\":[\"autogroup:self\"],\"users\":[\"deploy\"],\"checkPeriod\":\"1h\"},{\"action\":\"accept\",\"src\":[\"alice@example.com\"],\"dst\":[\"autogroup:self\"],\"users\":[\"deploy\"]}]}. Explain effective access, whether each proposed cleanup is safe, and what validation can establish.",
+      "expected_output": "Preserve the explicit deny-all network policy; distinguish host aliases, tag assignment, and route approval; retain SSH check semantics and account for the missing TCP/22 permission.",
+      "files": [],
+      "assertions": [
+        "Warns that removing the only explicit network access-control section can activate default allow-all.",
+        "Explains that tagOwners does not assign tags or grant connectivity, and that converting the user-owned device to a tag would change autogroup:self behavior.",
+        "Explains that autoApprovers approves advertisements, not network access.",
+        "States SSH check takes precedence over accept for the matching flow and preserves checkPeriod rather than treating accept as a bypass.",
+        "States that network access to TCP/22 is also needed and currently absent; does not add it as cosmetic cleanup.",
+        "Explains that policy validation/tests do not prove live routing, SSH enablement, or host account existence."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Review these Tailscale grants for gotchas. Assume the referenced groups, tags and postures exist. defaultSrcPosture is [posture:managed]. Grant A: src [group:ops], dst [tag:db], ip [tcp:5432], srcPosture [posture:linux, posture:recent]. Grant B: same src/dst, ip [5432], no srcPosture. Does A require managed AND Linux AND recent? Can I replace B with tcp:5432 as a readability fix? Also, does adding via [tag:router-eu] to A force all matching access through EU?",
+      "expected_output": "Distinguish OR posture alternatives, explicit posture replacing defaults, protocol widening by a bare port, and independent matching paths without via. Treat protocol or routing restrictions as access changes.",
+      "files": [],
+      "assertions": [
+        "States that A requires Linux OR recent and replaces rather than adds to defaultSrcPosture.",
+        "States that B inherits the default for applicable sources and the bare port permits TCP and UDP with documented ICMP implications.",
+        "Does not label changing the bare port to TCP-only permission-preserving.",
+        "Checks B as an alternative without via before claiming EU-only routing.",
+        "Recommends posture pass/fail and protocol-specific tests without pretending native network tests prove router selection."
+      ]
+    }
+  ]
+}

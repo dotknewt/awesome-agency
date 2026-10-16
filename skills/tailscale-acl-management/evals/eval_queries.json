@@ -1,0 +1,18 @@
+[
+  {"query": "Write leaner, easier-to-read Tailscale ACLs.", "should_trigger": true},
+  {"query": "Does this broad grant undo my stricter Tailscale grant?", "should_trigger": true},
+  {"query": "Review my tailnet policy for gotchas and questionable access patterns.", "should_trigger": true},
+  {"query": "Refactor this HuJSON Tailscale policy without changing permissions.", "should_trigger": true},
+  {"query": "Can I merge these Tailscale grants and add regression tests?", "should_trigger": true},
+  {"query": "My Tailscale posture requirement seems bypassed by another rule.", "should_trigger": true},
+  {"query": "Create a Tailscale policy allowing developers to reach staging over HTTPS.", "should_trigger": true},
+  {"query": "Audit tagOwners, autogroup:self, and SSH permissions in my tailnet policy.", "should_trigger": true},
+  {"query": "Migrate my Tailscale ACLs to grants.", "should_trigger": true},
+  {"query": "Install Tailscale on Ubuntu.", "should_trigger": false},
+  {"query": "Why is my Tailscale connection relayed rather than direct?", "should_trigger": false},
+  {"query": "Make my AWS IAM policy less permissive.", "should_trigger": false},
+  {"query": "Review Linux file ACLs on /srv/shared.", "should_trigger": false},
+  {"query": "Reorder my nftables rules.", "should_trigger": false},
+  {"query": "Fix MagicDNS name resolution on my laptop.", "should_trigger": false},
+  {"query": "Configure OpenSSH authorized_keys.", "should_trigger": false}
+]
